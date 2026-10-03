@@ -2,6 +2,7 @@
 // Každý krok běží samostatně: když jeden zdroj selže, ostatní data se i tak obnoví.
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import { buildStanice } from "./stanice.mjs";
 import { get, pool, pragueNow, encodeGeom, stripTags, decodeEntities, parseCzDate, parseStockingText } from "./lib.mjs";
 
 const DATA = new URL("../data/", import.meta.url).pathname;
@@ -77,58 +78,19 @@ async function podminky(list) {
 }
 
 // ---------- 3) Průtoky ČHMÚ ----------
-// Stanice na nepstruhových (nížinných) řekách se vyberou automaticky z hlásných profilů ČHMÚ
-// a jednou měsíčně se obnoví (souřadnice a průměrný průtok Qa z evidenčního listu).
-const OBLASTI = [
-  ["Labe a Polabí", /^(Labe|Orlice|Divoká Orlice|Tichá Orlice|Cidlina|Mrlina|Jizera|Chrudimka|Doubrava|Loučná|Výrovka)$/],
-  ["Vltava a jih Čech", /^(Vltava|Lužnice|Nežárka|Malše|Otava|Blanice|Sázava|Želivka|Lomnice|Volyňka)$/],
-  ["Berounka a západ", /^(Berounka|Mže|Radbuza|Úhlava|Úslava|Střela|Litavka|Ohře|Bílina|Ploučnice|Teplá)$/],
-  ["Morava a Haná", /^(Morava|Bečva|Haná|Dřevnice|Olšava|Moravská Sázava|Třebůvka|Bystřice|Romže|Valová|Blata)$/],
-  ["Dyje a Svratka", /^(Dyje|Svratka|Svitava|Jihlava|Oslava|Rokytná|Jevišovka|Thaya|Želetavka|Litava|Kyjovka)$/],
-  ["Odra a Slezsko", /^(Odra|Opava|Olše|Moravice|Lučina|Ostravice)$/],
-];
-const QA_MIN = 4; // m³/s – horské potoky vynecháme
-async function buildStanice() {
-  const rows = [];
-  for (let p = 1; p <= 14; p++) {
-    let html;
-    try { html = await get(`https://floodmaps.chmi.cz/hppsoldv/hpps_oplist.php?sort=0&sort_type=asc&startpage=${p}`); } catch (e) { log("ČHMÚ strana", p, e.message); continue; }
-    let n = 0;
-    for (const r of html.split(/<tr[\s>]/i).slice(1)) {
-      const m = r.match(/seq=(\d+)/); if (!m) continue;
-      const tds = [...r.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map((x) => stripTags(x[1]));
-      if (tds.length < 6) continue; n++;
-      const tok = tds[1], st = tds[2];
-      const ob = OBLASTI.find(([, re]) => re.test(tok));
-      if (ob) rows.push({ seq: m[1], tok, stanice: st, oblast: ob[0] });
-    }
-    if (!n) break;
-  }
-  log("kandidátů stanic", rows.length);
-  const out = [];
-  await pool(rows, 4, async (s) => {
-    try {
-      const html = stripTags(await get(`https://hydro.chmi.cz/hppsevlist/download.php?seq=${s.seq}`));
-      const g = html.match(/([\d.]+)\s*v\.\s*d\.\s*([\d.]+)\s*s\.\s*š/);
-      const qa = html.match(/Průměrný roční průtok:?\s*([\d.,]+)/i);
-      if (!g || !qa) return;
-      const q = +qa[1].replace(",", ".");
-      if (!(q >= QA_MIN)) return;
-      out.push({ ...s, lat: +g[2], lon: +g[1], qa: q });
-    } catch (e) { log("ev. list", s.seq, e.message); }
-  });
-  if (out.length < 10) throw new Error("málo stanic: " + out.length);
-  const order = OBLASTI.map(([n]) => n);
-  out.sort((a, b) => order.indexOf(a.oblast) - order.indexOf(b.oblast) || a.tok.localeCompare(b.tok, "cs") || b.qa - a.qa);
-  await writeJSON("stanice.json", { vytvoreno: now.date, stanice: out });
-  log("stanice", out.length);
-  return out.length;
-}
+// Seznam stanic se sestaví automaticky (řeky s revíry tohoto typu) a jednou měsíčně obnoví.
+const TYP = "M";
 async function prutoky() {
   let meta = await readJSON("stanice.json");
   let nove = 0;
   if (!meta?.stanice?.length || !meta.vytvoreno || (Date.now() - Date.parse(meta.vytvoreno)) > 30 * 864e5) {
-    try { nove = await buildStanice(); meta = await readJSON("stanice.json"); } catch (e) { log("stanice chyba", e.message); if (!meta?.stanice?.length) throw e; }
+    try {
+      const rv = await readJSON("reviry.json"); const seed = await readJSON("oblasti-seed.json", []);
+      const out = await buildStanice({ typ: TYP, reviry: rv.reviry, seed, log });
+      if (out.length < 20) throw new Error("málo stanic: " + out.length);
+      await writeJSON("stanice.json", { vytvoreno: now.date, stanice: out }); nove = out.length; meta = await readJSON("stanice.json");
+      log("stanice", out.length);
+    } catch (e) { log("stanice chyba", e.message); if (!meta?.stanice?.length) throw e; }
   }
   const want = new Set(meta.stanice.map((s) => String(s.seq)));
   const vals = new Map();
@@ -216,7 +178,7 @@ async function zarybneni() {
     log("vysazování", c.titul, recs.length, "záznamů");
     add.push(...recs);
   }
-  const limit = new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10);
+  const limit = new Date(Date.now() - 400 * 864e5).toISOString().slice(0, 10); // rok zpět kvůli „poslednímu známému zarybnění“
   const zaznamy = [...prev.zaznamy, ...add].filter((z) => z.datum >= limit);
   const doDatum = zaznamy.reduce((m, z) => (z.datum > m ? z.datum : m), "");
   const zpracovane = [...new Set([...(prev.zpracovane || []), ...nove.map((c) => c.url)])].slice(-60);

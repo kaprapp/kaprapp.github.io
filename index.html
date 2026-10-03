@@ -198,6 +198,10 @@ ul.plain li{margin:3px 0}
 .pin{width:26px;height:34px;margin-left:-13px;margin-top:-34px}
 .numpin{display:grid;place-items:center;width:28px;height:28px;margin-left:-14px;margin-top:-14px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:800 15px var(--f-display);border:2px solid var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.35)}
 .leaflet-tooltip{font-family:var(--f-body);font-weight:700}
+.flownow{display:flex;gap:12px;align-items:center;padding:10px 14px;border-radius:12px;background:var(--sunk);border:1px solid var(--line);font-size:14px;line-height:1.35}
+.flownow .big{font-family:var(--f-display);font-size:26px;font-weight:700;line-height:1;white-space:nowrap}
+.flownow .big small{font-size:14px;font-weight:600;color:var(--muted)}
+.flownow .lvltxt{font-weight:700}
 .alert{padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--bad) 13%,var(--surface));border:1px solid color-mix(in srgb,var(--bad) 45%,transparent);color:var(--ink);font-size:15px}
 .alert b{color:var(--bad)}
 .okbox{padding:10px 14px;border-radius:12px;background:color-mix(in srgb,var(--ok) 12%,var(--surface));font-size:15px}
@@ -553,6 +557,14 @@ function head(r,x,p){ p=p||{};
   return `<div class="sheet-head"><div class="rid">${esc(fmtNum(r.c))} · ${esc(SVN[r.s]||"ČRS")} · ${r.t==="P"?"pstruhový":"mimopstruhový"}</div>
   <h2>${esc(r.n)}</h2><p>Hospodaří MO ${esc(r.o)}${p.delka?` · délka ${esc(p.delka)} km`:""}${p.rozloha?` · ${esc(p.rozloha)} ha`:""}</p>
   ${isFinite(x._d)?`<p class="hint" style="margin-top:4px">${fmtKm(x._d)} km vzdušnou čarou od tvého bodu</p>`:""}</div>`; }
+/* aktuální průtok na řece revíru (nejbližší stanice ČHMÚ na stejné řece, do 15 km) */
+const riverKey=s=>String(s||"").toLowerCase().replace(/\s*[-–(].*$/,"").replace(/\s+\d+[a-z]?\b.*$/i,"").replace(/\s+(horní|dolní)$/i,"").split(/\s+/).filter(Boolean).sort().join(" ");
+async function flowNow(r){ const d=await getData("prutoky.json"); if(!d) return "";
+  const k=riverKey(r.n); let best=null;
+  for(const s of d.stanice){ if(riverKey(s.tok)!==k||s.lat==null) continue; const dd=risDist(r,s).d; if(dd<=15&&(!best||dd<best.dd)) best={...s,dd}; }
+  if(!best||best.q==null) return "";
+  const l=lvl(best.q,best.qa), tr=TR[best.trend]||TR.ustaleny;
+  return `<div class="flownow"><div class="big">${fq(best.q)} <small>m³/s</small></div><div><span class="lvltxt" style="color:${l?l.c:"var(--ink)"}">${l?esc(l.t):"Aktuální průtok"}</span> · ${tr[0]} ${esc(tr[1])}<br><span class="hint">${esc(best.tok)} · ${esc(best.stanice)}${best.qa?`, běžně ${fq(best.qa)} m³/s`:""}${best.cas?` · ${esc(best.cas)}`:""}</span></div></div>`; }
 const covers=it=>(!it.od||it.od<=todayISO)&&(!it.do||it.do>=todayISO);
 async function body(r,x,p){
   const sec=(t,h)=>h?`<section class="sec"><h3>${t}</h3>${h}</section>`:"";
@@ -573,7 +585,8 @@ async function body(r,x,p){
   const tbl=miry.length?`<div class="tblwrap"><table class="tbl"><tr><th>Druh</th><th>Lovná míra</th><th>Dnes</th></tr>${miry.map(m=>`<tr><td>${esc(m.d)}${m.pozn?`<div class="hint">${esc(m.pozn)}</div>`:""}</td><td class="n">${m.min?esc(m.min)+" cm":"—"}${m.max?" až "+esc(m.max)+" cm":""}</td><td>${m.hajen?'<span class="st-h">hájen</span>':'<span class="st-l">lze lovit</span>'}</td></tr>`).join("")}</table></div>`:"";
   const lim=(p.limity||[]).length?`<p class="popis">${esc(p.limity.join("\n\n"))}</p>`:"";
   const z=await stockFor(r);
-  return `${alert?`<section class="sec">${alert}</section>`:""}
+  const flow=await flowNow(r), last=await lastStock(r);
+  return `${alert||flow||last?`<section class="sec" style="display:grid;gap:8px">${alert}${flow}${last}</section>`:""}
     ${sec("Dnes na revíru",dnes)}
     ${sec("Popis revíru",p.popis?`<p class="popis">${esc(p.popis)}</p>`:"")}
     ${sec("Lovné míry a hájení",tbl)}
@@ -591,8 +604,15 @@ function links(r,x){ const ll=isFinite(x.lat)?`${x.lat},${x.lon}`:"";
 const moKey=t=>norm(t).replace(/^mo\s+/,"").replace(/\s+ii\.?$/," 2").replace(/\s+i\.?$/," 1").replace(/\s+/g," ").trim();
 const moMatch=(a,b)=>a===b||a.startsWith(b+" ")||b.startsWith(a+" ")||a.startsWith(b);
 const isTroutSp=d=>/pstruh|siven|lipan|hlavat/i.test(d);
+/* poslední známé zarybnění organizace (pro horní část detailu) */
+async function lastStock(r){ const Z=await getData("zarybneni.json"); if(!Z) return "";
+  const k=moKey(r.o); const all=(Z.zaznamy||[]).filter(z=>moMatch(k,moKey(z.mo)));
+  if(!all.length) return "";
+  const pref=all.filter(z=>(r.t==="P")===isTroutSp(z.druh)); if(!pref.length) return ""; const pick=pref.sort((a,b)=>b.datum.localeCompare(a.datum));
+  const d=pick[0].datum, same=pick.filter(z=>z.datum===d);
+  return `<div class="flownow"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true" style="width:34px;flex:none"><use href="#fish-sm"/></svg><div><span class="lvltxt">Poslední známé zarybnění ${esc(dCZ(d))}</span><br>${same.slice(0,3).map(z=>`${esc(z.druh)} ${esc(z.mn.toLocaleString("cs-CZ"))} ${esc(z.j)}`).join(", ")}<br><span class="hint">MO ${esc(pick[0].mo)} · podle zpráv Východočeského ÚS</span></div></div>`; }
 async function stockFor(r){ const Z=await getData("zarybneni.json"); if(!Z) return "";
-  const k=moKey(r.o); const recs=(Z.zaznamy||[]).filter(z=>moMatch(k,moKey(z.mo))).sort((a,b)=>b.datum.localeCompare(a.datum));
+  const k=moKey(r.o), od60=new Date(today.getTime()-60*864e5).toISOString().slice(0,10); const recs=(Z.zaznamy||[]).filter(z=>z.datum>=od60&&moMatch(k,moKey(z.mo))).sort((a,b)=>b.datum.localeCompare(a.datum));
   if(!recs.length) return r.s==="VČ"?`<p class="hint">Za posledních 60 dní žádné vysazení této organizace.</p>`:"";
   return `<div class="stock">${recs.slice(0,8).map(z=>`<div class="stock-item"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true"><use href="#fish-sm"/></svg><div><strong>${esc(z.druh)} ${esc(z.mn.toLocaleString("cs-CZ"))} ${esc(z.j)}</strong><div class="hint">${esc(dCZ(z.datum))} · ${esc(z.kat)}</div></div></div>`).join("")}</div><p class="hint" style="margin-top:6px">Ryby dostává místní organizace pro své revíry, ne nutně přímo tento.</p>`; }
 let ZSORT="datum";

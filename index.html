@@ -671,7 +671,7 @@ const CFG={
   iban:"",           // IBAN pro QR platbu (např. CZ65 0800 0000 1920 0014 5399)
   ucet:"",           // číslo účtu k zobrazení (např. 19-2000145399/0800)
   castky:[25,50,100],  // jen pro QR platbu
-  stripe:""  // Stripe Payment Link (karta, Apple Pay, Google Pay); částku volí plátce, od 25 Kč
+  stripe:"https://buy.stripe.com/cNi28t1xo64iaaN5Qy9Ve00"  // Stripe Payment Link (karta, Apple Pay, Google Pay); částku volí plátce, od 25 Kč
 };
 const toggle=(id)=>{ const el=$(id), open=el.hidden; ["donatePanel","contactPanel"].forEach(x=>$(x).hidden=true); el.hidden=!open;
   if(open) el.scrollIntoView({behavior:"smooth",block:"nearest"}); };

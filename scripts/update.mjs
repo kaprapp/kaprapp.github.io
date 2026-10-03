@@ -22,15 +22,24 @@ const SVAZ = (n = "") => /Jihočesk/i.test(n) ? "JČ" : /Moravskoslez/i.test(n) 
 // ---------- 1) Revíry ČRS z RIS (polohy úseků) ----------
 async function reviry() {
   const tiles = [];
-  const X0 = -910000, X1 = -430000, Y0 = -1235000, Y1 = -930000, NX = 3, NY = 2;
+  const X0 = -910000, X1 = -430000, Y0 = -1235000, Y1 = -930000, NX = 6, NY = 4;
   for (let i = 0; i < NX; i++) for (let j = 0; j < NY; j++)
     tiles.push([X0 + ((X1 - X0) * i) / NX, Y0 + ((Y1 - Y0) * j) / NY, X0 + ((X1 - X0) * (i + 1)) / NX, Y0 + ((Y1 - Y0) * (j + 1)) / NY].map(Math.round));
   const bySid = new Map();
-  for (const t of tiles) {
-    const j = await get(`${API}/reviry?filter.bbox=${t.join(",")}&output.uzemniVymezeni=true`, { json: true });
-    for (const x of j.items || []) bySid.set(x.sid, x);
-    log("revíry dlaždice", t.join(","), (j.items || []).length);
-  }
+  // RIS občas pošle useknutou/poškozenou odpověď; velkou dlaždici pak rozdělíme na čtvrtiny
+  const fetchTile = async (t, depth = 0) => {
+    try {
+      const j = await get(`${API}/reviry?filter.bbox=${t.join(",")}&output.uzemniVymezeni=true`, { json: true, tries: 2 });
+      for (const x of j.items || []) bySid.set(x.sid, x);
+      log("revíry dlaždice", t.join(","), (j.items || []).length);
+    } catch (e) {
+      if (depth >= 3) throw e;
+      log("dlaždice selhala, dělím", t.join(","), String(e).slice(0, 80));
+      const [x0, y0, x1, y1] = t, mx = Math.round((x0 + x1) / 2), my = Math.round((y0 + y1) / 2);
+      for (const q of [[x0, y0, mx, my], [mx, y0, x1, my], [x0, my, mx, y1], [mx, my, x1, y1]]) await fetchTile(q, depth + 1);
+    }
+  };
+  for (const t of tiles) await fetchTile(t);
   const list = [...bySid.values()].filter((x) => x.typReviru && x.cislo).map((x) => [
     x.cislo, x.oficialniNazev, x.typReviru.kod === "PSTRUHOVY" ? "P" : "M", SVAZ(x.uzemniSvaz?.nazev), x.organizace?.nazev || "",
     x.friendlyUrl, x.sid, encodeGeom(x.uzemniVymezeni),

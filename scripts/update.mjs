@@ -34,7 +34,25 @@ async function reviry() {
   const list = [...bySid.values()].filter((x) => x.typReviru && x.cislo).map((x) => [
     x.cislo, x.oficialniNazev, x.typReviru.kod === "PSTRUHOVY" ? "P" : "M", SVAZ(x.uzemniSvaz?.nazev), x.organizace?.nazev || "",
     x.friendlyUrl, x.sid, encodeGeom(x.uzemniVymezeni),
-  ]).sort((a, b) => a[1].localeCompare(b[1], "cs"));
+  ]);
+  // Revíry bez mapy v RIS (bbox je nevrátí): doplníme z úplného seznamu a umístíme přibližně
+  // do středu ostatních revírů téže organizace (9. položka = 1 → poloha přibližná).
+  try {
+    const all = await get(`${API}/reviry?size=5000`, { json: true });
+    const have = new Set(list.map((r) => r[6]));
+    const center = new Map();
+    for (const r of list) { const g = r[7]?.[0]; if (!g) continue; const k = r[4]; const c = center.get(k) || { x: 0, y: 0, n: 0 }; c.x += g[0]; c.y += g[1]; c.n++; center.set(k, c); }
+    let add = 0;
+    for (const x of all.items || []) {
+      if (!x.typReviru || !x.cislo || have.has(x.sid)) continue;
+      const org = x.organizace?.nazev || ""; const c = center.get(org);
+      list.push([x.cislo, x.oficialniNazev, x.typReviru.kod === "PSTRUHOVY" ? "P" : "M", SVAZ(x.uzemniSvaz?.nazev), org, x.friendlyUrl, x.sid,
+        c ? [[Math.round(c.x / c.n), Math.round(c.y / c.n)]] : [], 1]);
+      add++;
+    }
+    log("revíry bez mapy doplněny", add, "z úplného seznamu", (all.items || []).length);
+  } catch (e) { log("úplný seznam revírů chyba", e.message); }
+  list.sort((a, b) => a[1].localeCompare(b[1], "cs"));
   if (list.length < 500) throw new Error("podezřele málo revírů: " + list.length);
   await writeJSON("reviry.json", { aktualizovano: now.iso, zdroj: "RIS Portál ČRS", reviry: list });
   log("revíry uloženy", list.length);

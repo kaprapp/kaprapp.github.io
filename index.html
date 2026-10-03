@@ -400,7 +400,7 @@ const persist=()=>store.set("kapr",{typ:S.typ,mode:S.mode,loc:S.loc});
 /* ---------- revíry ---------- */
 const RIS={all:null};
 async function loadRis(){ if(RIS.all) return RIS.all; const d=await getData("reviry.json"); if(!d) return null;
-  RIS.all=d.reviry.map(([c,n,t,s,o,url,sid,parts])=>({c,n,t,s,o,url,sid,segs:(parts||[]).map(f=>{const p=[];let x=0,y=0;for(let i=0;i<f.length;i+=2){x+=f[i];y+=(f[i+1]||0);p.push([x/1000,y/1000]);}return p;}).filter(p=>p.length)}));
+  RIS.all=d.reviry.map(([c,n,t,s,o,url,sid,parts,approx])=>({c,n,t,s,o,url,sid,approx:!!approx,segs:(parts||[]).map(f=>{const p=[];let x=0,y=0;for(let i=0;i<f.length;i+=2){x+=f[i];y+=(f[i+1]||0);p.push([x/1000,y/1000]);}return p;}).filter(p=>p.length)}));
   RIS.stav=d.aktualizovano; return RIS.all; }
 const risOfTyp=()=>(RIS.all||[]).filter(r=>r.t===S.typ);
 function risDist(r,pt){ const K=Math.cos(pt.lat*Math.PI/180)*111.32, L=110.57; let best={d:1e9,lat:0,lon:0};
@@ -529,7 +529,7 @@ function renderResults(title,extra=""){
     return `<button class="card" data-i="${i}" ${S.sel===i?'aria-current="true"':""}>
       <span class="num">${esc(x._label??i+1)}</span>
       <div><h3>${esc(x.title||r?.n||"")}</h3><div class="meta">${esc(x.sub||(r?fmtNum(r.c)+" · MO "+r.o:""))}</div>
-      ${x.pozn?`<div class="meta">${esc(x.pozn)}</div>`:""}
+      ${x.pozn?`<div class="meta">${esc(x.pozn)}</div>`:""}${r?.approx?`<div class="meta">Poloha přibližná – RIS u revíru nemá mapu</div>`:""}
       ${x.pill?`<div class="meta" style="margin-top:4px"><span class="pill vysoka">${esc(x.pill)}</span></div>`:""}</div>
       <span class="dist">${isFinite(x._d)?fmtKm(x._d)+"<small>KM VZDUŠNĚ</small>":x._date?dShort(x._date)+"<small>NAPOSLEDY</small>":""}</span></button>`;}).join("");
   $("out").innerHTML=`<h2 style="font-size:26px;margin-bottom:10px">${esc(title)}</h2>${extra}<div class="list">${items}</div><p class="hint" style="margin-top:8px">Klepni na revír pro podmínky lovu.</p>`;
@@ -556,7 +556,7 @@ const risUrl=r=>"https://ris.rybsvaz.cz/karta-reviru/-/"+r.url;
 function head(r,x,p){ p=p||{};
   return `<div class="sheet-head"><div class="rid">${esc(fmtNum(r.c))} · ${esc(SVN[r.s]||"ČRS")} · ${r.t==="P"?"pstruhový":"mimopstruhový"}</div>
   <h2>${esc(r.n)}</h2><p>Hospodaří MO ${esc(r.o)}${p.delka?` · délka ${esc(p.delka)} km`:""}${p.rozloha?` · ${esc(p.rozloha)} ha`:""}</p>
-  ${isFinite(x._d)?`<p class="hint" style="margin-top:4px">${fmtKm(x._d)} km vzdušnou čarou od tvého bodu</p>`:""}</div>`; }
+  ${isFinite(x._d)?`<p class="hint" style="margin-top:4px">${r.approx?"asi ":""}${fmtKm(x._d)} km vzdušnou čarou od tvého bodu${r.approx?" (poloha přibližná – RIS u revíru nemá mapu, přesný úsek najdeš v popisu)":""}</p>`:""}</div>`; }
 /* aktuální průtok na řece revíru (nejbližší stanice ČHMÚ na stejné řece, do 15 km) */
 const riverKey=s=>String(s||"").toLowerCase().replace(/\s*[-–(].*$/,"").replace(/\s+\d+[a-z]?\b.*$/i,"").replace(/\s+(horní|dolní)$/i,"").split(/\s+/).filter(Boolean).sort().join(" ");
 async function flowNow(r){ const d=await getData("prutoky.json"); if(!d) return "";

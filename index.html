@@ -250,9 +250,11 @@ ul.plain li{margin:3px 0}
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <symbol id="trout" viewBox="0 0 84 52">
-        <path fill="currentColor" d="M4 26c8-12 22-19 38-19 10 0 18 4 24 10l12-9c1-1 3 0 3 1l-3 17 3 17c0 1-2 2-3 1l-12-9c-6 6-14 10-24 10C26 45 12 38 4 26z"/>
-        <circle cx="14" cy="23" r="2.4" fill="var(--head-a)"/>
-        <g fill="var(--spot)"><circle cx="30" cy="18" r="1.8"/><circle cx="38" cy="14" r="1.5"/><circle cx="44" cy="20" r="1.8"/><circle cx="52" cy="15" r="1.4"/><circle cx="34" cy="26" r="1.3"/><circle cx="56" cy="24" r="1.5"/></g>
+        <path fill="currentColor" opacity=".8" d="M27 11C33 3 45 1 54 4c1 3 1 6 1 8-9-3-19-3-28-1z"/>
+        <path fill="currentColor" d="M3 29C9 16 23 9 39 9c11 0 18 5 22 12l14-10c2-1 4 0 3 2l-3 16 3 16c1 2-1 3-3 2L61 37c-4 7-11 11-22 11C23 48 9 41 3 29z"/>
+        <g fill="none" stroke="var(--head-a)" stroke-opacity=".35" stroke-width="1.6" stroke-linecap="round"><path d="M30 17a5 5 0 0 0 0 10M39 17a5 5 0 0 0 0 10M48 17a5 5 0 0 0 0 10M34 27a5 5 0 0 0 0 10M43 27a5 5 0 0 0 0 10M52 27a5 5 0 0 0 0 9"/><path d="M21 19c-3 6-3 13 0 19"/></g>
+        <circle cx="12" cy="26" r="2.4" fill="var(--head-a)"/>
+        <path d="M5 31c-1 4 0 7 3 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
       </symbol>
       <symbol id="fish-sm" viewBox="0 0 84 52"><path fill="currentColor" d="M4 26c8-12 22-19 38-19 10 0 18 4 24 10l12-9c1-1 3 0 3 1l-3 17 3 17c0 1-2 2-3 1l-12-9c-6 6-14 10-24 10C26 45 12 38 4 26z"/></symbol>
     </defs>
@@ -620,9 +622,9 @@ async function renderZar(){
   fitTo(here?[here,...res.slice(0,8)]:res); }
 
 /* ---------- průtoky ---------- */
-const OBLASTI=["Krkonoše a Orlické hory","Jizerské hory a Liberecko","Šumava a jih Čech","Krušné hory a západ","Vysočina","Jeseníky","Beskydy"];
+let OBLASTI=[]; // naplní se z dat (pořadí podle stanice.json)
 let FLOWF=null;
-function lvl(q,qa){if(!(q>=0)||!(qa>0))return null;const r=q/qa;
+function lvl(q,qa){if(q==null||!(q>=0)||!(qa>0))return null;const r=q/qa;
   if(r<0.25)return{r,t:"velmi málo vody",c:"var(--bad)"};if(r<0.5)return{r,t:"málo vody",c:"var(--warn)"};
   if(r<1.3)return{r,t:"běžný stav",c:"var(--ok)"};if(r<3)return{r,t:"zvýšený",c:"var(--water)"};return{r,t:"vysoký, kalný",c:"var(--bad)"};}
 const fq=v=>v==null||!isFinite(v)?"—":(v<1?v.toFixed(v<0.1?3:2):v<10?v.toFixed(2):v.toFixed(1)).replace(".",",");
@@ -630,6 +632,7 @@ const TR={stoupa:["↑","stoupá"],klesa:["↓","klesá"],ustaleny:["→","ustá
 $("flowBtn").onclick=async()=>{ resetResults(); $("out").dataset.view="flow"; $("out").innerHTML=statusBox("Načítám průtoky…"); if(!FLOWF) FLOWF=S.loc?"okoli":"vse"; renderFlows(await getData("prutoky.json")); };
 function renderFlows(d){ const out=$("out");
   if(!d){ out.innerHTML=`<div class="status">Průtoky se nepodařilo načíst. Zkus to za chvíli.</div>`; return; }
+  OBLASTI=[...new Set(d.stanice.map(s=>s.oblast))];
   let list=d.stanice.map(s=>({...s,_d:S.loc?hav(S.loc,s):null}));
   const f=FLOWF==="okoli"&&!S.loc?"vse":FLOWF;
   if(f==="okoli"){list.sort((a,b)=>a._d-b._d);list=list.slice(0,10);}

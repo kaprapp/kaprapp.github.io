@@ -3,6 +3,7 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { buildStanice } from "./stanice.mjs";
+import { zarybneniSvazy } from "./zarybneni-svazy.mjs";
 import { get, pool, pragueNow, encodeGeom, stripTags, decodeEntities, parseCzDate, parseStockingText } from "./lib.mjs";
 
 const DATA = new URL("../data/", import.meta.url).pathname;
@@ -226,6 +227,12 @@ if (want("podminky")) steps.push(["podminky", async () => {
 if (want("prutoky")) steps.push(["prutoky", prutoky]);
 if (want("aktuality")) steps.push(["aktuality", aktuality]);
 if (want("zarybneni")) steps.push(["zarybneni", zarybneni]);
+if (want("zarybneni")) steps.push(["zarybneniSvazy", async () => {
+  const rv = await readJSON("reviry.json"); const prev = await readJSON("zarybneni-svazy.json", {});
+  const r = await zarybneniSvazy({ reviry: rv.reviry, prev, today: now.date, log });
+  await writeJSON("zarybneni-svazy.json", r);
+  return { zaznamu: r.zaznamy.length, zprav: r.zpravy.length, ...r.kroky };
+}]);
 
 for (const [k, fn] of steps) {
   const t0 = Date.now();

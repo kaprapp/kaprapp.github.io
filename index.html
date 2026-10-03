@@ -605,13 +605,20 @@ const moKey=t=>norm(t).replace(/^mo\s+/,"").replace(/\s+ii\.?$/," 2").replace(/\
 const moMatch=(a,b)=>a===b||a.startsWith(b+" ")||b.startsWith(a+" ")||a.startsWith(b);
 const isTroutSp=d=>/pstruh|siven|lipan|hlavat/i.test(d);
 /* poslední známé zarybnění organizace (pro horní část detailu) */
-async function lastStock(r){ const Z=await getData("zarybneni.json"); if(!Z) return "";
+async function lastStock(r){ const Z2=await getData("zarybneni-svazy.json");
+  const own=(Z2?.zaznamy||[]).filter(z=>z.revir===r.c&&(r.t==="P")===isTroutSp(z.druh)).sort((a,b)=>b.datum.localeCompare(a.datum));
+  if(own.length){ const d=own[0].datum, same=own.filter(z=>z.datum===d);
+    return `<div class="flownow"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true" style="width:34px;flex:none"><use href="#fish-sm"/></svg><div><span class="lvltxt">Poslední známé zarybnění ${esc(dCZ(d))}</span><br>${same.slice(0,4).map(z=>`${esc(z.druh)}${z.mn!=null?` ${esc(z.mn.toLocaleString("cs-CZ"))} ${esc(z.j)}`:""}${z.kat?` (${esc(z.kat)})`:""}`).join(", ")}<br><span class="hint">přímo do tohoto revíru · ${esc(own[0].svaz==="Praha"?"ÚS města Prahy":"Jihočeský ÚS")}</span></div></div>`; }
+  const Z=await getData("zarybneni.json"); if(!Z) return "";
   const k=moKey(r.o); const all=(Z.zaznamy||[]).filter(z=>moMatch(k,moKey(z.mo)));
   if(!all.length) return "";
   const pref=all.filter(z=>(r.t==="P")===isTroutSp(z.druh)); if(!pref.length) return ""; const pick=pref.sort((a,b)=>b.datum.localeCompare(a.datum));
   const d=pick[0].datum, same=pick.filter(z=>z.datum===d);
   return `<div class="flownow"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true" style="width:34px;flex:none"><use href="#fish-sm"/></svg><div><span class="lvltxt">Poslední známé zarybnění ${esc(dCZ(d))}</span><br>${same.slice(0,3).map(z=>`${esc(z.druh)} ${esc(z.mn.toLocaleString("cs-CZ"))} ${esc(z.j)}`).join(", ")}<br><span class="hint">MO ${esc(pick[0].mo)} · podle zpráv Východočeského ÚS</span></div></div>`; }
-async function stockFor(r){ const Z=await getData("zarybneni.json"); if(!Z) return "";
+async function stockFor(r){ const Z2=await getData("zarybneni-svazy.json");
+  const own=(Z2?.zaznamy||[]).filter(z=>z.revir===r.c).sort((a,b)=>b.datum.localeCompare(a.datum));
+  if(own.length) return `<div class="stock">${own.slice(0,10).map(z=>`<div class="stock-item"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true"><use href="#fish-sm"/></svg><div><strong>${esc(z.druh)}${z.mn!=null?` ${esc(z.mn.toLocaleString("cs-CZ"))} ${esc(z.j)}`:""}</strong><div class="hint">${esc(dCZ(z.datum))}${z.kat?` · ${esc(z.kat)}`:""}</div></div></div>`).join("")}</div><p class="hint" style="margin-top:6px">Vysazení přímo do tohoto revíru za poslední rok (${esc(own[0].svaz==="Praha"?"ÚS města Prahy":"Jihočeský ÚS")}).</p>`;
+  const Z=await getData("zarybneni.json"); if(!Z) return "";
   const k=moKey(r.o), od60=new Date(today.getTime()-60*864e5).toISOString().slice(0,10); const recs=(Z.zaznamy||[]).filter(z=>z.datum>=od60&&moMatch(k,moKey(z.mo))).sort((a,b)=>b.datum.localeCompare(a.datum));
   if(!recs.length) return r.s==="VČ"?`<p class="hint">Za posledních 60 dní žádné vysazení této organizace.</p>`:"";
   return `<div class="stock">${recs.slice(0,8).map(z=>`<div class="stock-item"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true"><use href="#fish-sm"/></svg><div><strong>${esc(z.druh)} ${esc(z.mn.toLocaleString("cs-CZ"))} ${esc(z.j)}</strong><div class="hint">${esc(dCZ(z.datum))} · ${esc(z.kat)}</div></div></div>`).join("")}</div><p class="hint" style="margin-top:6px">Ryby dostává místní organizace pro své revíry, ne nutně přímo tento.</p>`; }
@@ -631,12 +638,26 @@ async function renderZar(){
     g.items.sort((a,b)=>b.datum.localeCompare(a.datum));
     res.push({r:best.r,lat:best.lat,lon:best.lon,_d:best.d,_date:g.items[0].datum,title:"MO "+g.mo,sub:best.r?`${fmtNum(best.r.c)} ${best.r.n}`:"místní organizace",
       pozn:g.items.map(z=>`${z.druh} ${z.mn.toLocaleString("cs-CZ")} ${z.j} (${z.kat}) · ${dShort(z.datum)}`).join(" · "),pill:"ověřeno · VČÚS"}); }
-  if(!res.length){ $("out").innerHTML=`<div class="status">Za posledních 6 týdnů nejsou žádná zveřejněná vysazení ${S.typ==="P"?"pstruhových":"nepstruhových"} ryb.</div>`; return; }
+  /* další svazy: záznamy po revírech (Praha, Jihočeský) */
+  const Z2=await getData("zarybneni-svazy.json"); const g2=new Map();
+  for(const z of (Z2?.zaznamy||[])){ if(z.datum<from) continue; if((S.typ==="P")!==isTroutSp(z.druh)) continue;
+    const k=z.revir||(z.svaz+"|"+z.rn); if(!g2.has(k)) g2.set(k,{z,items:[]}); g2.get(k).items.push(z); }
+  for(const g of g2.values()){ const z=g.z, r=z.revir?(RIS.all||[]).find(x=>x.c===z.revir):null;
+    let lat=z.lat, lon=z.lon, d=Infinity; if(r&&here){const x=risDist(r,here); d=x.d; lat=x.lat; lon=x.lon;} else if(here&&lat!=null) d=hav(here,{lat,lon});
+    g.items.sort((a,b)=>b.datum.localeCompare(a.datum));
+    res.push({r,lat:lat??NaN,lon:lon??NaN,_d:d,_date:g.items[0].datum,title:r?r.n:z.rn,sub:r?`${fmtNum(r.c)} · MO ${r.o}`:`${z.svaz} územní svaz`,
+      pozn:g.items.slice(0,6).map(x=>`${x.druh}${x.mn!=null?` ${x.mn.toLocaleString("cs-CZ")} ${x.j}`:""}${x.kat?` (${x.kat})`:""} · ${dShort(x.datum)}`).join(" · "),pill:`ověřeno · ${z.svaz==="Praha"?"ÚS Praha":"JčÚS"}`}); }
+  /* zprávy svazů bez určení revíru */
+  const trout=/pstruh|siven|lipan|hlavat/i;
+  const news=(Z2?.zpravy||[]).filter(z=>z.datum>=from&&((S.typ==="P")===trout.test(z.titul+" "+z.text)));
+  const newsHtml=news.length?`<section class="sec" style="margin-top:12px"><h3>Zprávy svazů o vysazení</h3><p class="hint">Bez určení konkrétních revírů.</p><div class="news">${news.map(z=>`<a class="newsitem" href="${esc(z.url)}" target="_blank" rel="noopener"><span class="nm">${esc(dCZ(z.datum))} · ${esc(z.svaz)} územní svaz</span><span class="nt">${esc(z.titul)}</span>${z.text?`<span class="nx">${esc(z.text)}</span>`:""}</a>`).join("")}</div></section>`:"";
+  if(!res.length){ $("out").innerHTML=`<div class="status">Za posledních 6 týdnů nejsou žádná zveřejněná vysazení ${S.typ==="P"?"pstruhových":"nepstruhových"} ryb.</div>${newsHtml}`; return; }
   const sortD=ZSORT==="dist"&&here;
   res.sort(sortD?(a,b)=>a._d-b._d:(a,b)=>b._date.localeCompare(a._date)||a._d-b._d); res.forEach((x,i)=>x._label=i+1); S.results=res;
   const chips=`<div class="chips" role="group" aria-label="Řazení"><button class="chip" data-s="datum" aria-pressed="${!sortD}">Nejnovější</button>${here?`<button class="chip" data-s="dist" aria-pressed="${!!sortD}">Nejblíž mně</button>`:""}</div>`;
-  const note=`<p class="note" style="margin:0 0 10px;border-left-color:var(--ok)">Skutečná vysazení ${S.typ==="P"?"pstruhů, sivenů a lipanů":"nepstruhových ryb"} od ${esc(dCZ(from))} podle týdenních zpráv Východočeského územního svazu (<a href="https://vcus.rybsvaz.cz/aktuality" target="_blank" rel="noopener">zdroj</a>). Ostatní svazy takové přehledy nezveřejňují.</p>`;
+  const note=`<p class="note" style="margin:0 0 10px;border-left-color:var(--ok)">Skutečná vysazení ${S.typ==="P"?"pstruhů, sivenů a lipanů":"nepstruhových ryb"} od ${esc(dCZ(from))} podle zpráv svazů: <a href="https://vcus.rybsvaz.cz/aktuality" target="_blank" rel="noopener">Východočeský</a> (po MO), <a href="https://www.rybaripraha.cz/rybolov/zarybneni/" target="_blank" rel="noopener">Praha</a> a <a href="https://www.jcus.cz/zarybnovani-reviru/" target="_blank" rel="noopener">Jihočeský</a> (po revírech). Ostatní svazy přehledy po revírech nezveřejňují.</p>`;
   renderResults("Zarybněno za 6 týdnů",chips+note);
+  if(newsHtml) $("out").insertAdjacentHTML("beforeend",newsHtml);
   $("out").querySelectorAll(".chip[data-s]").forEach(b=>b.onclick=()=>{ZSORT=b.dataset.s;renderZar();});
   fitTo(here?[here,...res.slice(0,8)]:res); }
 

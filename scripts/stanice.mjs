@@ -67,3 +67,4 @@ export async function buildStanice({ typ, reviry, seed, log = console.log }) {
   out.sort((a, b) => order.indexOf(a.oblast) - order.indexOf(b.oblast) || a.tok.localeCompare(b.tok, "cs") || (b.qa || 0) - (a.qa || 0));
   return out;
 }
+// výběr stanic: řeky s mimopstruhovými revíry do 8 km

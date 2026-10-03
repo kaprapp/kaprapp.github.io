@@ -88,7 +88,7 @@ const OBLASTI = [
   ["Odra a Slezsko", /^(Odra|Opava|Olše|Moravice|Lučina|Ostravice)$/],
 ];
 const QA_MIN = 4; // m³/s – horské potoky vynecháme
-async function stanice() {
+async function buildStanice() {
   const rows = [];
   for (let p = 1; p <= 14; p++) {
     let html;
@@ -128,7 +128,7 @@ async function prutoky() {
   let meta = await readJSON("stanice.json");
   let nove = 0;
   if (!meta?.stanice?.length || !meta.vytvoreno || (Date.now() - Date.parse(meta.vytvoreno)) > 30 * 864e5) {
-    try { nove = await stanice(); meta = await readJSON("stanice.json"); } catch (e) { log("stanice chyba", e.message); if (!meta?.stanice?.length) throw e; }
+    try { nove = await buildStanice(); meta = await readJSON("stanice.json"); } catch (e) { log("stanice chyba", e.message); if (!meta?.stanice?.length) throw e; }
   }
   const want = new Set(meta.stanice.map((s) => String(s.seq)));
   const vals = new Map();

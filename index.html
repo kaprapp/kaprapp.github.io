@@ -637,7 +637,7 @@ async function renderZar(){
     if(!best){ const ml=MO_LOC[g.mo]; best={r:null,lat:ml?ml[1]:NaN,lon:ml?ml[0]:NaN,d:here&&ml?hav(here,{lat:ml[1],lon:ml[0]}):Infinity}; }
     g.items.sort((a,b)=>b.datum.localeCompare(a.datum));
     res.push({r:best.r,lat:best.lat,lon:best.lon,_d:best.d,_date:g.items[0].datum,title:"MO "+g.mo,sub:best.r?`${fmtNum(best.r.c)} ${best.r.n}`:"místní organizace",
-      pozn:g.items.map(z=>`${z.druh} ${z.mn.toLocaleString("cs-CZ")} ${z.j} (${z.kat}) · ${dShort(z.datum)}`).join(" · "),pill:"ověřeno · VČÚS"}); }
+      pozn:g.items.map(z=>`${z.druh} ${z.mn.toLocaleString("cs-CZ")} ${z.j}${z.kat?` (${z.kat})`:""} · ${dShort(z.datum)}`).join(" · "),pill:"ověřeno · VČÚS"}); }
   /* další svazy: záznamy po revírech (Praha, Jihočeský) */
   const Z2=await getData("zarybneni-svazy.json"); const g2=new Map();
   for(const z of (Z2?.zaznamy||[])){ if(z.datum<from) continue; if((S.typ==="P")!==isTroutSp(z.druh)) continue;

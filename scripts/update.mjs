@@ -86,7 +86,9 @@ async function prutoky() {
   if (!meta?.stanice?.length || !meta.vytvoreno || (Date.now() - Date.parse(meta.vytvoreno)) > 30 * 864e5) {
     try {
       const rv = await readJSON("reviry.json"); const seed = await readJSON("oblasti-seed.json", []);
-      const out = await buildStanice({ typ: TYP, reviry: rv.reviry, seed, log });
+      // revíry Moravského rybářského svazu v RIS nejsou → hlavní moravské řeky přidáme podle průtoku
+      const extra = ["Dyje", "Svratka", "Jihlava", "Svitava", "Oslava", "Rokytná", "Jevišovka", "Morava", "Bečva", "Haná", "Dřevnice", "Olšava", "Moravská Dyje", "Thaya", "Litava", "Kyjovka"];
+      const out = await buildStanice({ typ: TYP, reviry: rv.reviry, seed, extra, extraQaMin: 2, log });
       if (out.length < 20) throw new Error("málo stanic: " + out.length);
       await writeJSON("stanice.json", { vytvoreno: now.date, stanice: out }); nove = out.length; meta = await readJSON("stanice.json");
       log("stanice", out.length);

@@ -23,7 +23,8 @@ export function distKm(segs, pt) {
   return best;
 }
 
-export async function buildStanice({ typ, reviry, seed, log = console.log }) {
+export async function buildStanice({ typ, reviry, seed, extra = [], extraQaMin = 4, log = console.log }) {
+  const extraSet = new Set(extra.map(riverKey));
   // řeky s revíry daného typu
   const byRiver = new Map();
   for (const [c, n, t, , , , , parts] of reviry) {
@@ -43,7 +44,7 @@ export async function buildStanice({ typ, reviry, seed, log = console.log }) {
       const tds = [...r.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map((x) => stripTags(x[1]));
       if (tds.length < 6) continue; n++;
       const tok = tds[1], st = tds[2];
-      if (byRiver.has(riverKey(tok))) rows.push({ seq: m[1], tok, stanice: st });
+      if (byRiver.has(riverKey(tok)) || extraSet.has(riverKey(tok))) rows.push({ seq: m[1], tok, stanice: st });
     }
     if (!n) break;
   }
@@ -56,11 +57,14 @@ export async function buildStanice({ typ, reviry, seed, log = console.log }) {
       const qa = html.match(/Průměrný roční průtok:?\s*([\d.,]+)/i);
       if (!g) return;
       const pt = { lat: +g[2], lon: +g[1] };
-      const d = Math.min(...byRiver.get(riverKey(s.tok)).map((segs) => distKm(segs, pt)));
-      if (!(d <= MAX_KM)) return;
+      const q = qa ? +qa[1].replace(",", ".") || null : null;
+      const segsList = byRiver.get(riverKey(s.tok)) || [];
+      const d = segsList.length ? Math.min(...segsList.map((segs) => distKm(segs, pt))) : 1e9;
+      const okExtra = extraSet.has(riverKey(s.tok)) && q >= extraQaMin;
+      if (!(d <= MAX_KM) && !okExtra) return;
       let ob = "", bd = 1e9;
       for (const z of seed) { const dd = Math.hypot((z.lat - pt.lat) * 111, (z.lon - pt.lon) * 72); if (dd < bd) { bd = dd; ob = z.oblast; } }
-      out.push({ ...s, ...pt, qa: qa ? +qa[1].replace(",", ".") || null : null, oblast: ob });
+      out.push({ ...s, ...pt, qa: q, oblast: ob });
     } catch (e) { log("ev. list", s.seq, e.message); }
   });
   const order = [...new Set(seed.map((z) => z.oblast))];

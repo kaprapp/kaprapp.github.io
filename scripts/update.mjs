@@ -227,6 +227,17 @@ if (want("podminky")) steps.push(["podminky", async () => {
 if (want("prutoky")) steps.push(["prutoky", prutoky]);
 if (want("aktuality")) steps.push(["aktuality", aktuality]);
 if (want("zarybneni")) steps.push(["zarybneni", zarybneni]);
+// RIS „Statistika zarybnění“ po revírech je zatím prázdná – jednou týdně (pondělí) zkusíme vzorek revírů,
+// ať víme, kdy ČRS data začne plnit (pak je začneme používat pro celé Česko).
+if (want("zarybneni") && (new Date().getDay() === 1 || process.argv.includes("rissonda"))) steps.push(["risStatistika", async () => {
+  const rv = (await readJSON("reviry.json")).reviry; const y = +now.date.slice(0, 4);
+  const sample = rv.filter((_, i) => i % Math.ceil(rv.length / 40) === 0);
+  let plnych = 0, dotazu = 0;
+  for (const r of sample) for (const id of [34, 58, 59]) {
+    try { dotazu++; const j = await get(`${API}/statistika/${r[6]}/zarybneni?rokOd=${y - 1}&rokDo=${y}&idRyby=${id}`, { json: true, tries: 1 }); if ((j.items || []).length) plnych++; } catch {}
+  }
+  return { vzorek: sample.length, dotazu, plnych };
+}]);
 if (want("zarybneni")) steps.push(["zarybneniSvazy", async () => {
   const rv = await readJSON("reviry.json"); const prev = await readJSON("zarybneni-svazy.json", {});
   const r = await zarybneniSvazy({ reviry: rv.reviry, prev, today: now.date, log });

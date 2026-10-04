@@ -454,7 +454,7 @@ function head(r,x,p){ p=p||{};
   <h2>${esc(r.n)}</h2><p>Hospodaří MO ${esc(r.o)}${p.delka?` · délka ${esc(p.delka)} km`:""}${p.rozloha?` · ${esc(p.rozloha)} ha`:""}</p>
   ${isFinite(x._d)?`<p class="hint" style="margin-top:4px">${r.approx?"asi ":""}${fmtKm(x._d)} km vzdušnou čarou od tvého bodu${r.approx?" (poloha přibližná – RIS u revíru nemá mapu, přesný úsek najdeš v popisu)":""}</p>`:""}${zapisLine(r)}</div>`; }
 function zapisLine(r){ const d=new Date(); const ds=`${d.getDate()}. ${d.getMonth()+1}. ${d.getFullYear()}`;
-  return `<div class="zapis"><div><span class="hint">Zápis do povolenky (před začátkem lovu)</span><br><b>${esc(ds)}</b> · <span style="white-space:nowrap">revír <b>${esc(fmtNum(r.c))}</b></span> <span class="hint">(${esc(r.n)})</span></div><button class="btn small" type="button" data-copy="${esc(r.c)}">Kopírovat revír</button></div>`; }
+  return `<div class="zapis"><div><span class="hint">Zápis do povolenky (před začátkem lovu)</span><br><b>${esc(ds)}</b> · <span style="white-space:nowrap">revír <b>${esc(fmtNum(r.c))}</b></span> <span class="hint">(${esc(r.n)})</span></div><button class="btn small" type="button" data-copy="${esc(r.n)}">Kopírovat revír</button></div>`; }
 document.addEventListener("click",async e=>{ const b=e.target.closest("[data-copy]"); if(!b) return;
   const t=b.dataset.copy; let ok=false;
   try{ await navigator.clipboard.writeText(t); ok=true; }catch(_){ const a=document.createElement("textarea"); a.value=t; a.style.position="fixed"; a.style.opacity="0"; document.body.appendChild(a); a.select(); try{ ok=document.execCommand("copy"); }catch(__){} a.remove(); }

@@ -252,6 +252,7 @@ ul.plain li{margin:3px 0}
 .verdict ul{margin:6px 0 0;padding-left:18px}
 .fishform{display:grid;grid-template-columns:1fr 120px;gap:8px;margin:8px 0}
 .fishform select,.fishform input{border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;background:var(--bg);color:var(--ink);width:100%}
+.btn.big[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 35%,transparent)}
 .panel{margin:14px auto 0;max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;text-align:center}
 .panel a.btn{text-decoration:none}
 .panel h3{margin:0 0 6px;font-size:18px}
@@ -506,7 +507,7 @@ function renderLoc(){
   $("locName").textContent=S.loc.label;
   $("locCoord").textContent=fmtC(S.loc.lat,S.loc.lon)+(src?" · "+src:"");
 }
-function resetResults(){S.results=null;S.sel=null;$("out").innerHTML="";$("out").dataset.view="";$("detail").innerHTML="";drawResults();}
+function resetResults(){ACTIVE=null;markActive();S.results=null;S.sel=null;$("out").innerHTML="";$("out").dataset.view="";$("detail").innerHTML="";drawResults();}
 
 /* ---------- GPS ---------- */
 function locate(silent){
@@ -898,6 +899,14 @@ $("radSearch").oninput=e=>radRender(e.target.value);
 $("shareBtn").onclick=async()=>{ const url=location.origin+location.pathname;
   try{ if(navigator.share){ await navigator.share({title:"Kapr",text:"Nejbližší rybářské revíry, podmínky lovu, průtoky a zarybnění",url}); return; } }catch(e){ if(e.name==="AbortError") return; }
   try{ await navigator.clipboard.writeText(url); $("shareBtn").textContent="Odkaz zkopírován"; }catch{ prompt("Zkopíruj odkaz:",url); } };
+
+/* ---------- tlačítka: druhé kliknutí obsah skryje ---------- */
+var ACTIVE=null, ACTIVE_LOC="";
+function markActive(){ ["findBtn","stockBtn","flowBtn","newsBtn","fishBtn"].forEach(id=>{ const b=document.getElementById(id); if(b) b.setAttribute("aria-pressed",String(ACTIVE===id)); }); }
+["findBtn","stockBtn","flowBtn","newsBtn","fishBtn"].forEach(id=>{ const b=$(id); if(!b) return; const orig=b.onclick;
+  b.onclick=async e=>{ const locKey=S.loc?`${S.loc.lat.toFixed(4)},${S.loc.lon.toFixed(4)},${S.typ}`:S.typ;
+    if(ACTIVE===id&&(id!=="findBtn"||ACTIVE_LOC===locKey)&&($("out").innerHTML.trim()||$("detail").innerHTML.trim())){ resetResults(); window.scrollTo({top:Math.max(0,b.getBoundingClientRect().top+scrollY-120),behavior:"smooth"}); return; }
+    await orig.call(b,e); ACTIVE=id; ACTIVE_LOC=locKey; markActive(); }; });
 
 /* ---------- start ---------- */
 renderToggles(); renderLoc(); drawLoc();

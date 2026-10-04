@@ -74,6 +74,8 @@ html,body{margin:0}
 .fishcard img{max-width:100%;max-height:84px;object-fit:contain}
 .fishcard b{font-size:14px;color:#1b2420;line-height:1.2}
 .fishcard i{font-size:11.5px;color:#66756e}
+.fishcard .dl{font-size:11.5px;color:#3f4b45}
+.dlen{margin:6px 0 0;font-size:14px}
 .fishsearch{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:var(--bg);color:var(--ink);margin:4px 0 8px}
 .fishhero{background:#fff;border-radius:12px;display:grid;place-items:center;padding:8px;margin:6px 0}
 .fishhero img{max-width:100%;max-height:220px;object-fit:contain}
@@ -623,16 +625,16 @@ if(CFG.kontakt && CFG.email){
 
 /* ---------- poznej rybu ---------- */
 let RYBY=null, FISHF="vse", FISHQ="", FISHSEL=null;
-const FGROUPS={vse:"Vše",lososovité:"Lososovité",kaprovité:"Kaprovité",dravci:"Dravci",ostatní:"Ostatní",nepůvodní:"Nepůvodní",chráněné:"Chráněné"};
+const FGROUPS={vse:"Vše",lososovité:"Lososovité",kaprovité:"Kaprovité",dravci:"Dravci",ostatní:"Ostatní",nepůvodní:"Nepůvodní"};
 $("fishBtn").onclick=async()=>{ resetResults(); $("out").dataset.view="fish"; $("out").innerHTML=statusBox("Načítám atlas ryb…");
   RYBY=RYBY||await getData("ryby.json"); await loadRis(); if(!RYBY){ $("out").innerHTML=`<div class="status">Atlas ryb se nepodařilo načíst.</div>`; return; } renderFish(); };
 function renderFish(){ const nq=norm(FISHQ);
-  const list=RYBY.druhy.filter(d=>(FISHF==="vse"||d.skupina===FISHF)&&(!nq||norm(d.cz+" "+d.la).includes(nq)));
+  const list=RYBY.druhy.filter(d=>(FISHF==="vse"||d.skupina===FISHF||(FISHF==="dravci"&&d.dravec))&&(!nq||norm(d.cz+" "+d.la).includes(nq)));
   $("out").innerHTML=`<div class="flowhead"><h2 style="font-size:26px">Poznej rybu</h2><span class="hint">${RYBY.druhy.length} druhů</span></div>
     <p class="hint" style="margin:0 0 6px">Vyber rybu podle obrázku a popisu. Pak zadej délku a revír – ukážu, jestli je hájená a jestli ji pustit, nebo si ji můžeš (či musíš) ponechat.</p>
     <input class="fishsearch" id="fishQ" type="search" placeholder="Hledat druh, např. tloušť, candát…" value="${esc(FISHQ)}">
     <div class="chips" role="group" aria-label="Skupina">${Object.entries(FGROUPS).map(([k,l])=>`<button class="chip" data-g="${esc(k)}" aria-pressed="${FISHF===k}">${l}</button>`).join("")}</div>
-    <div class="fishgrid">${list.map(d=>`<button class="fishcard" data-id="${esc(d.id)}" ${FISHSEL===d.id?'aria-current="true"':""}><div class="ph"><img src="data/ryby/${esc(d.img)}" alt="" loading="lazy"></div><b>${esc(d.cz)}</b><i>${esc(d.la)}</i></button>`).join("")||`<p class="hint">Nic nenalezeno.</p>`}</div>`;
+    <div class="fishgrid">${list.map(d=>`<button class="fishcard" data-id="${esc(d.id)}" ${FISHSEL===d.id?'aria-current="true"':""}><div class="ph"><img src="data/ryby/${esc(d.img)}" alt="" loading="lazy"></div><b>${esc(d.cz)}</b><i>${esc(d.la)}</i>${d.delka?`<span class="dl">dospělá ${esc(d.delka)}</span>`:""}</button>`).join("")||`<p class="hint">Nic nenalezeno.</p>`}</div>`;
   const q=$("fishQ"); q.oninput=()=>{ FISHQ=q.value; const pos=q.selectionStart; renderFish(); const n=$("fishQ"); n.focus(); n.setSelectionRange(pos,pos); };
   $("out").querySelectorAll(".chip[data-g]").forEach(b=>b.onclick=()=>{FISHF=b.dataset.g;renderFish();});
   $("out").querySelectorAll(".fishcard").forEach(b=>b.onclick=()=>openFish(b.dataset.id)); }
@@ -648,7 +650,7 @@ async function openFish(id){ const d=RYBY.druhy.find(x=>x.id===id); if(!d) retur
   $("out").querySelectorAll(".fishcard").forEach(b=>b.setAttribute("aria-current",String(b.dataset.id===id)));
   const opts=fishRevOptions(); const box=$("detail");
   const pref=opts.find(o=>o.v.startsWith("r:"))?.v||("g:"+S.typ);
-  box.innerHTML=`<article class="sheet"><div class="sheet-head"><div class="rid">${esc(d.skupina)} · ${esc(d.puvod)}</div><h2>${esc(d.cz)}</h2><p><i>${esc(d.la)}</i></p></div>
+  box.innerHTML=`<article class="sheet"><div class="sheet-head"><div class="rid">${esc(d.skupina)} · ${esc(d.puvod)}</div><h2>${esc(d.cz)}</h2><p><i>${esc(d.la)}</i></p>${d.delka?`<p class="dlen">Běžná délka v dospělosti: <b>${esc(d.delka)}</b></p>`:""}</div>
     <section class="sec"><div class="fishhero"><img src="data/ryby/${esc(d.img)}" alt="${esc(d.cz)}"></div>
       <h3>Jak ji poznáš</h3><p class="popis">${esc(d.popis)}</p>
       <h3 style="margin-top:10px">Pozor na záměnu</h3><p class="popis">${esc(d.zamena)}</p></section>

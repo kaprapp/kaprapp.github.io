@@ -67,6 +67,24 @@ html,body{margin:0}
 .rad .odd p.li{padding-left:18px}
 .rad .odd p.par{font-weight:600;color:var(--muted);font-size:13px;margin-top:10px}
 .rad mark{background:color-mix(in srgb,var(--warn) 35%,transparent);color:inherit;border-radius:3px}
+.fishgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:6px}
+.fishcard{border:1px solid var(--line);border-radius:12px;background:#fff;padding:6px 6px 8px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.fishcard:hover,.fishcard[aria-current="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
+.fishcard .ph{height:84px;display:grid;place-items:center;overflow:hidden;border-radius:8px;background:#fff}
+.fishcard img{max-width:100%;max-height:84px;object-fit:contain}
+.fishcard b{font-size:14px;color:#1b2420;line-height:1.2}
+.fishcard i{font-size:11.5px;color:#66756e}
+.fishsearch{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:var(--bg);color:var(--ink);margin:4px 0 8px}
+.fishhero{background:#fff;border-radius:12px;display:grid;place-items:center;padding:8px;margin:6px 0}
+.fishhero img{max-width:100%;max-height:220px;object-fit:contain}
+.verdict{border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.4;border:1px solid var(--line)}
+.verdict b.big{display:block;font-family:var(--f-display);font-size:22px;letter-spacing:.02em;margin-bottom:4px}
+.verdict.ok{background:color-mix(in srgb,var(--ok) 14%,var(--surface));border-color:color-mix(in srgb,var(--ok) 45%,transparent)}
+.verdict.bad{background:color-mix(in srgb,var(--bad) 13%,var(--surface));border-color:color-mix(in srgb,var(--bad) 45%,transparent)}
+.verdict.keep{background:color-mix(in srgb,var(--warn) 16%,var(--surface));border-color:color-mix(in srgb,var(--warn) 50%,transparent)}
+.verdict ul{margin:6px 0 0;padding-left:18px}
+.fishform{display:grid;grid-template-columns:1fr 120px;gap:8px;margin:8px 0}
+.fishform select,.fishform input{border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;background:var(--bg);color:var(--ink);width:100%}
 .panel{margin:14px auto 0;max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;text-align:center}
 .panel a.btn{text-decoration:none}
 .panel h3{margin:0 0 6px;font-size:18px}
@@ -177,6 +195,10 @@ html,body{margin:0}
       <button class="btn big" id="newsBtn" style="font-size:19px">
         <svg width="22" height="20" viewBox="0 0 22 20" aria-hidden="true" fill="none" stroke="var(--spot)" stroke-width="2"><rect x="1" y="1" width="20" height="18" rx="3"/><path d="M5 6h12M5 10h12M5 14h7"/></svg>
         Kapří aktuality
+      </button>
+      <button class="btn big" id="fishBtn" style="font-size:19px">
+        <svg width="26" height="18" viewBox="0 0 84 52" aria-hidden="true" style="color:var(--accent)"><use href="#fish-sm"/></svg>
+        Poznej rybu
       </button>
     </div>
     <div id="out" style="margin-top:14px"></div>
@@ -597,6 +619,97 @@ if(CFG.kontakt && CFG.email){
   $("contactSend").onclick=(e)=>{ e.preventDefault();
     location.href=`mailto:${CFG.email}?subject=${encodeURIComponent("Kapr – zpráva")}&body=${encodeURIComponent($("contactText").value)}`; };
 }
+
+/* ---------- poznej rybu ---------- */
+let RYBY=null, FISHF="vse", FISHQ="", FISHSEL=null;
+const FGROUPS={vse:"Vše",lososovité:"Lososovité",kaprovité:"Kaprovité",dravci:"Dravci",ostatní:"Ostatní",nepůvodní:"Nepůvodní",chráněné:"Chráněné"};
+$("fishBtn").onclick=async()=>{ resetResults(); $("out").dataset.view="fish"; $("out").innerHTML=statusBox("Načítám atlas ryb…");
+  RYBY=RYBY||await getData("ryby.json"); await loadRis(); if(!RYBY){ $("out").innerHTML=`<div class="status">Atlas ryb se nepodařilo načíst.</div>`; return; } renderFish(); };
+function renderFish(){ const nq=norm(FISHQ);
+  const list=RYBY.druhy.filter(d=>(FISHF==="vse"||d.skupina===FISHF)&&(!nq||norm(d.cz+" "+d.la).includes(nq)));
+  $("out").innerHTML=`<div class="flowhead"><h2 style="font-size:26px">Poznej rybu</h2><span class="hint">${RYBY.druhy.length} druhů</span></div>
+    <p class="hint" style="margin:0 0 6px">Vyber rybu podle obrázku a popisu. Pak zadej délku a revír – ukážu, jestli je hájená a jestli ji pustit, nebo si ji můžeš (či musíš) ponechat.</p>
+    <input class="fishsearch" id="fishQ" type="search" placeholder="Hledat druh, např. tloušť, candát…" value="${esc(FISHQ)}">
+    <div class="chips" role="group" aria-label="Skupina">${Object.entries(FGROUPS).map(([k,l])=>`<button class="chip" data-g="${esc(k)}" aria-pressed="${FISHF===k}">${l}</button>`).join("")}</div>
+    <div class="fishgrid">${list.map(d=>`<button class="fishcard" data-id="${esc(d.id)}" ${FISHSEL===d.id?'aria-current="true"':""}><div class="ph"><img src="data/ryby/${esc(d.img)}" alt="" loading="lazy"></div><b>${esc(d.cz)}</b><i>${esc(d.la)}</i></button>`).join("")||`<p class="hint">Nic nenalezeno.</p>`}</div>`;
+  const q=$("fishQ"); q.oninput=()=>{ FISHQ=q.value; const pos=q.selectionStart; renderFish(); const n=$("fishQ"); n.focus(); n.setSelectionRange(pos,pos); };
+  $("out").querySelectorAll(".chip[data-g]").forEach(b=>b.onclick=()=>{FISHF=b.dataset.g;renderFish();});
+  $("out").querySelectorAll(".fishcard").forEach(b=>b.onclick=()=>openFish(b.dataset.id)); }
+const inPer=(od,dO,dISO)=>{ const md=dISO.slice(5); return od<=dO? (md>=od&&md<=dO) : (md>=od||md<=dO); };
+const dmCZ=md=>`${+md.slice(3)}. ${+md.slice(0,2)}.`;
+function fishRevOptions(){ const opts=[]; const seen=new Set();
+  const add=(r,label)=>{ if(!r||seen.has(r.c)) return; seen.add(r.c); opts.push({v:"r:"+r.c,l:label||`${r.n} (${fmtNum(r.c)})`}); };
+  if(S.results&&S.sel!=null&&S.results[S.sel]?.r) add(S.results[S.sel].r,`${S.results[S.sel].r.n} – vybraný revír`);
+  if(S.loc&&RIS.all){ RIS.all.filter(r=>r.segs.length).map(r=>({r,d:risDist(r,S.loc).d})).sort((a,b)=>a.d-b.d).slice(0,6).forEach(x=>add(x.r,`${x.r.n} · ${fmtKm(x.d)} km`)); }
+  opts.push({v:"g:P",l:"Obecně – pstruhový revír"},{v:"g:M",l:"Obecně – mimopstruhový revír"});
+  return opts; }
+async function openFish(id){ const d=RYBY.druhy.find(x=>x.id===id); if(!d) return; FISHSEL=id;
+  $("out").querySelectorAll(".fishcard").forEach(b=>b.setAttribute("aria-current",String(b.dataset.id===id)));
+  const opts=fishRevOptions(); const box=$("detail");
+  const pref=opts.find(o=>o.v.startsWith("r:"))?.v||("g:"+S.typ);
+  box.innerHTML=`<article class="sheet"><div class="sheet-head"><div class="rid">${esc(d.skupina)} · ${esc(d.puvod)}</div><h2>${esc(d.cz)}</h2><p><i>${esc(d.la)}</i></p></div>
+    <section class="sec"><div class="fishhero"><img src="data/ryby/${esc(d.img)}" alt="${esc(d.cz)}"></div>
+      <h3>Jak ji poznáš</h3><p class="popis">${esc(d.popis)}</p>
+      <h3 style="margin-top:10px">Pozor na záměnu</h3><p class="popis">${esc(d.zamena)}</p></section>
+    <section class="sec"><h3>Co s ní?</h3>
+      <div class="fishform"><select id="fRev">${opts.map(o=>`<option value="${esc(o.v)}" ${o.v===pref?"selected":""}>${esc(o.l)}</option>`).join("")}</select>
+        <input id="fLen" type="number" inputmode="decimal" min="1" max="300" placeholder="Délka cm"></div>
+      <div id="fOut"></div>
+      <p class="hint" style="margin-top:8px">Hmotnost je jen odhad z délky${d.lwZdroj==="ČRS"?" (podle tabulek délek a hmotností ČRS)":""}. Závazné jsou podmínky na kartě revíru v RIS a Rybářský řád.</p></section>
+    <section class="sec"><p class="hint">Obrázek: ${esc(d.foto.autor)}, ${esc(d.foto.licence)} – <a href="${esc(d.foto.url)}" target="_blank" rel="noopener">Wikimedia Commons</a></p></section></article>`;
+  box.scrollIntoView({behavior:"smooth",block:"start"});
+  const upd=async()=>{ $("fOut").innerHTML=await fishVerdict(d,$("fRev").value,parseFloat(String($("fLen").value).replace(",","."))); };
+  $("fRev").onchange=upd; $("fLen").oninput=upd; upd(); }
+async function fishVerdict(d,rv,L){
+  let typ=S.typ, r=null, p=null;
+  if(rv.startsWith("r:")){ r=(RIS.all||[]).find(x=>x.c===rv.slice(2)); typ=r?.t||typ; p=r?await getData(`podminky/${r.c}.json`):null; } else typ=rv.slice(2);
+  const why=[], info=[]; let st="ok", min=null, max=null, ponechat=false, hajen=false;
+  const key=norm(d.cz).split(" ").slice(0,2).join(" ");
+  // 1) celoročně chránění
+  if(d.chranen && ["vranka","piskor","losos"].includes(d.id)){ hajen=true; why.push(d.chranen); }
+  // 2) obecná pravidla Rybářského řádu (zákon/vyhláška platí vždy, revír je může jen zpřísnit)
+  if(!hajen){
+    if(typ==="P"&&inPer("12-01","04-15",todayISO)){ hajen=true; why.push("Od 1. 12. do 15. 4. jsou v pstruhovém revíru hájeny všechny ryby."); }
+    for(const h of d.hajeni){ if(h.kde==="MP"&&typ!=="M") continue; if(inPer(h.od,h.do,todayISO)){ hajen=true; why.push(`Hájen ${h.od==="01-01"&&h.do==="12-31"?"celoročně":`od ${dmCZ(h.od)} do ${dmCZ(h.do)}`}${h.kde==="MP"?" (v mimopstruhovém revíru)":""}.`); } }
+  }
+  min=typ==="P"?d.miraP:d.miraMP;
+  // 3) podmínky konkrétního revíru (RIS) – přísnější údaje
+  const ent=(p?.miry||[]).filter(e=>norm(e.d).startsWith(key)||key.startsWith(norm(e.d)));
+  if(ent.length){ const cur=ent.filter(e=>(!e.od||e.od<=todayISO)&&(!e.do||e.do>=todayISO));
+    if(!cur.length){ if(!hajen){ hajen=true; why.push(`Na revíru ${r.n} se tento druh dnes lovit nesmí (mimo dobu lovu).`); } }
+    else { for(const e of cur){
+        if(e.hajen&&!hajen){ hajen=true; why.push(`Na revíru ${r.n} je dnes hájen${e.do&&e.do<"2099"?` (do ${dCZ(e.do)})`:""}.`); }
+        if(e.min&&(!min||e.min>min)) min=e.min; if(e.max) max=e.max;
+        if(e.pozn){ info.push(e.pozn); if(/povinnost ponechat|nesmí vrátit|nesmí být vrácen|nevrací/i.test(e.pozn)) ponechat=true; } } }
+  }
+  if(d.chranen&&!["vranka","piskor","losos"].includes(d.id)) info.push(d.chranen);
+  if(rv.startsWith("r:")&&r&&!p) info.push("Podmínky revíru se nepodařilo načíst – použita obecná pravidla.");
+  if(r&&p){ const lovOk=(p.lov||[]).find(l=>/^lov ryb/i.test(l.co)&&!l.zakaz&&(!l.od||l.od<=todayISO)&&(!l.do||l.do>=todayISO));
+    const kr=(p.kratkodobe||[]).filter(k=>(!k.od||k.od<=todayISO)&&(!k.do||k.do>=todayISO));
+    if(kr.length){ hajen=true; why.push("Na revíru teď platí omezení: "+kr.map(k=>k.duvod.trim()).join("; ")); }
+    else if((p.lov||[]).some(l=>/^lov ryb/i.test(l.co))&&!lovOk){ hajen=true; why.push(`Na revíru ${r.n} dnes není lov ryb povolen.`); } }
+  if(d.nevracet){ ponechat=true; info.unshift(d.nevracet); }
+  if(typ==="P"&&d.nevracetP){ ponechat=true; info.unshift("Ulovenou štiku, tlouště, okouna, sumce, bolena nebo candáta se do pstruhového revíru nevrací. Nezapočítávají se do denního limitu."); }
+  // 4) délka
+  const hasL=isFinite(L)&&L>0;
+  if(!hajen&&hasL&&min&&L<min){ why.push(`Nedosahuje nejmenší lovné míry ${min} cm.`); }
+  if(!hajen&&hasL&&max&&L>max){ why.push(`Přesahuje největší lovnou míru ${max} cm.`); }
+  const podMirou=!hajen&&hasL&&((min&&L<min)||(max&&L>max));
+  let title, cls;
+  if(d.nevracet||(typ==="P"&&d.nevracetP)){ title="Nevracej ji do vody – ponech si ji"; cls="keep"; }
+  else if(hajen||podMirou){ title="Pusť ji šetrně zpět"; cls="bad"; }
+  else if(ponechat){ title="Musíš si ji ponechat"; cls="keep"; }
+  else if(!hasL&&min){ title=`Můžeš si ji ponechat, má-li aspoň ${min} cm${max?` a nejvýš ${max} cm`:""}`; cls="ok"; }
+  else { title="Můžeš si ji ponechat"; cls="ok"; }
+  if(!hajen){ if(min&&!why.some(w=>/míry/.test(w))) info.push(`Nejmenší lovná míra: ${min} cm${max?`, největší ${max} cm`:""}.`); else if(!min&&!d.nevracet&&!d.mimoLimit) info.push("Lovná míra pro tento druh stanovená není."); }
+  if(d.mimoLimit) info.push("Nezapočítává se do denního limitu.");
+  else if(d.lososovita) info.push("Lososovité ryby: denně nejvýše 3 ks (v limitu 7 kg).");
+  else if(d.kusy2&&typ==="M") info.push("Kapr, amur, štika, candát, bolen a sumec: denně nejvýše 2 ks dohromady (v limitu 7 kg).");
+  else if(d.id==="kapr") info.push("Kapr: denně nejvýše 2 ks (v limitu 7 kg).");
+  let w="";
+  if(hasL){ const g=d.lw[0]*Math.pow(L,d.lw[1]); w=`<p style="margin:8px 0 0">Odhad hmotnosti při ${esc(String(L))} cm: <b>${g>=1000?(g/1000).toFixed(g>=10000?0:1).replace(".",",")+" kg":Math.round(g/10)*10+" g"}</b> <span class="hint">(odhad)</span></p>`; }
+  return `<div class="verdict ${cls}"><b class="big">${esc(title)}</b>${why.length?`<ul>${why.map(x=>`<li>${esc(x.replace(/\.\.$/,"."))}</li>`).join("")}</ul>`:""}${info.length?`<ul>${[...new Set(info)].map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}${w}</div>
+    <p class="hint" style="margin-top:6px">${r?`Podle podmínek revíru ${esc(r.n)} v RIS a Rybářského řádu ČRS.`:`Obecná pravidla Rybářského řádu ČRS pro ${typ==="P"?"pstruhový":"mimopstruhový"} revír.`} Stav k ${esc(dCZ(todayISO))}.</p>`; }
 
 /* ---------- rybářský řád ---------- */
 let RAD=null;

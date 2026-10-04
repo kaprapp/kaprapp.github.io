@@ -1,0 +1,1296 @@
+{
+"verze": "Rybářský řád ČRS 2026–2027",
+"druhy": [
+{
+"id": "pstruh-obecny",
+"cz": "Pstruh obecný",
+"la": "Salmo trutta",
+"skupina": "lososovité",
+"img": "pstruh-obecny.jpg",
+"puvod": "původní",
+"popis": "Tuková ploutvička mezi hřbetní a ocasní ploutví. Na bocích černé a červené tečky, červené často se světlým lemem. Ocasní ploutev bez teček nebo jen s několika. Hřbet hnědozelený, boky žlutavé.",
+"zamena": "Pstruh duhový má růžový pruh a husté tečky i na ocasní ploutvi. Siven americký má světlé skvrny na tmavém těle a bílé okraje ploutví.",
+"miraMP": 25,
+"miraP": 25,
+"hajeni": [
+{
+"od": "09-01",
+"do": "04-15",
+"kde": "vse"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": true,
+"kusy2": false,
+"lw": [
+0.0105,
+3.0
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Duane Raver, U.S. Fish and Wildlife Service",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Bachforelle_Zeichnung.jpg"
+}
+},
+{
+"id": "pstruh-duhovy",
+"cz": "Pstruh duhový",
+"la": "Oncorhynchus mykiss",
+"skupina": "lososovité",
+"img": "pstruh-duhovy.jpg",
+"puvod": "nepůvodní",
+"popis": "Tuková ploutvička. Po boku růžovofialový podélný pruh. Hustě černé tečky po celém těle i na hřbetní a ocasní ploutvi. Červené tečky nemá.",
+"zamena": "Pstruh obecný nemá růžový pruh, má červené tečky a ocasní ploutev skoro bez teček.",
+"miraMP": 25,
+"miraP": 25,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": true,
+"kusy2": false,
+"lw": [
+0.0119,
+3.0
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Jonathunder",
+"licence": "CC BY-SA 3.0",
+"url": "https://commons.wikimedia.org/wiki/File:Trout.jpg"
+}
+},
+{
+"id": "siven-americky",
+"cz": "Siven americký",
+"la": "Salvelinus fontinalis",
+"skupina": "lososovité",
+"img": "siven-americky.jpg",
+"puvod": "nepůvodní",
+"popis": "Tuková ploutvička. Tmavý hřbet s červíkovitou mramorovanou kresbou. Na bocích světlé skvrny a drobné červené tečky s modrým lemem. Prsní, břišní a řitní ploutve oranžové s bílým a černým předním okrajem.",
+"zamena": "Pstruh obecný má tmavé tečky na světlém podkladu a ploutve bez bílého okraje.",
+"miraMP": 25,
+"miraP": 25,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": true,
+"kusy2": false,
+"lw": [
+0.0105,
+3.0
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Photo by and (C)2007 Derek Ramsey (Ram-Man)",
+"licence": "CC BY-SA 2.5",
+"url": "https://commons.wikimedia.org/wiki/File:Brook_Trout_Salvelinus_fontinalis_2900px.jpg"
+}
+},
+{
+"id": "lipan-podhorni",
+"cz": "Lipan podhorní",
+"la": "Thymallus thymallus",
+"skupina": "lososovité",
+"img": "lipan-podhorni.jpg",
+"puvod": "původní",
+"popis": "Velká vlajkovitá hřbetní ploutev (u samců s fialovými a červenými skvrnami). Malá ústa, tuková ploutvička. Stříbrnošedé tělo s tmavými tečkami v přední části a výraznými šupinami.",
+"zamena": "Žádná jiná naše ryba nemá tak velkou hřbetní ploutev.",
+"miraMP": 30,
+"miraP": 30,
+"hajeni": [
+{
+"od": "12-01",
+"do": "06-15",
+"kde": "vse"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": true,
+"kusy2": false,
+"lw": [
+0.005949,
+3.074
+],
+"lwZdroj": "ČRS",
+"foto": {
+"autor": "High Plains Grifter",
+"licence": "CC BY-SA 4.0",
+"url": "https://commons.wikimedia.org/wiki/File:Grayling_Thymallus_thymallus.JPG"
+}
+},
+{
+"id": "hlavatka",
+"cz": "Hlavatka obecná",
+"la": "Hucho hucho",
+"skupina": "lososovité",
+"img": "hlavatka.jpg",
+"puvod": "původní",
+"popis": "Velký protáhlý lososovitý dravec s téměř válcovitým tělem. Široká hlava a velká ústa, tuková ploutvička. Drobné černé tečky (často ve tvaru x), měděný nádech.",
+"zamena": "Pstruh obecný má vyšší tělo a červené tečky.",
+"miraMP": 65,
+"miraP": 65,
+"hajeni": [
+{
+"od": "01-01",
+"do": "09-30",
+"kde": "vse"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": true,
+"kusy2": false,
+"lw": [
+0.0105,
+3.0
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Liquid Art",
+"licence": "CC BY-SA 4.0",
+"url": "https://commons.wikimedia.org/wiki/File:Danube_Salmon_-_Huchen_(Hucho_hucho).jpg"
+}
+},
+{
+"id": "losos",
+"cz": "Losos obecný",
+"la": "Salmo salar",
+"skupina": "lososovité",
+"img": "losos.jpg",
+"puvod": "původní",
+"popis": "Stříbrný lososovitý s černými tečkami ve tvaru x nad postranní čarou, užší ocasní násadec a mírně vykrojená ocasní ploutev. Tuková ploutvička.",
+"zamena": "Pstruh obecný má širší ocasní násadec a obvykle červené tečky.",
+"miraMP": 50,
+"miraP": 50,
+"hajeni": [
+{
+"od": "01-01",
+"do": "12-31",
+"kde": "vse"
+}
+],
+"chranen": "Losos obecný je celoročně hájen.",
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": true,
+"kusy2": false,
+"lw": [
+0.0105,
+3.0
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Timothy Knepp, U.S. Fish and Wildlife Service",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Atlantic_salmon_fish.jpg"
+}
+},
+{
+"id": "sih-marena",
+"cz": "Síh maréna",
+"la": "Coregonus maraena",
+"skupina": "lososovité",
+"img": "sih-marena.jpg",
+"puvod": "nepůvodní",
+"popis": "Stříbrná ryba s tukovou ploutvičkou, malou hlavou, malými ústy a velkými šupinami. Ocasní ploutev hluboce vykrojená.",
+"zamena": "Kaprovité ryby (jelci, plotice) nemají tukovou ploutvičku.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0105,
+3.0
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Apple2000",
+"licence": "CC BY 3.0",
+"url": "https://commons.wikimedia.org/wiki/File:Coregonus_lavaretus_maraena_1.jpg"
+}
+},
+{
+"id": "kapr",
+"cz": "Kapr obecný",
+"la": "Cyprinus carpio",
+"skupina": "kaprovité",
+"img": "kapr.jpg",
+"puvod": "nepůvodní (zdomácnělý)",
+"popis": "Na horním pysku 2 páry vousků (4 vousky). Dlouhá hřbetní ploutev s tvrdým ozubeným paprskem. Formy šupinatý, lysec (jen několik velkých šupin) a hladký.",
+"zamena": "Karasi nemají vousky. Lín má jen 1 pár drobných vousků a drobné šupiny ve slizu.",
+"miraMP": 40,
+"miraP": 40,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": true,
+"lw": [
+0.006927,
+3.239
+],
+"lwZdroj": "ČRS",
+"foto": {
+"autor": "George Chernilevsky",
+"licence": "CC BY-SA 3.0",
+"url": "https://commons.wikimedia.org/wiki/File:Cyprinus_carpio_2008_G1.jpg"
+}
+},
+{
+"id": "amur",
+"cz": "Amur bílý",
+"la": "Ctenopharyngodon idella",
+"skupina": "kaprovité",
+"img": "amur.jpg",
+"puvod": "nepůvodní",
+"popis": "Protáhlé válcovité tělo, široká plochá hlava bez vousků. Velké šupiny s tmavým lemem (síťování). Krátká hřbetní ploutev.",
+"zamena": "Jelec tloušť je menší, má vypouklou červenou řitní ploutev a větší ústa.",
+"miraMP": 50,
+"miraP": 50,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": true,
+"lw": [
+0.010713,
+3.0078
+],
+"lwZdroj": "ČRS",
+"foto": {
+"autor": "neznámý autor",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Grass-Carp1web.jpg"
+}
+},
+{
+"id": "tolstolobik-bily",
+"cz": "Tolstolobik bílý",
+"la": "Hypophthalmichthys molitrix",
+"skupina": "kaprovité",
+"img": "tolstolobik-bily.jpg",
+"puvod": "nepůvodní",
+"popis": "Oči posazené nízko, pod úrovní úst. Drobné stříbrné šupiny. Ostrý kýl na břiše od hrdla až k řitní ploutvi.",
+"zamena": "Tolstolobik pestrý má tmavé skvrny, větší hlavu a kýl jen od břišních ploutví.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "USFWS Mountain-Prairie",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Silver_Carp_Adult_(Hypophthalmichthys_molitrix).jpg"
+}
+},
+{
+"id": "tolstolobik-pestry",
+"cz": "Tolstolobik pestrý",
+"la": "Hypophthalmichthys nobilis",
+"skupina": "kaprovité",
+"img": "tolstolobik-pestry.jpg",
+"puvod": "nepůvodní",
+"popis": "Velká hlava (asi třetina těla), oči nízko pod úrovní úst. Tmavé mramorování nebo skvrny na bocích. Kýl na břiše jen mezi břišními a řitní ploutví.",
+"zamena": "Tolstolobik bílý je celý stříbrný a kýl má od hrdla.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Original uploader was Carptracker at en.wikipedia",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Bighead_carp_b.gif"
+}
+},
+{
+"id": "lin",
+"cz": "Lín obecný",
+"la": "Tinca tinca",
+"skupina": "kaprovité",
+"img": "lin.jpg",
+"puvod": "původní",
+"popis": "Zelenozlaté tělo, velmi drobné šupiny zapuštěné ve slizu. V koutcích úst 1 pár drobných vousků. Zaoblené ploutve, červené oko.",
+"zamena": "Kapr má 2 páry vousků a velké šupiny.",
+"miraMP": 20,
+"miraP": 20,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.013182,
+3.0415
+],
+"lwZdroj": "ČRS",
+"foto": {
+"autor": "Karelj",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Tinca_tinca_Prague_Vltava_2.jpg"
+}
+},
+{
+"id": "karas-obecny",
+"cz": "Karas obecný",
+"la": "Carassius carassius",
+"skupina": "kaprovité",
+"img": "karas-obecny.jpg",
+"puvod": "původní",
+"popis": "Vysoké tělo, zlatavě bronzové. Hřbetní ploutev nahoře vyklenutá (vypouklá). Bez vousků. Mladí mají často tmavou skvrnu u kořene ocasu.",
+"zamena": "Karas stříbřitý je stříbrný a má hřbetní ploutev rovnou nebo vykrojenou. Kapr má vousky.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "A. F. Lydon",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Carassius_carassius1.jpg"
+}
+},
+{
+"id": "karas-stribrity",
+"cz": "Karas stříbřitý",
+"la": "Carassius gibelio",
+"skupina": "kaprovité",
+"img": "karas-stribrity.jpg",
+"puvod": "nepůvodní",
+"popis": "Stříbrné vysoké tělo, bez vousků. Hřbetní ploutev nahoře rovná až mírně vykrojená. Vnitřní stěna břišní dutiny (pobřišnice) je černá.",
+"zamena": "Karas obecný je bronzový s vypouklou hřbetní ploutví. Kapr má vousky.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": true,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "George Chernilevsky",
+"licence": "CC BY-SA 3.0",
+"url": "https://commons.wikimedia.org/wiki/File:Carassius_gibelio_2008_G1.jpg"
+}
+},
+{
+"id": "cejn",
+"cz": "Cejn velký",
+"la": "Abramis brama",
+"skupina": "kaprovité",
+"img": "cejn.jpg",
+"puvod": "původní",
+"popis": "Vysoké, ze stran silně zploštělé tělo. Šedé až tmavé ploutve, dlouhá řitní ploutev. Vysunovatelná ústa. Starší kusy bronzové.",
+"zamena": "Cejnek malý je stříbřitější, má větší oko a načervenalé kořeny prsních a břišních ploutví.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.005406,
+3.211
+],
+"lwZdroj": "ČRS",
+"foto": {
+"autor": "Микова Наталия",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Carp_bream.jpg"
+}
+},
+{
+"id": "cejnek",
+"cz": "Cejnek malý",
+"la": "Blicca bjoerkna",
+"skupina": "kaprovité",
+"img": "cejnek.jpg",
+"puvod": "původní",
+"popis": "Podobný cejnu, ale stříbřitý, s větším okem. Prsní a břišní ploutve jsou u kořene načervenalé.",
+"zamena": "Cejn velký má tmavé ploutve bez červené a menší oko.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Viridiflavus",
+"licence": "CC BY-SA 3.0",
+"url": "https://commons.wikimedia.org/wiki/File:SilverBreamBliccaBjoerknaCropped.JPG"
+}
+},
+{
+"id": "plotice",
+"cz": "Plotice obecná",
+"la": "Rutilus rutilus",
+"skupina": "kaprovité",
+"img": "plotice.jpg",
+"puvod": "původní",
+"popis": "Stříbrné tělo, červená duhovka oka. Začátek hřbetní ploutve je přímo nad začátkem břišních ploutví. Ploutve oranžové až červené.",
+"zamena": "Perlín má hřbetní ploutev posunutou dozadu, ostrý kýl na břiše a ústa šikmo nahoru.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Scardinius_erythropthalmus1_resize.jpg: Original uploader was Algirdas at lt.wik",
+"licence": "CC BY-SA 3.0",
+"url": "https://commons.wikimedia.org/wiki/File:Rutilus_rutilus_by_Algirdas_cropped.jpg"
+}
+},
+{
+"id": "perlin",
+"cz": "Perlín ostrobřichý",
+"la": "Scardinius erythrophthalmus",
+"skupina": "kaprovité",
+"img": "perlin.jpg",
+"puvod": "původní",
+"popis": "Hřbetní ploutev posunutá dozadu (za začátek břišních ploutví). Mezi břišními a řitní ploutví ostrý kýl. Sytě červené ploutve, ústa směřují šikmo nahoru.",
+"zamena": "Plotice má hřbetní ploutev nad břišními a koncová ústa.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "George Chernilevsky",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Scardinius_erythropthalmus_2009_G1.jpg"
+}
+},
+{
+"id": "ouklej",
+"cz": "Ouklej obecná",
+"la": "Alburnus alburnus",
+"skupina": "kaprovité",
+"img": "ouklej.jpg",
+"puvod": "původní",
+"popis": "Malá štíhlá stříbrná ryba (obvykle do 15 cm). Ústa směřují nahoru, dlouhá řitní ploutev. Šupiny snadno opadávají.",
+"zamena": "Mladý bolen má větší ústa sahající pod oko.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Piet Spaans",
+"licence": "CC BY-SA 2.5",
+"url": "https://commons.wikimedia.org/wiki/File:AlburnusAlburnus1.JPG"
+}
+},
+{
+"id": "tloust",
+"cz": "Jelec tloušť",
+"la": "Squalius cephalus",
+"skupina": "kaprovité",
+"img": "tloust.jpg",
+"puvod": "původní",
+"popis": "Válcovité tělo, široká hlava s velkými ústy. Šupiny s tmavým lemem (síťování). Řitní ploutev je vypouklá (vyklenutá ven) a červená.",
+"zamena": "Jelec jesen a proudník mají řitní ploutev rovnou nebo vykrojenou a menší hlavu.",
+"miraMP": 25,
+"miraP": null,
+"hajeni": [
+{
+"od": "03-16",
+"do": "06-15",
+"kde": "MP"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": true,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Tylwyth Eldar",
+"licence": "CC BY-SA 4.0",
+"url": "https://commons.wikimedia.org/wiki/File:Oniria_-_Squalius_cephalus_03.jpg"
+}
+},
+{
+"id": "jesen",
+"cz": "Jelec jesen",
+"la": "Leuciscus idus",
+"skupina": "kaprovité",
+"img": "jesen.jpg",
+"puvod": "původní",
+"popis": "Vyšší tělo než tloušť, malá hlava a drobnější šupiny. Řitní ploutev rovná nebo mírně vykrojená, ploutve načervenalé. Existuje i zlatá forma (orfa).",
+"zamena": "Tloušť má vypouklou řitní ploutev a širokou hlavu.",
+"miraMP": 25,
+"miraP": 25,
+"hajeni": [
+{
+"od": "03-16",
+"do": "06-15",
+"kde": "MP"
+}
+],
+"chranen": "Bližší podmínky ČRS ho uvádějí mezi celoročně chráněnými druhy; na některých revírech je ale lov povolen s lovnou mírou 25 cm – řiď se kartou revíru.",
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "neznámý autor",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Leuciscus_idus.jpg"
+}
+},
+{
+"id": "proudnik",
+"cz": "Jelec proudník",
+"la": "Leuciscus leuciscus",
+"skupina": "kaprovité",
+"img": "proudnik.jpg",
+"puvod": "původní",
+"popis": "Štíhlé tělo, malá hlava, žlutavé oko. Řitní ploutev vykrojená. Obvykle do 25 cm.",
+"zamena": "Tloušť má vypouklou řitní ploutev a velkou hlavu.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "neznámý autor",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Leuciscus_leuciscus1.jpg"
+}
+},
+{
+"id": "bolen",
+"cz": "Bolen dravý",
+"la": "Leuciscus aspius",
+"skupina": "dravci",
+"img": "bolen.jpg",
+"puvod": "původní",
+"popis": "Štíhlý stříbrný dravec. Velká koncová ústa sahající až pod oko, spodní čelist vystupuje a zapadá do zářezu v horní. Dlouhá vykrojená řitní ploutev.",
+"zamena": "Tloušť má širší hlavu a vypouklou řitní ploutev. Ouklej je mnohem menší.",
+"miraMP": 40,
+"miraP": null,
+"hajeni": [
+{
+"od": "01-01",
+"do": "06-15",
+"kde": "MP"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": true,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": true,
+"lw": [
+0.0085,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Karelj",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Aspius_aspius_Prague_Vltava_1_(cropped).jpg"
+}
+},
+{
+"id": "parma",
+"cz": "Parma obecná",
+"la": "Barbus barbus",
+"skupina": "kaprovité",
+"img": "parma.jpg",
+"puvod": "původní",
+"popis": "Protáhlé tělo s plochým břichem. Spodní ústa s masitými pysky a 2 páry vousků (4 vousky).",
+"zamena": "Hrouzek je malý a má jen 1 pár vousků. Kapr má vysoké tělo.",
+"miraMP": 40,
+"miraP": 40,
+"hajeni": [
+{
+"od": "03-16",
+"do": "06-15",
+"kde": "vse"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Krüger",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Barbus_barbus1.jpg"
+}
+},
+{
+"id": "podoustev",
+"cz": "Podoustev říční (nosák)",
+"la": "Vimba vimba",
+"skupina": "kaprovité",
+"img": "podoustev.jpg",
+"puvod": "původní",
+"popis": "Výrazně vystouplý masitý rypec („nos“) nad spodními ústy. Za hřbetní ploutví kýl. V době tření tmavne až černá.",
+"zamena": "Ostroretka má rovná ústa s ostrým rohovitým okrajem.",
+"miraMP": 25,
+"miraP": 25,
+"hajeni": [
+{
+"od": "03-16",
+"do": "06-15",
+"kde": "vse"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Krüger",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Vimba_vimba1.jpg"
+}
+},
+{
+"id": "ostroretka",
+"cz": "Ostroretka stěhovavá",
+"la": "Chondrostoma nasus",
+"skupina": "kaprovité",
+"img": "ostroretka.jpg",
+"puvod": "původní",
+"popis": "Spodní ústa v příčné rovné štěrbině s ostrým rohovitým okrajem. Černá pobřišnice, oranžovočervené spodní ploutve.",
+"zamena": "Podoustev má masitý rypec a jiný tvar úst.",
+"miraMP": 30,
+"miraP": 30,
+"hajeni": [
+{
+"od": "03-16",
+"do": "06-15",
+"kde": "vse"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0115,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Krüger",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Chondrostoma_nasus.jpg"
+}
+},
+{
+"id": "hrouzek",
+"cz": "Hrouzek obecný",
+"la": "Gobio gobio",
+"skupina": "ostatní",
+"img": "hrouzek.jpg",
+"puvod": "původní",
+"popis": "Malá ryba (do 15 cm) se spodními ústy a 1 párem vousků v koutcích. Na boku řada tmavých skvrn.",
+"zamena": "Parma má 2 páry vousků a dorůstá mnohem větších rozměrů.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.009,
+3.0
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Viridiflavus at Dutch Wikipedia\n\n(Original text: Piet Spaans)",
+"licence": "CC BY-SA 3.0",
+"url": "https://commons.wikimedia.org/wiki/File:Riviergrondel.jpg"
+}
+},
+{
+"id": "stika",
+"cz": "Štika obecná",
+"la": "Esox lucius",
+"skupina": "dravci",
+"img": "stika.jpg",
+"puvod": "původní",
+"popis": "Protáhlé tělo, plochá hlava s ústy jako kachní zobák a velkými zuby. Hřbetní a řitní ploutev posunuty daleko dozadu. Zelené mramorování.",
+"zamena": "U nás ji nelze zaměnit.",
+"miraMP": 50,
+"miraP": null,
+"hajeni": [
+{
+"od": "01-01",
+"do": "06-15",
+"kde": "MP"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": true,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": true,
+"lw": [
+0.004318,
+3.1188
+],
+"lwZdroj": "ČRS",
+"foto": {
+"autor": "Krüger",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Esox_lucius2.jpg"
+}
+},
+{
+"id": "candat",
+"cz": "Candát obecný",
+"la": "Sander lucioperca",
+"skupina": "dravci",
+"img": "candat.jpg",
+"puvod": "původní",
+"popis": "Dvě oddělené hřbetní ploutve, přední s ostny. Velké skelné oči, v tlamě psí zuby. Na bocích tmavé příčné pruhy, šedozelená barva.",
+"zamena": "Okoun má hřbetní ploutve těsně u sebe, černou skvrnu na první z nich a oranžové spodní ploutve.",
+"miraMP": 45,
+"miraP": null,
+"hajeni": [
+{
+"od": "01-01",
+"do": "06-15",
+"kde": "MP"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": true,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": true,
+"lw": [
+0.004965,
+3.1591
+],
+"lwZdroj": "ČRS",
+"foto": {
+"autor": "Krüger",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Sander_lucioperca_2.jpg"
+}
+},
+{
+"id": "okoun",
+"cz": "Okoun říční",
+"la": "Perca fluviatilis",
+"skupina": "dravci",
+"img": "okoun.jpg",
+"puvod": "původní",
+"popis": "Dvě hřbetní ploutve těsně u sebe, na konci první černá skvrna. 5–9 tmavých příčných pruhů, oranžovočervené břišní a řitní ploutve. Drsné šupiny, ostrý trn na skřeli.",
+"zamena": "Candát má ploutve oddělené a psí zuby. Ježdík má jednu souvislou hřbetní ploutev.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [
+{
+"od": "01-01",
+"do": "06-15",
+"kde": "MP"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": true,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.011,
+3.1
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Krüger",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Perca_fluviatilis1.jpg"
+}
+},
+{
+"id": "jezdik",
+"cz": "Ježdík obecný",
+"la": "Gymnocephalus cernua",
+"skupina": "ostatní",
+"img": "jezdik.jpg",
+"puvod": "původní",
+"popis": "Malá okounovitá ryba (do 20 cm). Jedna souvislá hřbetní ploutev (ostnitá a měkká část spojené), hodně slizu, drobné tmavé tečky bez pruhů.",
+"zamena": "Okoun má dvě hřbetní ploutve a pruhy.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.009,
+3.0
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Tiit Hunt",
+"licence": "CC BY-SA 3.0",
+"url": "https://commons.wikimedia.org/wiki/File:Gymnocephalus_cernuus_P%C3%A4rnu_River_Estonia_2010-01-06.jpg"
+}
+},
+{
+"id": "sumec",
+"cz": "Sumec velký",
+"la": "Silurus glanis",
+"skupina": "dravci",
+"img": "sumec.jpg",
+"puvod": "původní",
+"popis": "Bez šupin. Na horní čelisti 2 dlouhé vousy, na spodní 4 krátké. Velmi malá hřbetní ploutev a velmi dlouhá řitní ploutev.",
+"zamena": "Sumeček americký je malý, má 8 vousků a tukovou ploutvičku.",
+"miraMP": 70,
+"miraP": null,
+"hajeni": [
+{
+"od": "01-01",
+"do": "06-15",
+"kde": "MP"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": true,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": true,
+"lw": [
+0.006033,
+3.0192
+],
+"lwZdroj": "ČRS",
+"foto": {
+"autor": "Krüger",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Silurus_glanis1.jpg"
+}
+},
+{
+"id": "sumecek",
+"cz": "Sumeček americký",
+"la": "Ameiurus nebulosus",
+"skupina": "nepůvodní",
+"img": "sumecek.jpg",
+"puvod": "nepůvodní",
+"popis": "Malý sumcovitý (obvykle do 30 cm) s 8 vousky a tukovou ploutvičkou. Tvrdé ostny v hřbetní a prsních ploutvích, hnědočerné tělo bez šupin.",
+"zamena": "Sumec velký má jen 6 vousků, nemá tukovou ploutvičku a dorůstá obřích rozměrů.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": "Na řadě revírů se ulovený sumeček nesmí vrátit zpět do vody. Nezapočítává se do denního limitu.",
+"nevracetP": false,
+"mimoLimit": true,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.012,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "neznámý autor",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Ictalurus_nebulosus_GLERL_1.jpg"
+}
+},
+{
+"id": "uhor",
+"cz": "Úhoř říční",
+"la": "Anguilla anguilla",
+"skupina": "ostatní",
+"img": "uhor.jpg",
+"puvod": "původní",
+"popis": "Hadovité tělo. Hřbetní, ocasní a řitní ploutev tvoří souvislý lem. Drobné šupiny skryté v kůži, hodně slizu.",
+"zamena": "Piskoř je menší, má 10 vousků a podélné pruhy.",
+"miraMP": 50,
+"miraP": 50,
+"hajeni": [
+{
+"od": "09-01",
+"do": "11-30",
+"kde": "vse"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0007,
+3.2
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Krüger",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Anguilla_anguilla1.jpg"
+}
+},
+{
+"id": "mnik",
+"cz": "Mník jednovousý",
+"la": "Lota lota",
+"skupina": "ostatní",
+"img": "mnik.jpg",
+"puvod": "původní",
+"popis": "Jediný vousek na bradě. Dvě hřbetní ploutve, druhá velmi dlouhá. Mramorované hnědozelené tělo, zploštělá hlava.",
+"zamena": "Sumec má 6 vousků. Úhoř má souvislý ploutevní lem.",
+"miraMP": 30,
+"miraP": 30,
+"hajeni": [
+{
+"od": "01-01",
+"do": "03-15",
+"kde": "vse"
+}
+],
+"chranen": "Bližší podmínky ČRS ho uvádějí mezi celoročně chráněnými druhy; na části revírů je lov povolen (lovná míra 30 cm) – řiď se kartou revíru.",
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.0055,
+3.1
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Krüger",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Lota_lota.jpg"
+}
+},
+{
+"id": "jeseter",
+"cz": "Jeseter malý (sterlet)",
+"la": "Acipenser ruthenus",
+"skupina": "ostatní",
+"img": "jeseter.jpg",
+"puvod": "původní",
+"popis": "Místo šupin řady kostěných štítků. Dlouhý špičatý rypec, pod ním 4 vousky a spodní ústa. Horní lalok ocasní ploutve delší.",
+"zamena": "Ostatní jeseteři (ruský, sibiřský, hvězdnatý) jsou si velmi podobní.",
+"miraMP": 30,
+"miraP": 30,
+"hajeni": [
+{
+"od": "03-16",
+"do": "06-15",
+"kde": "vse"
+}
+],
+"chranen": null,
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.009,
+3.0
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Krüger",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Acipenser_ruthenus1.jpg"
+}
+},
+{
+"id": "slunecnice",
+"cz": "Slunečnice pestrá",
+"la": "Lepomis gibbosus",
+"skupina": "nepůvodní",
+"img": "slunecnice.jpg",
+"puvod": "invazní (unijní seznam)",
+"popis": "Malá vysoká ryba (do 20 cm) s pestrými modrými a oranžovými kresbami. Na konci skřele černá skvrna s červeným okrajem.",
+"zamena": "U nás ji nelze zaměnit.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": "Invazní druh z unijního seznamu – po ulovení se nesmí vrátit do vody.",
+"nevracetP": false,
+"mimoLimit": true,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.012,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Cephas",
+"licence": "CC BY-SA 3.0",
+"url": "https://commons.wikimedia.org/wiki/File:Lepomis_gibbosus_PAQ.jpg"
+}
+},
+{
+"id": "strevlicka",
+"cz": "Střevlička východní",
+"la": "Pseudorasbora parva",
+"skupina": "nepůvodní",
+"img": "strevlicka.jpg",
+"puvod": "invazní (unijní seznam)",
+"popis": "Malá ryba (do 10 cm) s ústy směřujícími nahoru. Po boku tmavý podélný pruh, šupiny s tmavým lemem.",
+"zamena": "Ouklej má dlouhou řitní ploutev a nemá pruh.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": "Invazní druh z unijního seznamu – po ulovení se nesmí vrátit do vody.",
+"nevracetP": false,
+"mimoLimit": true,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.012,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Seotaro, (cleaned up and denoised by Estrilda, and edited by Laitche)",
+"licence": "CC BY-SA 3.0",
+"url": "https://commons.wikimedia.org/wiki/File:Pseudorasbora_parva(edited_version).jpg"
+}
+},
+{
+"id": "hlavackovec",
+"cz": "Hlaváčkovec Glenův",
+"la": "Perccottus glenii",
+"skupina": "nepůvodní",
+"img": "hlavackovec.jpg",
+"puvod": "invazní (unijní seznam)",
+"popis": "Malá zavalitá ryba (do 25 cm) s velkou hlavou a ústy. Dvě hřbetní ploutve, zaoblená ocasní ploutev, tmavě skvrnité tělo.",
+"zamena": "Vranka má plochou hlavu, velké prsní ploutve a je chráněná.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": null,
+"nevracet": "Invazní druh z unijního seznamu – po ulovení se nesmí vrátit do vody.",
+"nevracetP": false,
+"mimoLimit": true,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.012,
+3.05
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "George Chernilevsky",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Percottus_glenii_2009_G1.jpg"
+}
+},
+{
+"id": "vranka",
+"cz": "Vranka obecná",
+"la": "Cottus gobio",
+"skupina": "chráněné",
+"img": "vranka.jpg",
+"puvod": "původní (chráněná)",
+"popis": "Malá ryba (do 15 cm) bez šupin, s velkou plochou hlavou a velkými vějířovitými prsními ploutvemi. Žije na dně proudných potoků.",
+"zamena": "Hlaváčkovec Glenův má užší hlavu a malé prsní ploutve.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": "Chráněný druh – celoročně hájen.",
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.009,
+3.0
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Groppe",
+"licence": "CC BY-SA 3.0",
+"url": "https://commons.wikimedia.org/wiki/File:Cottus_gobio.jpg"
+}
+},
+{
+"id": "piskor",
+"cz": "Piskoř pruhovaný",
+"la": "Misgurnus fossilis",
+"skupina": "chráněné",
+"img": "piskor.jpg",
+"puvod": "původní (chráněný)",
+"popis": "Válcovité, úhořovité tělo s podélnými tmavými pruhy a 10 vousky kolem úst.",
+"zamena": "Úhoř nemá vousky a má souvislý ploutevní lem.",
+"miraMP": null,
+"miraP": null,
+"hajeni": [],
+"chranen": "Chráněný druh – celoročně hájen.",
+"nevracet": null,
+"nevracetP": false,
+"mimoLimit": false,
+"lososovita": false,
+"kusy2": false,
+"lw": [
+0.009,
+3.0
+],
+"lwZdroj": "odhad",
+"foto": {
+"autor": "Krüger",
+"licence": "Public domain",
+"url": "https://commons.wikimedia.org/wiki/File:Misgurnus_fossilis1.jpg"
+}
+}
+]
+}

@@ -218,6 +218,22 @@ ul.plain li{margin:3px 0}
 .btn.donate:hover{background:var(--accent);color:var(--accent-ink)}
 .donatenote{text-align:center;font-size:13px;color:var(--muted);margin:8px auto 0;max-width:420px}
 .linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--muted);text-decoration:underline;cursor:pointer}
+.radbar{display:flex;justify-content:center;margin-top:18px}
+.panel.rad{max-width:720px;text-align:left}
+.panel.rad h3{text-align:center}
+.rad .radsearch{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:var(--bg);color:var(--ink);margin:8px 0}
+.rad details{border-top:1px solid var(--line)}
+.rad details details{border-top:1px dashed var(--line);margin-left:6px}
+.rad summary{cursor:pointer;padding:10px 2px;font-weight:700;list-style:none}
+.rad summary::-webkit-details-marker{display:none}
+.rad summary::before{content:"▸ ";color:var(--accent)}
+.rad details[open]>summary::before{content:"▾ "}
+.rad .part>summary{font-family:var(--f-display);font-size:18px;letter-spacing:.02em}
+.rad .odd>summary{font-size:15px}
+.rad .odd p{margin:0 0 8px;font-size:14.5px;line-height:1.5;color:var(--ink)}
+.rad .odd p.li{padding-left:18px}
+.rad .odd p.par{font-weight:600;color:var(--muted);font-size:13px;margin-top:10px}
+.rad mark{background:color-mix(in srgb,var(--warn) 35%,transparent);color:inherit;border-radius:3px}
 .panel{margin:14px auto 0;max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;text-align:center}
 .panel a.btn{text-decoration:none}
 .panel h3{margin:0 0 6px;font-size:18px}
@@ -341,6 +357,13 @@ ul.plain li{margin:3px 0}
     <button class="btn" id="contactBtn" hidden>Napište nám</button>
   </div>
   <p class="donatenote" id="donateNote" hidden>Kapr je zdarma a bez reklam. Příspěvkem od 25,- Kč pomůžete s jeho provozem. Děkujeme! <button class="linkbtn" id="donateBtn" hidden>Platba QR kódem</button></p>
+  <div class="radbar"><button class="btn" id="radBtn">📖 Rybářský řád</button></div>
+  <div class="panel rad" id="radPanel" hidden>
+    <h3>Rybářský řád ČRS</h3>
+    <p class="hint" id="radInfo" style="text-align:center"></p>
+    <input class="radsearch" id="radSearch" type="search" placeholder="Hledat v řádu, např. lovná míra, bójka, nástražní ryba…">
+    <div id="radBody"></div>
+  </div>
   <div class="panel" id="donatePanel" hidden>
     <h3>QR platba</h3>
     <div id="donateBank" hidden>
@@ -741,6 +764,22 @@ if(CFG.kontakt && CFG.email){
   $("contactSend").onclick=(e)=>{ e.preventDefault();
     location.href=`mailto:${CFG.email}?subject=${encodeURIComponent("Kapr – zpráva")}&body=${encodeURIComponent($("contactText").value)}`; };
 }
+
+/* ---------- rybářský řád ---------- */
+let RAD=null;
+function radRender(q){ if(!RAD) return; q=(q||"").trim(); const nq=norm(q);
+  const hl=t=>{ let h=esc(t); if(nq.length>=3){ const re=new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi"); h=h.replace(re,"<mark>$1</mark>"); } return h; };
+  const cls=t=>/^§/.test(t)?"par":/^(\(\d+\)|[a-z]\)|\d+\.|[A-Z]\.\s|[–•-]\s)/.test(t)&&!/^\(\d+\)/.test(t)?"li":"";
+  const html=RAD.casti.map((c,ci)=>{ const odd=c.oddily.filter(o=>!nq||norm(o.nazev+" "+o.t.join(" ")).includes(nq));
+    if(!odd.length) return "";
+    return `<details class="part" ${nq||ci===2?"open":""}><summary>${esc(c.nazev)}</summary>${odd.map(o=>`<details class="odd" ${nq?"open":""}><summary>${esc(o.c)}. ${hl(o.nazev)}</summary>${o.t.map(t=>`<p class="${cls(t)}">${hl(t)}</p>`).join("")}</details>`).join("")}</details>`; }).join("");
+  $("radBody").innerHTML=html||`<p class="hint">Nic nenalezeno.</p>`; }
+$("radBtn").onclick=async()=>{ const el=$("radPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(!open) return;
+  if(!RAD){ $("radBody").innerHTML=statusBox("Načítám rybářský řád…"); RAD=await getData("rad.json");
+    if(!RAD){ $("radBody").innerHTML=`<p class="hint">Rybářský řád se nepodařilo načíst.</p>`; return; }
+    $("radInfo").innerHTML=`Platí ${esc(RAD.platnost)} na revírech ČRS (pstruhových i mimopstruhových). Plné znění: <a href="${esc(RAD.odkazy.pstruhove)}" target="_blank" rel="noopener">pstruhové</a> · <a href="${esc(RAD.odkazy.mimopstruhove)}" target="_blank" rel="noopener">mimopstruhové</a> revíry (PDF).`; }
+  radRender($("radSearch").value); el.scrollIntoView({behavior:"smooth",block:"start"}); };
+$("radSearch").oninput=e=>radRender(e.target.value);
 
 /* ---------- sdílení ---------- */
 $("shareBtn").onclick=async()=>{ const url=location.origin+location.pathname;

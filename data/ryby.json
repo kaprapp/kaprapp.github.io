@@ -294,9 +294,9 @@
    ],
    "lwZdroj": "ČRS",
    "foto": {
-    "autor": "Internet Archive Book Images (stará kresba)",
-    "licence": "volné dílo",
-    "url": "https://commons.wikimedia.org/wiki/File:Ctenopharyngodon_idella_~_758_mm_TL.,_male,_Lake_Erie,_1985.jpg"
+    "autor": "OptimusPrimeBot, úprava Ellicrum",
+    "licence": "CC BY-SA 4.0",
+    "url": "https://commons.wikimedia.org/wiki/File:Ctenopharyngodon_idella.png"
    },
    "delka": "60–100 cm"
   },
@@ -324,9 +324,9 @@
    ],
    "lwZdroj": "odhad",
    "foto": {
-    "autor": "USFWS Mountain-Prairie",
-    "licence": "volné dílo",
-    "url": "https://commons.wikimedia.org/wiki/File:Silver_Carp_Adult_(Hypophthalmichthys_molitrix).jpg"
+    "autor": "GreenLipstickLesbian, úprava Ellicrum",
+    "licence": "CC BY-SA 4.0",
+    "url": "https://commons.wikimedia.org/wiki/File:Hypophthalmichthys_molitrix.png"
    },
    "delka": "60–100 cm"
   },
@@ -354,7 +354,7 @@
    ],
    "lwZdroj": "odhad",
    "foto": {
-    "autor": "Original: Dokurrat (Derivative work: Ellicrum)",
+    "autor": "Dokurrat, úprava Ellicrum",
     "licence": "CC BY-SA 4.0",
     "url": "https://commons.wikimedia.org/wiki/File:Hypophthalmichthys_nobilis.png"
    },
@@ -1244,9 +1244,9 @@
    ],
    "lwZdroj": "odhad",
    "foto": {
-    "autor": "Kawahara Keiga (1823–1829), Naturalis Biodiversity Center",
-    "licence": "volné dílo",
-    "url": "https://commons.wikimedia.org/wiki/File:Naturalis_Biodiversity_Center_-_RMNH.ART.139_-_Pseudorasbora_parva_(Temminck_and_Schlegel)_-_Kawahara_Keiga_-_1823_-_1829_-_Siebold_Collection_-_pencil_drawing_-_water_colour.jpeg"
+    "autor": "Zhu D. a kol. (2018), Zoologia",
+    "licence": "CC BY 4.0",
+    "url": "https://commons.wikimedia.org/wiki/File:Pseudorasbora_parva_(10.3897-zoologia.35.e22162)_Figure_1.jpg"
    },
    "delka": "5–8 cm"
   },

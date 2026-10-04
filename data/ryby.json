@@ -1026,7 +1026,7 @@
 "miraP": null,
 "hajeni": [],
 "chranen": null,
-"nevracet": "Na řadě revírů se ulovený sumeček nesmí vrátit zpět do vody. Nezapočítává se do denního limitu.",
+"nevracet": "Na řadě revírů se ulovený sumeček nesmí vrátit zpět do vody.",
 "nevracetP": false,
 "mimoLimit": true,
 "lososovita": false,

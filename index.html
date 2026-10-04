@@ -407,7 +407,7 @@ ul.plain li{margin:3px 0}
     <p>nebo přímo na <a id="contactMail" href="#"></a></p>
   </div>
   <p class="foot" id="foot">Revíry a podmínky lovu z RIS Portálu ČRS, průtoky z ČHMÚ, mapa © přispěvatelé OpenStreetMap. Data se obnovují každé ráno. Před lovem si vždy ověř aktuální podmínky na kartě revíru v RIS. Revíry Moravského rybářského svazu zatím nejsou zahrnuty.</p>
-  <p class="foot contactline" id="contactLine" hidden>Chybí vám revír, nesedí údaj nebo máte nápad? Napište nám: <a id="contactLink" href="#"></a></p>
+  <p class="foot contactline" id="contactLine" hidden>Chybí vám revír, nesedí údaj nebo máte nápad na zlepšení? Napište nám: <a id="contactLink" href="#"></a><br><span style="font-size:12px">Pište prosím jen k aplikaci – co nesedí, u kterého revíru a jak je to správně.</span></p>
 </div>
 
 <script>
@@ -784,7 +784,7 @@ if(CFG.iban||hasStripe){
     $("donateCard").onclick=(e)=>{e.preventDefault();$("donateBtn").click();}; }
   $("donateBtn").onclick=()=>{ toggle("donatePanel"); if(!$("donatePanel").hidden) draw().catch(()=>{$("donateQr").textContent="QR kód se nepodařilo načíst.";}); };
 }
-if(CFG.kontaktDole && CFG.email){ $("contactLine").hidden=false; $("contactLink").textContent=CFG.email; $("contactLink").href="mailto:"+CFG.email+"?subject="+encodeURIComponent("Kapr – zpráva"); }
+if(CFG.kontaktDole && CFG.email){ $("contactLine").hidden=false; $("contactLink").textContent=CFG.email; const MB="Dobrý den,\n\nTýká se: chyba v údajích / chybějící revír / nápad na zlepšení (nehodící se smažte)\n\nRevír (název nebo číslo):\n\nCo nesedí nebo chybí:\n\nSprávný údaj a odkud ho víte (povolenka, web svazu, odkaz):\n\nDěkujeme, že pomáháte aplikaci zpřesnit.\n"; $("contactLink").href="mailto:"+CFG.email+"?subject="+encodeURIComponent("Kapr – oprava / nápad")+"&body="+encodeURIComponent(MB).replace(/%0A/g,"%0D%0A"); }
 if(CFG.kontakt && CFG.email){
   $("contactBtn").hidden=false;
   $("contactMail").textContent=CFG.email; $("contactMail").href="mailto:"+CFG.email+"?subject=Kapr";

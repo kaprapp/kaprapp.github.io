@@ -31,6 +31,7 @@ html,body{margin:0}
 .pin{width:26px;height:34px;margin-left:-13px;margin-top:-34px}
 .numpin{display:grid;place-items:center;width:28px;height:28px;margin-left:-14px;margin-top:-14px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:800 15px var(--f-display);border:2px solid var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.35)}
 .leaflet-tooltip{font-family:var(--f-body);font-weight:700}
+.chcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:12px}.chhead{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.chhead h3{margin:2px 0 0;font-family:var(--f-display);font-size:26px;line-height:1}.chnum{font-family:var(--f-mono);font-size:12px;color:var(--muted)}.chkm{font-size:13px;font-weight:700;background:var(--sunk);border-radius:999px;padding:4px 10px;white-space:nowrap}.rose{position:relative;width:calc(100% - 44px);max-width:300px;aspect-ratio:1;margin:8px auto 0}.rose>svg{position:absolute;inset:0;width:100%;height:100%}.rlab{position:absolute;transform:translate(-50%,-50%);width:66px;text-align:center;font-size:11.5px;line-height:1.15}.rlab b{font-size:13px}.rmid{position:absolute;inset:22%;display:flex;flex-direction:column;align-items:center;justify-content:center}.rpct{font-family:var(--f-display);font-size:40px;font-weight:800;line-height:.9}.rlbl{font-size:13px;font-weight:700}.chsum{text-align:center;margin:6px 0 0;font-size:14px}.chbest{text-align:center;margin:4px 0 0;font-size:14px;font-weight:700}.chwhy{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;display:grid;gap:8px}.chft{display:flex;justify-content:space-between;gap:8px;font-size:14px}.chbar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden;margin-top:3px}.chbar>div{height:6px;border-radius:3px}
 .zapis{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:10px;padding:8px 12px;border-radius:12px;background:var(--surface);border:1px dashed var(--line);font-size:14px;line-height:1.35;text-align:left}
 .btn.small{padding:6px 12px;font-size:13px;min-height:0;flex:none}
 .flownow{display:flex;gap:12px;align-items:center;padding:10px 14px;border-radius:12px;background:var(--sunk);border:1px solid var(--line);font-size:14px;line-height:1.35}
@@ -193,6 +194,10 @@ html,body{margin:0}
     <div class="eyebrow" id="s3"><b>3</b> Revíry</div>
     <div class="actions">
       <button class="btn primary big" id="findBtn" disabled>Najít 3 nejbližší revíry</button>
+      <button class="btn big" id="chanceBtn" style="font-size:19px" disabled>
+        <svg width="28" height="17" viewBox="0 0 84 52" aria-hidden="true" style="color:var(--ok)"><use href="#fish-sm"/></svg>
+        Šance na záběr
+      </button>
       <button class="btn big" id="stockBtn" style="font-size:19px">
         <svg width="28" height="17" viewBox="0 0 84 52" aria-hidden="true" style="color:var(--accent)"><use href="#fish-sm"/></svg>
         Zarybněno za posledních 6 týdnů
@@ -443,7 +448,7 @@ function setLoc(lat,lon,label,source,zoom=true){
   if(zoom) map.setView([lat,lon],Math.max(map.getZoom(),11));
 }
 function renderLoc(){
-  const on=!!S.loc;$("locBox").hidden=!on;$("findBtn").disabled=!on;
+  const on=!!S.loc;$("locBox").hidden=!on;$("findBtn").disabled=!on;$("chanceBtn").disabled=!on;
   if(!on) return;
   const src={gps:"GPS",misto:"hledané místo",mapa:"upřesněno v mapě"}[S.loc.source]||"";
   $("locName").textContent=S.loc.label;
@@ -909,12 +914,119 @@ $("shareBtn").onclick=async()=>{ const url=location.origin+location.pathname;
   try{ if(navigator.share){ await navigator.share({title:"Kapr",text:"Nejbližší rybářské revíry, podmínky lovu, průtoky a zarybnění",url}); return; } }catch(e){ if(e.name==="AbortError") return; }
   try{ await navigator.clipboard.writeText(url); $("shareBtn").textContent="Odkaz zkopírován"; }catch{ prompt("Zkopíruj odkaz:",url); } };
 
+/* ---------- šance na záběr (odhad z počasí, průtoku, zarybnění, denní doby a sezóny) ---------- */
+const WX={};
+async function wxAt(lat,lon){ const k=lat.toFixed(2)+","+lon.toFixed(2); if(WX[k]) return WX[k];
+  WX[k]=(async()=>{ try{ const u=`https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(3)}&longitude=${lon.toFixed(3)}&hourly=surface_pressure,temperature_2m,cloud_cover,wind_speed_10m,precipitation&daily=sunrise,sunset&timezone=Europe%2FPrague&past_days=2&forecast_days=2`;
+    const r=await fetch(u); return r.ok?await r.json():null; }catch(e){ return null; } })();
+  const v=await WX[k]; if(!v) delete WX[k]; return v; }
+async function revFlow(r){ const d=await getData("prutoky.json"); if(!d) return null; const k=riverKey(r.n); let best=null;
+  for(const s of d.stanice){ if(riverKey(s.tok)!==k||s.lat==null||s.q==null) continue; const dd=risDist(r,s).d; if(dd<=15&&(!best||dd<best.dd)) best={...s,dd}; } return best; }
+async function revStock(r){ const Z2=await getData("zarybneni-svazy.json");
+  const own=(Z2?.zaznamy||[]).filter(z=>z.revir===r.c&&(r.t==="P")===isTroutSp(z.druh)).sort((a,b)=>b.datum.localeCompare(a.datum));
+  if(own.length) return {datum:own[0].datum,druh:own[0].druh,own:true};
+  const Z=await getData("zarybneni.json"); if(!Z) return null; const k=moKey(r.o);
+  const pick=(Z.zaznamy||[]).filter(z=>moMatch(k,moKey(z.mo))&&(r.t==="P")===isTroutSp(z.druh)).sort((a,b)=>b.datum.localeCompare(a.datum));
+  return pick.length?{datum:pick[0].datum,druh:pick[0].druh,own:false}:null; }
+const hm=m=>`${Math.floor(m/60)}:${String(Math.round(m%60)).padStart(2,"0")}`;
+function chanceScore(r,w,fl,st,p){
+  const now=new Date(), mon=now.getMonth()+1, P=r.t==="P", F=[];
+  const add=(name,short,text,pts)=>F.push({name,short,text,pts});
+  let closed="";
+  if(P&&(mon===12||mon<=3||(mon===4&&now.getDate()<=15))) closed="Pstruhový revír má hájení (1. 12.–15. 4.).";
+  const kr=(p?.kratkodobe||[]).filter(covers); const lr=(p?.lov||[]).filter(covers).find(l=>/^lov ryb/i.test(l.co));
+  if(kr.length||lr?.zakaz) closed=closed||("Na revíru dnes platí omezení: "+(kr[0]?.duvod||"lov ryb není povolen")+".");
+  // počasí
+  let sr=null,ss=null, iNow=-1;
+  if(w?.hourly?.time){ const loc=new Date(now.getTime()-now.getTimezoneOffset()*6e4).toISOString().slice(0,13)+":00"; iNow=w.hourly.time.indexOf(loc); }
+  if(w&&iNow>=6){ const H=w.hourly, pNow=H.surface_pressure[iNow], d6=pNow-H.surface_pressure[iNow-6];
+    const pts=d6<=-1.5?12:d6<=-0.5?6:d6<0.5?2:d6<2?-2:-8;
+    add("Tlak","Tlak",`${Math.round(pNow)} hPa, ${d6<=-0.5?"klesá":d6>=0.5?"stoupá":"stálý"} (${d6>0?"+":""}${d6.toFixed(1).replace(".",",")} za 6 h)`,pts);
+    const from=Math.max(0,iNow-36), tt=H.temperature_2m.slice(from,iNow+1), mean=tt.reduce((a,b)=>a+b,0)/tt.length, air=H.temperature_2m[iNow];
+    const wt=Math.max(1,Math.round(mean)); let tp;
+    if(P) tp=wt<3?-4:wt<8?3:wt<=16?8:wt<=19?2:-8; else tp=wt<8?-6:wt<12?0:wt<16?4:wt<=25?8:-2;
+    add("Teplota","Teplota",`vzduch ${Math.round(air)} °C, voda asi ${wt} °C`,tp);
+    const wind=H.wind_speed_10m[iNow], cl=H.cloud_cover[iNow], pr=H.precipitation[iNow]; let wp=0; const tx=[];
+    if(cl>60){wp+=2;tx.push("zataženo");} else if(cl<20){tx.push("jasno");} else tx.push("polojasno");
+    if(wind>35){wp-=6;tx.push("silný vítr");} else if(wind>=5&&wind<=20){wp+=2;tx.push("mírný vítr");} else if(wind<5) tx.push("bezvětří"); else tx.push("čerstvý vítr");
+    if(pr>3){wp-=4;tx.push("silně prší");} else if(pr>0.1){wp+=2;tx.push("mírně prší");}
+    add("Vítr a obloha","Počasí",tx.join(", "),wp);
+    const d0=w.daily.time.indexOf(new Date(now.getTime()-now.getTimezoneOffset()*6e4).toISOString().slice(0,10));
+    if(d0>=0){ const toM=s=>{const t=s.slice(11).split(":");return +t[0]*60+ +t[1];}; sr=toM(w.daily.sunrise[d0]); ss=toM(w.daily.sunset[d0]); }
+  } else { add("Tlak","Tlak","předpověď počasí se nepodařilo načíst",0); add("Teplota","Teplota","bez dat",0); add("Vítr a obloha","Počasí","bez dat",0); }
+  // průtok
+  if(fl&&fl.qa>0){ const q=fl.q/fl.qa, up=fl.trend==="stoupa"; let pt;
+    if(P) pt=q<0.25?-8:q<0.5?-3:q<1.3?4:q<2?10:q<3?2:-14; else pt=q<0.5?-2:q<1.3?4:q<2?6:q<3?0:-10;
+    if(up&&q>=1.3) pt-=4;
+    const L=lvl(fl.q,fl.qa); add("Průtok","Průtok",`${fq(fl.q)} m³/s, ${L?L.t:""}${up?", stoupá":fl.trend==="klesa"?", klesá":""} (${fl.stanice})`,pt);
+  } else add("Průtok","Průtok",fl?`${fq(fl.q)} m³/s (${fl.stanice})`:"na řece není stanice ČHMÚ",0);
+  // denní doba
+  const nm=now.getHours()*60+now.getMinutes(); let dp=0, dt="";
+  if(sr!=null){ if(nm>=ss-90&&nm<=ss+30){dp=14;dt=nm<ss?`soumrak za ${Math.round(ss-nm)} min`:"právě soumrak";}
+    else if(nm>=sr-30&&nm<=sr+90){dp=14;dt="ráno po svítání";}
+    else if(nm>ss+30||nm<sr-30){ dp=P?0:6; dt=P?"noc – na pstruhovém revíru se v noci neloví":"noc"; }
+    else if(nm>=660&&nm<=900){ dp=(mon>=6&&mon<=8)?-4:(mon<=3||mon>=11)?4:0; dt=(mon>=6&&mon<=8)?"poledne v létě":"poledne"; }
+    else { dp=2; dt=nm<720?"dopoledne":"odpoledne"; } }
+  else dt="bez údajů o slunci";
+  add("Denní doba","Doba",dt,dp);
+  // zarybnění
+  if(st){ const days=Math.round((Date.now()-new Date(st.datum))/864e5); const zp=days<=14?10:days<=30?7:days<=60?4:0;
+    add("Zarybnění","Zarybnění",`${st.druh} před ${days} dny${st.own?"":" (organizace)"}`,zp); }
+  else add("Zarybnění","Zarybnění","žádný známý záznam",0);
+  // sezóna
+  let sp, stx;
+  if(P){ sp=(mon>=4&&mon<=6)?5:(mon>=9&&mon<=11)?4:(mon>=7&&mon<=8)?0:-5; stx=sp>=4?(mon>=9?"podzim, ryby se vykrmují":"jaro, ryby jsou aktivní"):sp===0?"léto":"zima"; }
+  else { sp=(mon>=5&&mon<=6)?6:(mon>=9&&mon<=10)?5:(mon>=7&&mon<=8)?2:mon===4?2:-5; stx=sp>=5?(mon>=9?"podzim, ryby se vykrmují":"květen–červen, hlavní sezóna"):sp>=2?"léto":"chladné měsíce"; }
+  add("Roční období","Sezóna",stx,sp);
+  const ord=["Tlak","Průtok","Denní doba","Teplota","Zarybnění","Vítr a obloha","Roční období"]; F.sort((a,b)=>ord.indexOf(a.name)-ord.indexOf(b.name));
+  let pct=Math.max(3,Math.min(97,Math.round(45+F.reduce((a,f)=>a+f.pts,0))));
+  if(closed) pct=0;
+  let best="";
+  if(closed) best="dnes se tu nesmí lovit";
+  else if(fl&&fl.qa>0&&fl.q/fl.qa>=3) best="až voda opadne";
+  else if(sr!=null){ if(nm<sr-30) best=`dnes ráno ${hm(sr-15)}–${hm(sr+90)}`; else if(nm<=sr+90) best=`teď, do ${hm(sr+90)}`; else if(nm<ss-90) best=`dnes večer ${hm(ss-90)}–${hm(ss+(P?15:60))}`; else if(nm<=ss+30) best=`teď, do ${hm(ss+(P?15:60))}`; else best=`zítra ráno ${hm(sr-15)}–${hm(sr+90)}`; }
+  const pos=F.filter(f=>f.pts>0).sort((a,b)=>b.pts-a.pts).slice(0,2).map(f=>f.short.toLowerCase()), neg=F.filter(f=>f.pts<0).sort((a,b)=>a.pts-b.pts).slice(0,2).map(f=>f.short.toLowerCase());
+  const sum=closed||[pos.length?"Pomáhá: "+pos.join(", ")+".":"",neg.length?"Brzdí: "+neg.join(", ")+".":""].filter(Boolean).join(" ")||"Podmínky jsou průměrné.";
+  return {pct,F,best,sum,closed:!!closed};
+}
+function chanceCard(x,i,c){ const r=x.r, p=c.pct;
+  const col=c.closed?"var(--muted)":p<35?"var(--warn)":p<65?"var(--accent)":"var(--ok)";
+  const lab=c.closed?"Lov není povolen":p<20?"Slabá šance":p<40?"Spíš slabší":p<65?"Dobrá šance":p<85?"Velmi dobrá":"Výborná šance";
+  const C=150,R=106,LR=140,n=c.F.length,gap=4, ptA=(a,rr)=>[C+rr*Math.sin(a*Math.PI/180),C-rr*Math.cos(a*Math.PI/180)];
+  const segs=c.F.map((f,k)=>{ const a0=k*360/n+gap/2,a1=(k+1)*360/n-gap/2,am=(a0+a1)/2,p0=ptA(a0,R),p1=ptA(a1,R),l=ptA(am,LR);
+    const sc=f.pts>0?"var(--ok)":f.pts<0?"var(--bad)":"#9AABA3", op=f.pts?(0.35+0.65*Math.min(1,Math.abs(f.pts)/14)).toFixed(2):"0.6";
+    return {d:`M${p0[0].toFixed(1)} ${p0[1].toFixed(1)} A${R} ${R} 0 0 1 ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}`,sc,op,l,f}; });
+  const sign=v=>v>0?"+"+v:v<0?"−"+Math.abs(v):"0", fcol=v=>v>0?"var(--ok)":v<0?"var(--bad)":"var(--muted)";
+  const scale=(0.45+0.75*p/100).toFixed(2);
+  return `<article class="chcard"><div class="chhead"><div><div class="chnum">${esc(fmtNum(r.c))}</div><h3>${esc(r.n)}</h3><div class="hint">MO ${esc(r.o)}</div></div><span class="chkm">${esc(fmtKm(x._d))} km</span></div>
+    <div class="rose"><svg viewBox="0 0 300 300" aria-hidden="true">${segs.map(s=>`<path d="${s.d}" fill="none" stroke="var(--sunk)" stroke-width="24"/><path d="${s.d}" fill="none" stroke="${s.sc}" stroke-opacity="${s.op}" stroke-width="24"/>`).join("")}</svg>
+      ${segs.map(s=>`<div class="rlab" style="left:${(s.l[0]/3).toFixed(2)}%;top:${(s.l[1]/3).toFixed(2)}%"><div>${esc(s.f.short)}</div><b style="color:${fcol(s.f.pts)}">${sign(s.f.pts)}</b></div>`).join("")}
+      <div class="rmid"><svg viewBox="0 0 120 64" aria-hidden="true" style="width:86px;height:46px;transform:scale(${scale})"><path d="M6 32 L-8 16 L-4 32 L-8 48 Z" transform="translate(14 0)" fill="${col}"/><path d="M18 32 C34 8, 86 6, 112 30 C108 36, 104 40, 98 44 C78 58, 36 56, 18 32 Z" fill="${col}"/><path d="M54 14 C60 4, 74 4, 80 12" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round"/><circle cx="96" cy="27" r="4" fill="#fff"/></svg>
+        <div class="rpct">${p}&nbsp;%</div><div class="rlbl" style="color:${col}">${lab}</div></div></div>
+    <p class="chsum">${esc(c.sum)}</p>${c.best?`<p class="chbest">Nejlepší čas: ${esc(c.best)}</p>`:""}
+    <div class="chwhy"><div class="hint" style="font-weight:700">Proč takové hodnocení</div>
+      ${c.F.map(f=>`<div class="chf"><div class="chft"><span><b>${esc(f.name)}</b> · ${esc(f.text)}</span><b style="color:${fcol(f.pts)}">${sign(f.pts)}</b></div><div class="chbar"><div style="width:${Math.min(100,20+Math.abs(f.pts)*5)}%;background:${f.pts>0?"var(--ok)":f.pts<0?"var(--bad)":"#9AABA3"}"></div></div></div>`).join("")}</div>
+    <p style="margin:8px 0 0"><button class="linkbtn" data-chopen="${i}">Otevřít detail revíru</button></p></article>`; }
+$("chanceBtn").onclick=async()=>{
+  if(!S.loc){ $("out").innerHTML=`<div class="status">Nejdřív zvol polohu (krok 2).</div>`; return; }
+  $("detail").innerHTML=""; S.sel=null; $("out").dataset.view="chance"; $("out").innerHTML=statusBox("Počítám šanci na záběr…");
+  await loadRis(); const list=risOfTyp(); if(!list.length){ $("out").innerHTML=`<div class="status">Data revírů se nepodařilo načíst. Zkus to za chvíli.</div>`; return; }
+  S.results=list.map(r=>({r,...risDist(r,S.loc)})).filter(x=>x.d<1e8).sort((a,b)=>a.d-b.d).slice(0,3).map(risResult); drawResults(); fitTo([S.loc,...S.results]);
+  const res=await Promise.all(S.results.map(async x=>{ const pt=isFinite(x.lat)?{lat:x.lat,lon:x.lon}:S.loc;
+    const [w,fl,st,p]=await Promise.all([wxAt(pt.lat,pt.lon),revFlow(x.r),revStock(x.r),getData(`podminky/${x.r.c}.json`)]); return chanceScore(x.r,w,fl,st,p); }));
+  const now=new Date();
+  $("out").innerHTML=`<div class="flowhead" style="justify-content:center;text-align:center;flex-direction:column;gap:2px"><h2 style="font-size:26px;margin:0">Šance na záběr</h2><span class="hint">3 nejbližší ${S.typ==="P"?"pstruhové":"nepstruhové"} revíry · dnes ${now.getHours()}:${String(now.getMinutes()).padStart(2,"0")}</span></div>
+    ${S.results.map((x,i)=>chanceCard(x,i,res[i])).join("")}
+    <p class="hint" style="margin-top:10px">Odhad z předpovědi počasí (Open-Meteo), průtoku (ČHMÚ), zarybnění (RIS a svazy), denní doby a ročního období. Nejde o záruku – ryby mají i své dny.</p>`;
+  $("out").querySelectorAll("[data-chopen]").forEach(b=>b.onclick=()=>openDetail(+b.dataset.chopen));
+};
+
 /* ---------- tlačítka: druhé kliknutí obsah skryje ---------- */
 var ACTIVE=null, ACTIVE_LOC="";
-function markActive(){ ["findBtn","stockBtn","flowBtn","newsBtn","fishBtn"].forEach(id=>{ const b=document.getElementById(id); if(b) b.setAttribute("aria-pressed",String(ACTIVE===id)); }); }
-["findBtn","stockBtn","flowBtn","newsBtn","fishBtn"].forEach(id=>{ const b=$(id); if(!b) return; const orig=b.onclick;
+function markActive(){ ["findBtn","chanceBtn","stockBtn","flowBtn","newsBtn","fishBtn"].forEach(id=>{ const b=document.getElementById(id); if(b) b.setAttribute("aria-pressed",String(ACTIVE===id)); }); }
+["findBtn","chanceBtn","stockBtn","flowBtn","newsBtn","fishBtn"].forEach(id=>{ const b=$(id); if(!b) return; const orig=b.onclick;
   b.onclick=async e=>{ const locKey=S.loc?`${S.loc.lat.toFixed(4)},${S.loc.lon.toFixed(4)},${S.typ}`:S.typ;
-    if(ACTIVE===id&&(id!=="findBtn"||ACTIVE_LOC===locKey)&&($("out").innerHTML.trim()||$("detail").innerHTML.trim())){ resetResults(); window.scrollTo({top:Math.max(0,b.getBoundingClientRect().top+scrollY-120),behavior:"smooth"}); return; }
+    if(ACTIVE===id&&(!["findBtn","chanceBtn"].includes(id)||ACTIVE_LOC===locKey)&&($("out").innerHTML.trim()||$("detail").innerHTML.trim())){ resetResults(); window.scrollTo({top:Math.max(0,b.getBoundingClientRect().top+scrollY-120),behavior:"smooth"}); return; }
     await orig.call(b,e); ACTIVE=id; ACTIVE_LOC=locKey; markActive(); }; });
 
 /* ---------- start ---------- */

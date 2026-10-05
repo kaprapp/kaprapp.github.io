@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ["scripts/**", ".github/workflows/update.yml"]
+    paths: ["scripts/**", ".github/workflows/update.yml", "!scripts/diag-*", "!scripts/bloch*"]
 
 permissions:
   contents: write
@@ -37,6 +37,7 @@ jobs:
             echo "Žádné změny."
           else
             git commit -m "Data $(TZ=Europe/Prague date +'%-d. %-m. %Y %H:%M')"
-            git pull --rebase
+            # novější data mají přednost, když se mezitím na GitHubu objevila jiná verze stejných souborů
+            git pull --rebase -X theirs || { git rebase --abort; cp -r data /tmp/nova-data; git fetch origin main; git reset --hard origin/main; rm -rf data; cp -r /tmp/nova-data data; git add data; git commit -m "Data $(TZ=Europe/Prague date +'%-d. %-m. %Y %H:%M')"; }
             git push
           fi

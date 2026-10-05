@@ -198,6 +198,7 @@ ul.plain li{margin:3px 0}
 .pin{width:26px;height:34px;margin-left:-13px;margin-top:-34px}
 .numpin{display:grid;place-items:center;width:28px;height:28px;margin-left:-14px;margin-top:-14px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:800 15px var(--f-display);border:2px solid var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.35)}
 .leaflet-tooltip{font-family:var(--f-body);font-weight:700}
+.chwrap{margin:0 0 14px;display:grid}.chwrap>.btn{justify-self:stretch}#chanceBtn[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
 .chcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:12px}.chhead{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.chhead h3{margin:2px 0 0;font-family:var(--f-display);font-size:26px;line-height:1}.chnum{font-family:var(--f-mono);font-size:12px;color:var(--muted)}.chkm{font-size:13px;font-weight:700;background:var(--sunk);border-radius:999px;padding:4px 10px;white-space:nowrap}.rose{position:relative;width:calc(100% - 44px);max-width:300px;aspect-ratio:1;margin:8px auto 0}.rose>svg{position:absolute;inset:0;width:100%;height:100%}.rlab{position:absolute;transform:translate(-50%,-50%);width:66px;text-align:center;font-size:11.5px;line-height:1.15}.rlab b{font-size:13px}.rmid{position:absolute;inset:22%;display:flex;flex-direction:column;align-items:center;justify-content:center}.rpct{font-family:var(--f-display);font-size:40px;font-weight:800;line-height:.9}.rlbl{font-size:13px;font-weight:700}.chsum{text-align:center;margin:6px 0 0;font-size:14px}.chbest{text-align:center;margin:4px 0 0;font-size:14px;font-weight:700}.chwhy{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;display:grid;gap:8px}.chft{display:flex;justify-content:space-between;gap:8px;font-size:14px}.chbar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden;margin-top:3px}.chbar>div{height:6px;border-radius:3px}
 .zapis{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:10px;padding:8px 12px;border-radius:12px;background:var(--surface);border:1px dashed var(--line);font-size:14px;line-height:1.35;text-align:left}
 .btn.small{padding:6px 12px;font-size:13px;min-height:0;flex:none}
@@ -361,10 +362,6 @@ ul.plain li{margin:3px 0}
     <div class="eyebrow" id="s3"><b>3</b> Revíry</div>
     <div class="actions">
       <button class="btn primary big" id="findBtn" disabled>Najít 3 nejbližší revíry</button>
-      <button class="btn big" id="chanceBtn" style="font-size:19px" disabled>
-        <svg width="28" height="17" viewBox="0 0 84 52" aria-hidden="true" style="color:var(--ok)"><use href="#fish-sm"/></svg>
-        Šance na záběr
-      </button>
       <button class="btn big" id="stockBtn" style="font-size:19px">
         <svg width="28" height="17" viewBox="0 0 84 52" aria-hidden="true" style="color:var(--accent)"><use href="#fish-sm"/></svg>
         Zarybněno za posledních 6 týdnů
@@ -615,7 +612,7 @@ function setLoc(lat,lon,label,source,zoom=true){
   if(zoom) map.setView([lat,lon],Math.max(map.getZoom(),11));
 }
 function renderLoc(){
-  const on=!!S.loc;$("locBox").hidden=!on;$("findBtn").disabled=!on;$("chanceBtn").disabled=!on;
+  const on=!!S.loc;$("locBox").hidden=!on;$("findBtn").disabled=!on;
   if(!on) return;
   const src={gps:"GPS",misto:"hledané místo",mapa:"upřesněno v mapě"}[S.loc.source]||"";
   $("locName").textContent=S.loc.label;
@@ -681,7 +678,8 @@ $("findBtn").onclick=async()=>{
   await loadRis();
   const list=risOfTyp(); if(!list.length){ $("out").innerHTML=`<div class="status">${RIS.all?"Nepstruhové revíry se doplní při nejbližší ranní aktualizaci dat.":"Data revírů se nepodařilo načíst. Zkus to za chvíli."}</div>`; return; }
   S.results=list.map(r=>({r,...risDist(r,S.loc)})).filter(x=>x.d<1e8).sort((a,b)=>a.d-b.d).slice(0,3).map(risResult);
-  renderResults(`Tři nejbližší ${S.typ==="P"?"pstruhové":"nepstruhové"} revíry`);
+  renderResults(`Tři nejbližší ${S.typ==="P"?"pstruhové":"nepstruhové"} revíry`,`<div class="chwrap"><button class="btn big" id="chanceBtn" aria-pressed="false"><svg width="28" height="17" viewBox="0 0 84 52" aria-hidden="true" style="color:var(--ok)"><use href="#fish-sm"/></svg> Šance na záběr</button><div id="chanceOut"></div></div>`);
+  $("chanceBtn").onclick=showChance;
   fitTo([S.loc,...S.results]);
 };
 function renderResults(title,extra=""){
@@ -692,7 +690,7 @@ function renderResults(title,extra=""){
       ${x.pozn?`<div class="meta">${esc(x.pozn)}</div>`:""}${r?.approx?`<div class="meta">Poloha přibližná – RIS u revíru nemá mapu</div>`:""}
       ${x.pill?`<div class="meta" style="margin-top:4px"><span class="pill vysoka">${esc(x.pill)}</span></div>`:""}</div>
       <span class="dist">${isFinite(x._d)?fmtKm(x._d)+"<small>KM VZDUŠNĚ</small>":x._date?dShort(x._date)+"<small>NAPOSLEDY</small>":""}</span></button>`;}).join("");
-  $("out").innerHTML=`<h2 style="font-size:26px;margin-bottom:10px">${esc(title)}</h2>${extra}<div class="list">${items}</div><p class="hint" style="margin-top:8px">Klepni na revír pro podmínky lovu.</p>`;
+  $("out").innerHTML=`<h2 style="font-size:26px;margin-bottom:10px;text-align:center">${esc(title)}</h2>${extra}<div class="list">${items}</div><p class="hint" style="margin-top:8px">Klepni na revír pro podmínky lovu.</p>`;
   $("out").querySelectorAll(".card").forEach(b=>b.onclick=()=>openDetail(+b.dataset.i));
   drawResults();
 }
@@ -1174,26 +1172,23 @@ function chanceCard(x,i,c){ const r=x.r, p=c.pct;
     <div class="chwhy"><div class="hint" style="font-weight:700">Proč takové hodnocení</div>
       ${c.F.map(f=>`<div class="chf"><div class="chft"><span><b>${esc(f.name)}</b> · ${esc(f.text)}</span><b style="color:${fcol(f.pts)}">${sign(f.pts)}</b></div><div class="chbar"><div style="width:${Math.min(100,20+Math.abs(f.pts)*5)}%;background:${f.pts>0?"var(--ok)":f.pts<0?"var(--bad)":"#9AABA3"}"></div></div></div>`).join("")}</div>
     <p style="margin:8px 0 0"><button class="linkbtn" data-chopen="${i}">Otevřít detail revíru</button></p></article>`; }
-$("chanceBtn").onclick=async()=>{
-  if(!S.loc){ $("out").innerHTML=`<div class="status">Nejdřív zvol polohu (krok 2).</div>`; return; }
-  $("detail").innerHTML=""; S.sel=null; $("out").dataset.view="chance"; $("out").innerHTML=statusBox("Počítám šanci na záběr…");
-  await loadRis(); const list=risOfTyp(); if(!list.length){ $("out").innerHTML=`<div class="status">Data revírů se nepodařilo načíst. Zkus to za chvíli.</div>`; return; }
-  S.results=list.map(r=>({r,...risDist(r,S.loc)})).filter(x=>x.d<1e8).sort((a,b)=>a.d-b.d).slice(0,3).map(risResult); drawResults(); fitTo([S.loc,...S.results]);
+async function showChance(){ const box=$("chanceOut"), btn=$("chanceBtn"); if(!box||!S.results) return;
+  if(box.innerHTML.trim()){ box.innerHTML=""; btn.setAttribute("aria-pressed","false"); return; }
+  btn.setAttribute("aria-pressed","true"); box.innerHTML=statusBox("Počítám šanci na záběr…");
   const res=await Promise.all(S.results.map(async x=>{ const pt=isFinite(x.lat)?{lat:x.lat,lon:x.lon}:S.loc;
     const [w,fl,st,p]=await Promise.all([wxAt(pt.lat,pt.lon),revFlow(x.r),revStock(x.r),getData(`podminky/${x.r.c}.json`)]); return chanceScore(x.r,w,fl,st,p); }));
   const now=new Date();
-  $("out").innerHTML=`<div class="flowhead" style="justify-content:center;text-align:center;flex-direction:column;gap:2px"><h2 style="font-size:26px;margin:0">Šance na záběr</h2><span class="hint">3 nejbližší ${S.typ==="P"?"pstruhové":"nepstruhové"} revíry · dnes ${now.getHours()}:${String(now.getMinutes()).padStart(2,"0")}</span></div>
+  box.innerHTML=`<p class="hint" style="text-align:center;margin:8px 0 0">Dnes ${now.getHours()}:${String(now.getMinutes()).padStart(2,"0")} · seřazeno podle vzdálenosti</p>
     ${S.results.map((x,i)=>chanceCard(x,i,res[i])).join("")}
     <p class="hint" style="margin-top:10px">Odhad z předpovědi počasí (Open-Meteo), průtoku (ČHMÚ), zarybnění (RIS a svazy), denní doby a ročního období. Nejde o záruku – ryby mají i své dny.</p>`;
-  $("out").querySelectorAll("[data-chopen]").forEach(b=>b.onclick=()=>openDetail(+b.dataset.chopen));
-};
+  box.querySelectorAll("[data-chopen]").forEach(b=>b.onclick=()=>openDetail(+b.dataset.chopen)); }
 
 /* ---------- tlačítka: druhé kliknutí obsah skryje ---------- */
 var ACTIVE=null, ACTIVE_LOC="";
-function markActive(){ ["findBtn","chanceBtn","stockBtn","flowBtn","newsBtn","fishBtn"].forEach(id=>{ const b=document.getElementById(id); if(b) b.setAttribute("aria-pressed",String(ACTIVE===id)); }); }
-["findBtn","chanceBtn","stockBtn","flowBtn","newsBtn","fishBtn"].forEach(id=>{ const b=$(id); if(!b) return; const orig=b.onclick;
+function markActive(){ ["findBtn","stockBtn","flowBtn","newsBtn","fishBtn"].forEach(id=>{ const b=document.getElementById(id); if(b) b.setAttribute("aria-pressed",String(ACTIVE===id)); }); }
+["findBtn","stockBtn","flowBtn","newsBtn","fishBtn"].forEach(id=>{ const b=$(id); if(!b) return; const orig=b.onclick;
   b.onclick=async e=>{ const locKey=S.loc?`${S.loc.lat.toFixed(4)},${S.loc.lon.toFixed(4)},${S.typ}`:S.typ;
-    if(ACTIVE===id&&(!["findBtn","chanceBtn"].includes(id)||ACTIVE_LOC===locKey)&&($("out").innerHTML.trim()||$("detail").innerHTML.trim())){ resetResults(); window.scrollTo({top:Math.max(0,b.getBoundingClientRect().top+scrollY-120),behavior:"smooth"}); return; }
+    if(ACTIVE===id&&(id!=="findBtn"||ACTIVE_LOC===locKey)&&($("out").innerHTML.trim()||$("detail").innerHTML.trim())){ resetResults(); window.scrollTo({top:Math.max(0,b.getBoundingClientRect().top+scrollY-120),behavior:"smooth"}); return; }
     await orig.call(b,e); ACTIVE=id; ACTIVE_LOC=locKey; markActive(); }; });
 
 /* ---------- start ---------- */

@@ -54,6 +54,7 @@ html,body{margin:0}
 .donatenote{text-align:center;font-size:13px;color:var(--muted);margin:8px auto 0;max-width:420px}
 .linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--muted);text-decoration:underline;cursor:pointer}
 .radbar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+.ask{margin:12px 0;text-align:left}.ask label{display:block;margin-bottom:6px;font-size:14px}.askhit{border-left:3px solid var(--accent);padding:4px 10px;margin:8px 0;font-size:14px;background:var(--sunk);border-radius:0 8px 8px 0}.askhit p{margin:2px 0}
 .ulovek ol{text-align:left;padding-left:20px;margin:10px 0}.ulovek li{margin:6px 0;font-size:14px}.ulovek .hint{text-align:left}
 .panel.rad{max-width:720px;text-align:left}
 .panel.rad h3{text-align:center}
@@ -229,6 +230,9 @@ html,body{margin:0}
       <li><b>Zápis o kontrole.</b> Strážce zapíše kontrolu do povolenky (oddíl II – Evidence docházky a úlovků). Zkontroluj předem, že máš zapsané dnešní datum a číslo revíru a všechny ponechané ryby.</li>
       <li><b>Když něco nesedí.</b> Stráž může papírovou povolenku zadržet (do 5 pracovních dnů ji předá organizaci, která ji vydala), elektronickou pozastavit, zadržet úlovek či nářadí nebo uložit pokutu na místě. Nehádej se – s pokutou na místě souhlasit nemusíš, pak věc řeší úřad. Poznamenej si jméno nebo číslo průkazu strážce a obrať se na svou organizaci.</li>
     </ol>
+    <div class="ask"><label for="askQ"><b>Nejsi si jistý? Zeptej se Rybářského řádu</b></label>
+      <input class="radsearch" id="askQ" type="search" placeholder="Např. smím mít vezírek na pstruhovém revíru?">
+      <div id="askOut"></div></div>
     <p class="hint"><b>Tip:</b> Měj lístek, povolenku a občanku pohromadě v sáčku proti vodě. Podle § 14–16 zákona č. 99/2004 Sb. o rybářství a Rybářského řádu ČRS – nejde o právní poradenství.</p>
   </div>
   <div class="panel ulovek" id="catchPanel" hidden>
@@ -766,6 +770,31 @@ $("radBtn").onclick=async()=>{ const el=$("radPanel"); const open=el.hidden; ["d
     $("radInfo").innerHTML=`Platí ${esc(RAD.platnost)} na revírech ČRS (pstruhových i mimopstruhových). Plné znění: <a href="${esc(RAD.odkazy.pstruhove)}" target="_blank" rel="noopener">pstruhové</a> · <a href="${esc(RAD.odkazy.mimopstruhove)}" target="_blank" rel="noopener">mimopstruhové</a> revíry (PDF).`; }
   radRender($("radSearch").value); el.scrollIntoView({behavior:"smooth",block:"start"}); };
 $("radSearch").oninput=e=>radRender(e.target.value);
+
+/* ---------- dotaz do Rybářského řádu (vyhledání nejbližších pasáží) ---------- */
+const ASK_STOP=new Set("a i k o s u v z ze na do od po pro při pri za je jsem jsi jsou byt být mam mám mit mít muze může muzu můžu smim smím lze jak co kdy kde ktery který ktera která ktere které to ten ta tu tom tak ale nebo jestli zda se si mi me mě muj můj moje svuj svůj jeho jej ji jí bez jen uz už jeste ještě take také musim musím musi musí nemusim nemusím".split(" ").map(norm));
+const ASK_SYN={vezirek:"vezírek uchovávat živé",sumpek:"vezírek uchovávat",prut:"udice udic",pruty:"udice udic",udice:"udic",hacek:"háček háčky",hacky:"háček háčky",trojhacek:"dvoj- trojháčků",noc:"denní doby lovu hodin",nocni:"denní doby lovu hodin",kdy:"denní doby lovu hodin",vzit:"zadržet",zabavit:"zadržet",sebrat:"zadržet",pokuta:"přestupek příkazem",strazce:"rybářská stráž",straz:"rybářská stráž",zapis:"zapsat zapisovat oddílu evidence",zapsat:"zapsat zapisovat oddílu evidence",dochazka:"docházky evidence",mira:"lovná míra",miru:"lovná míra",delka:"lovná míra",hmotnost:"hmotnosti",kusy:"kusů přisvojit",ponechat:"přisvojit přivlastní",privlastnit:"přisvojit přivlastní",pustit:"vrátit zpět vodě",vratit:"vrátit zpět vodě",hajeni:"hájena hájení doba",hajena:"hájena hájení",nastraha:"nástraha nástražní",nastrazni:"nástražní ryba",rizek:"nástražní",bojka:"bójka bójky",krmeni:"vnadění krmení",vnadit:"vnadění",lod:"loďky člun",clun:"loďky člun",muska:"muškaření mušky",muskarit:"muškaření",prívlac:"přívlač",privlac:"přívlač",podlozka:"podložka podložky",obcanka:"totožnosti",prukaz:"průkazem",listek:"rybářský lístek",povolenka:"povolenky k lovu"};
+const askStem=w=>w.length>5?w.slice(0,5):w.length===5?w.slice(0,4):w;
+let ASKIDX=null;
+function askIndex(){ if(ASKIDX) return ASKIDX; const units=[]; const df=new Map();
+  RAD.casti.forEach(c=>c.oddily.forEach(o=>{ let ctx="";
+    o.t.forEach(t=>{ const isItem=/^([a-z]\)|\d+\.|[–•-]\s)/.test(t); if(!isItem) ctx=t;
+      const st=new Set(norm(o.nazev+" "+t).split(/[^a-z0-9]+/).filter(w=>w.length>2).map(askStem));
+      st.forEach(s=>df.set(s,(df.get(s)||0)+1)); units.push({c,o,t,ctx:isItem?ctx:"",st}); }); }));
+  return ASKIDX={units,df,N:units.length}; }
+function askRender(q){ const out=$("askOut"); q=(q||"").trim(); if(q.length<3){ out.innerHTML=""; return; }
+  if(!RAD){ out.innerHTML=`<p class="hint">Načítám Rybářský řád…</p>`; return; }
+  const {units,df,N}=askIndex();
+  let words=norm(q).split(/[^a-z0-9]+/).filter(w=>w.length>1&&!ASK_STOP.has(w));
+  const extra=[]; words.forEach(w=>{ if(ASK_SYN[w]) extra.push(...norm(ASK_SYN[w]).split(/\s+/)); });
+  const qs=[...new Set([...words,...extra].filter(w=>w.length>2).map(askStem))];
+  if(!qs.length){ out.innerHTML=""; return; }
+  const scored=units.map(u=>{ let s=0,hit=0; qs.forEach(k=>{ if(u.st.has(k)){ hit++; s+=Math.log(1+N/(df.get(k)||1)); } }); return {u,s:s*(hit/qs.length+.3)}; }).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+  const seen=new Set(); const top=[]; for(const x of scored){ const k=x.u.t; if(seen.has(k)) continue; seen.add(k); top.push(x.u); if(top.length>=5) break; }
+  if(!top.length){ out.innerHTML=`<p class="hint">K tomu jsem v Rybářském řádu nic nenašel. Zkus jiná slova, např. „vezírek“, „noční lov“, „lovná míra“.</p>`; return; }
+  out.innerHTML=top.map(u=>`<div class="askhit"><div class="hint">${esc(u.c.nazev)} › ${esc(u.o.nazev)}</div>${u.ctx?`<p class="hint" style="margin:2px 0">${esc(u.ctx.length>160?u.ctx.slice(0,157)+"…":u.ctx)}</p>`:""}<p>${esc(u.t)}</p></div>`).join("")+
+    `<p class="hint">Výňatky z Rybářského řádu ČRS a zákona o rybářství. Na revíru mohou platit i přísnější bližší podmínky – najdeš je u revíru. Nejde o právní poradenství.</p>`; }
+$("askQ").oninput=async e=>{ if(!RAD){ RAD=await getData("rad.json"); } askRender(e.target.value); };
 
 /* ---------- sdílení ---------- */
 $("shareBtn").onclick=async()=>{ const url=location.origin+location.pathname;

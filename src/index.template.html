@@ -54,7 +54,7 @@ html,body{margin:0}
 .donatenote{text-align:center;font-size:13px;color:var(--muted);margin:8px auto 0;max-width:420px}
 .linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--muted);text-decoration:underline;cursor:pointer}
 .radbar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
-.ask{margin:12px 0;text-align:left}.ask label{display:block;margin-bottom:6px;font-size:14px}.askhit{border-left:3px solid var(--accent);padding:4px 10px;margin:8px 0;font-size:14px;background:var(--sunk);border-radius:0 8px 8px 0}.askhit p{margin:2px 0}
+.ask{margin:14px 0;text-align:left;padding:12px;border-radius:14px;background:var(--accent-soft)}.askinput{width:100%;box-sizing:border-box;font-size:18px;padding:14px 16px;border:2px solid var(--accent);border-radius:12px;background:var(--surface);color:var(--ink);margin:4px 0 6px}.askinput:focus{outline:3px solid color-mix(in srgb,var(--accent) 35%,transparent)}.askcard{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:14px}.askcard p{margin:4px 0}.askh{font-weight:700;font-size:15px}.askcard summary{cursor:pointer;color:var(--accent);margin-top:6px}.ask label{display:block;margin-bottom:6px;font-size:14px}.askhit{border-left:3px solid var(--accent);padding:4px 10px;margin:8px 0;font-size:14px;background:var(--sunk);border-radius:0 8px 8px 0}.askhit p{margin:2px 0}
 .ulovek ol{text-align:left;padding-left:20px;margin:10px 0}.ulovek li{margin:6px 0;font-size:14px}.ulovek .hint{text-align:left}
 .panel.rad{max-width:720px;text-align:left}
 .panel.rad h3{text-align:center}
@@ -231,8 +231,8 @@ html,body{margin:0}
       <li><b>Zápis o kontrole.</b> Strážce zapíše kontrolu do povolenky (oddíl II – Evidence docházky a úlovků). Zkontroluj předem, že máš zapsané dnešní datum a číslo revíru a všechny ponechané ryby.</li>
       <li><b>Když něco nesedí.</b> Stráž může papírovou povolenku zadržet (do 5 pracovních dnů ji předá organizaci, která ji vydala), elektronickou pozastavit, zadržet úlovek či nářadí nebo uložit pokutu na místě. Nehádej se – s pokutou na místě souhlasit nemusíš, pak věc řeší úřad. Poznamenej si jméno nebo číslo průkazu strážce a obrať se na svou organizaci.</li>
     </ol>
-    <div class="ask"><label for="askQ"><b>Zeptej se</b> <span class="hint">– odpověď najdu v Rybářském řádu ČRS</span></label>
-      <input class="radsearch" id="askQ" type="search" placeholder="Např. smím mít vezírek na pstruhovém revíru?">
+    <div class="ask"><label for="askQ" style="font-size:16px"><b>Zeptej se</b> <span class="hint">– odpověď najdu v Rybářském řádu ČRS</span></label>
+      <input class="askinput" id="askQ" type="search" enterkeyhint="search" placeholder="Např. doba lovu, vezírek, kolik pstruhů…">
       <div id="askOut"></div></div>
     <p class="hint"><b>Tip:</b> Měj lístek, povolenku a občanku pohromadě v sáčku proti vodě. Podle § 14–16 zákona č. 99/2004 Sb. o rybářství a Rybářského řádu ČRS – nejde o právní poradenství.</p>
   </div>
@@ -783,15 +783,47 @@ function askIndex(){ if(ASKIDX) return ASKIDX; const units=[]; const df=new Map(
       const st=new Set(norm(o.nazev+" "+t).split(/[^a-z0-9]+/).filter(w=>w.length>2).map(askStem));
       st.forEach(s=>df.set(s,(df.get(s)||0)+1)); units.push({c,o,t,ctx:isItem?ctx:"",st}); }); }));
   return ASKIDX={units,df,N:units.length}; }
+
+const ASK_TOPICS=[
+ {p:[0,"IV"],k:["doba lovu","doby lovu","doba","doby","hodin","noc","nocni","rano","vecer","kdy muzu","kdy smim","od kolika","do kolika","cas lovu","denni dob"]},
+ {p:[0,"V"],k:["hajen","hajena","hajeny","hajeni","sezon","zacina lov","konci lov"]},
+ {p:[0,"III"],k:["mira","miru","miry","mer","delk","centimetr"," cm","lovna"]},
+ {p:[0,"VII"],k:["limit","kolik","kusu","kusy"," kus","ponech","privlast","prisvoj","kilo"," kg","hmotnost"]},
+ {p:[0,"II"],k:["listek","povolenk","doklad","evidenc","sumar","odevzd"]},
+ {p:[2,"II"],k:["zapis","zapsat","zapsal","dochazk","proskrt","povinn"]},
+ {p:[0,"VI"],k:["udic","prut","hacek","hacky","dvojhac","trojhac","privlac","plavan","polozen","muskar","musk","nastrah","technick","zpusob lovu"]},
+ {p:[1,"I"],k:["udic","prut","privlac","plavan","polozen","muskar","musk","feeder","nastraz"]},
+ {p:[0,"VIII"],k:["zakaz","nesmi","nesmim","zakazan","elektr","osti","sit "]},
+ {p:[0,"X"],k:["straz","strazce","kontrol","pokut","zadrz","prukaz","odznak","policie"]},
+ {p:[2,"III"],k:["mimopstruh","kapr"]},
+ {p:[2,"IV"],k:["pstruhov","pstruh"]},
+ {p:[2,"V"],k:["lod","clun","plavidl"]},
+ {p:[2,"VI"],k:["bojk"]},
+ {p:[2,"VII"],k:["chovani","odpadk","hluk","vzdalen","metr","opustit","odejit","misto lovu"]},
+ {p:[2,"VIII"],k:["zachaz","podlozk","podberak","pustit","vratit","vypust"]},
+ {p:[2,"IX"],k:["vezir","sumpek","uchov","chladic","box"]},
+ {p:[2,"I"],k:["rak","raci","zab","zivocich","mlz"]},
+ {p:[0,"IX"],k:["pozem","vstup","pobrez","soukrom","plot"]}
+];
+function askTopics(nq){ const q=" "+nq+" "; return ASK_TOPICS.map(t=>({t,s:t.k.reduce((a,k)=>a+(q.includes(k)?k.length:0),0)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s); }
+function askOdd(p){ const c=RAD.casti[p[0]]; const o=c&&c.oddily.find(x=>x.c===p[1]); return o?{c,o}:null; }
 function askRender(q){ const out=$("askOut"); q=(q||"").trim(); if(q.length<3){ out.innerHTML=""; return; }
   if(!RAD){ out.innerHTML=`<p class="hint">Načítám Rybářský řád…</p>`; return; }
   const {units,df,N}=askIndex();
   let words=norm(q).split(/[^a-z0-9]+/).filter(w=>w.length>1&&!ASK_STOP.has(w));
   const extra=[]; words.forEach(w=>{ if(ASK_SYN[w]) extra.push(...norm(ASK_SYN[w]).split(/\s+/)); });
   const qs=[...new Set([...words,...extra].filter(w=>w.length>2).map(askStem))];
-  if(!qs.length){ out.innerHTML=""; return; }
+  if(!qs.length&&!askTopics(norm(q)).length){ out.innerHTML=""; return; }
   const scored=units.map(u=>{ let s=0,hit=0; qs.forEach(k=>{ if(u.st.has(k)){ hit++; s+=Math.log(1+N/(df.get(k)||1)); } }); return {u,s:s*(hit/qs.length+.3)}; }).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
   const seen=new Set(); const top=[]; for(const x of scored){ const k=x.u.t; if(seen.has(k)) continue; seen.add(k); top.push(x.u); if(top.length>=5) break; }
+  const tps=askTopics(norm(q)).slice(0,2).map(x=>askOdd(x.t.p)).filter(Boolean);
+  const tset=new Set(tps.map(x=>x.o)); const rest=[];
+  if(tps.length){ const inT=new Set(); 
+    const card=({c,o},i)=>{ const lines=o.t; const sc=lines.map(t=>{ const st=new Set(norm(t).split(/[^a-z0-9]+/).filter(w=>w.length>2).map(askStem)); return qs.filter(k=>st.has(k)).length; });
+      const best=Math.max(...sc); const show=lines.length<=16||best===0?lines:lines.filter((t,j)=>sc[j]>=Math.max(1,best-1)).slice(0,8);
+      return `<div class="askcard"><div class="askh">${esc(o.nazev)}</div><div class="hint">${esc(c.nazev)}</div>${show.map(t=>`<p>${esc(t)}</p>`).join("")}${show.length<lines.length?`<details><summary>Zobrazit celý oddíl</summary>${lines.map(t=>`<p>${esc(t)}</p>`).join("")}</details>`:""}</div>`; };
+    out.innerHTML=tps.map(card).join("")+(rest.length?`<p class="hint" style="margin-top:10px">Další související místa:</p>`+rest.map(u=>`<div class="askhit"><div class="hint">${esc(u.o.nazev)}</div><p>${esc(u.t)}</p></div>`).join(""):"")+
+      `<p class="hint">Přesné znění Rybářského řádu ČRS a zákona o rybářství. Na revíru mohou platit i přísnější bližší podmínky – najdeš je u revíru. Nejde o právní poradenství.</p>`; return; }
   if(!top.length){ out.innerHTML=`<p class="hint">K tomu jsem v Rybářském řádu nic nenašel. Zkus jiná slova, např. „vezírek“, „noční lov“, „lovná míra“.</p>`; return; }
   out.innerHTML=top.map(u=>`<div class="askhit"><div class="hint">${esc(u.c.nazev)} › ${esc(u.o.nazev)}</div>${u.ctx?`<p class="hint" style="margin:2px 0">${esc(u.ctx.length>160?u.ctx.slice(0,157)+"…":u.ctx)}</p>`:""}<p>${esc(u.t)}</p></div>`).join("")+
     `<p class="hint">Výňatky z Rybářského řádu ČRS a zákona o rybářství. Na revíru mohou platit i přísnější bližší podmínky – najdeš je u revíru. Nejde o právní poradenství.</p>`; }

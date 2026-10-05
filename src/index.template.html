@@ -218,7 +218,19 @@ html,body{margin:0}
     <button class="btn" id="contactBtn" hidden>Napište nám</button>
   </div>
   <p class="donatenote" id="donateNote" hidden>Kapr je zdarma a bez reklam. Příspěvkem od 25,- Kč pomůžete s jeho provozem. Děkujeme! <button class="linkbtn" id="donateBtn" hidden>Platba QR kódem</button></p>
-  <div class="radbar"><button class="btn" id="radBtn">📖 Rybářský řád</button><button class="btn" id="catchBtn">✍️ Zapsat úlovek</button></div>
+  <div class="radbar"><button class="btn" id="radBtn">📖 Rybářský řád</button><button class="btn" id="catchBtn">✍️ Zapsat úlovek</button><button class="btn" id="guardBtn">🛡️ Rybářská stráž</button></div>
+  <div class="panel ulovek" id="guardPanel" hidden>
+    <h3>Kontrola rybářskou stráží</h3>
+    <p>Rybářská stráž hlídá, aby revír zůstal v pořádku pro všechny. Kontrola je běžná věc a zabere pár minut – stačí klid a připravené doklady.</p>
+    <ol>
+      <li><b>Pozdrav a klid.</b> Strážce má mít služební odznak na viditelném místě a prokázat se průkazem rybářské stráže. Slušně o průkaz požádat můžeš.</li>
+      <li><b>Připrav doklady.</b> Rybářský lístek, povolenku k lovu (papírovou nebo v mobilu) a doklad totožnosti – stráž může chtít prokázat, kdo jsi.</li>
+      <li><b>Ukaž, co máš u vody.</b> Stráž smí zkontrolovat pruty a nástrahy, úlovek, vezírek nebo box i obsah loďky. Ryby během kontroly nepouštěj ani nepřekládej.</li>
+      <li><b>Zápis o kontrole.</b> Strážce zapíše kontrolu do povolenky (oddíl II – Evidence docházky a úlovků). Zkontroluj předem, že máš zapsané dnešní datum a číslo revíru a všechny ponechané ryby.</li>
+      <li><b>Když něco nesedí.</b> Stráž může papírovou povolenku zadržet (do 5 pracovních dnů ji předá organizaci, která ji vydala), elektronickou pozastavit, zadržet úlovek či nářadí nebo uložit pokutu na místě. Nehádej se – s pokutou na místě souhlasit nemusíš, pak věc řeší úřad. Poznamenej si jméno nebo číslo průkazu strážce a obrať se na svou organizaci.</li>
+    </ol>
+    <p class="hint"><b>Tip:</b> Měj lístek, povolenku a občanku pohromadě v sáčku proti vodě. Podle § 14–16 zákona č. 99/2004 Sb. o rybářství a Rybářského řádu ČRS – nejde o právní poradenství.</p>
+  </div>
   <div class="panel ulovek" id="catchPanel" hidden>
     <h3>Zapsat úlovek</h3>
     <p>Docházku a úlovky zapisuješ ve své <b>Kartě rybáře</b> v RIS Portálu ČRS.</p>
@@ -617,7 +629,7 @@ const CFG={
   castky:[25,50,100],  // jen pro QR platbu
   stripe:"https://buy.stripe.com/cNi28t1xo64iaaN5Qy9Ve00"  // Stripe Payment Link (karta, Apple Pay, Google Pay); částku volí plátce, od 25 Kč
 };
-const toggle=(id)=>{ const el=$(id), open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open;
+const toggle=(id)=>{ const el=$(id), open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open;
   if(open) el.scrollIntoView({behavior:"smooth",block:"nearest"}); };
 const hasStripe=!!CFG.stripe;
 if(CFG.iban||hasStripe){
@@ -746,8 +758,9 @@ function radRender(q){ if(!RAD) return; q=(q||"").trim(); const nq=norm(q);
     if(!odd.length) return "";
     return `<details class="part" ${nq||ci===2?"open":""}><summary>${esc(c.nazev)}</summary>${odd.map(o=>`<details class="odd" ${nq?"open":""}><summary>${esc(o.c)}. ${hl(o.nazev)}</summary>${o.t.map(t=>`<p class="${cls(t)}">${hl(t)}</p>`).join("")}</details>`).join("")}</details>`; }).join("");
   $("radBody").innerHTML=html||`<p class="hint">Nic nenalezeno.</p>`; }
-$("catchBtn").onclick=()=>{ const el=$("catchPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(open) el.scrollIntoView({behavior:"smooth",block:"nearest"}); };
-$("radBtn").onclick=async()=>{ const el=$("radPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(!open) return;
+$("guardBtn").onclick=()=>{ const el=$("guardPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(open) el.scrollIntoView({behavior:"smooth",block:"nearest"}); };
+$("catchBtn").onclick=()=>{ const el=$("catchPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(open) el.scrollIntoView({behavior:"smooth",block:"nearest"}); };
+$("radBtn").onclick=async()=>{ const el=$("radPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(!open) return;
   if(!RAD){ $("radBody").innerHTML=statusBox("Načítám rybářský řád…"); RAD=await getData("rad.json");
     if(!RAD){ $("radBody").innerHTML=`<p class="hint">Rybářský řád se nepodařilo načíst.</p>`; return; }
     $("radInfo").innerHTML=`Platí ${esc(RAD.platnost)} na revírech ČRS (pstruhových i mimopstruhových). Plné znění: <a href="${esc(RAD.odkazy.pstruhove)}" target="_blank" rel="noopener">pstruhové</a> · <a href="${esc(RAD.odkazy.mimopstruhove)}" target="_blank" rel="noopener">mimopstruhové</a> revíry (PDF).`; }

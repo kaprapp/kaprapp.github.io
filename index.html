@@ -679,7 +679,7 @@ $("findBtn").onclick=async()=>{
   await loadRis();
   const list=risOfTyp(); if(!list.length){ $("out").innerHTML=`<div class="status">${RIS.all?"Nepstruhové revíry se doplní při nejbližší ranní aktualizaci dat.":"Data revírů se nepodařilo načíst. Zkus to za chvíli."}</div>`; return; }
   S.results=list.map(r=>({r,...risDist(r,S.loc)})).filter(x=>x.d<1e8).sort((a,b)=>a.d-b.d).slice(0,3).map(risResult);
-  renderResults(`Tři nejbližší ${S.typ==="P"?"pstruhové":"nepstruhové"} revíry`,`<div class="chwrap"><button class="btn big" id="chanceBtn" aria-pressed="false"><svg width="28" height="17" viewBox="0 0 84 52" aria-hidden="true" style="color:var(--ok)"><use href="#fish-sm"/></svg> Šance na záběr</button><div id="chanceOut"></div></div>`);
+  renderResults(`Tři nejbližší ${S.typ==="P"?"pstruhové":"nepstruhové"} revíry`,`<div class="chwrap"><button class="btn primary big" id="chanceBtn" aria-pressed="false"><svg width="28" height="17" viewBox="0 0 84 52" aria-hidden="true" style="color:currentColor"><use href="#fish-sm"/></svg> Šance na záběr</button><div id="chanceOut"></div></div>`);
   $("chanceBtn").onclick=showChance;
   fitTo([S.loc,...S.results]);
 };

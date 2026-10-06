@@ -32,6 +32,7 @@ html,body{margin:0}
 .numpin{display:grid;place-items:center;width:28px;height:28px;margin-left:-14px;margin-top:-14px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:800 15px var(--f-display);border:2px solid var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.35)}
 .leaflet-tooltip{font-family:var(--f-body);font-weight:700}
 .btnsub{display:block;font-family:var(--f-body);font-size:14px;letter-spacing:0;font-weight:400;opacity:.92;margin-top:2px}.dist.chd{display:flex;flex-direction:column;align-items:center;gap:2px}.mring{position:relative;width:58px;height:58px;display:block}.mring svg{position:absolute;inset:0;width:100%;height:100%}.mring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-size:19px;font-weight:800;color:var(--ink)}.dist.chd small{font-size:12px;font-weight:700;letter-spacing:0;color:var(--muted)}.chtip{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:var(--accent-soft);border:0;border-radius:var(--r);padding:12px 14px;margin:0 0 12px;font:inherit;font-size:15px;line-height:1.4;color:var(--ink);cursor:pointer}.chdh{margin:0 0 4px;text-align:center;font-family:var(--f-display);font-size:22px}#chDetail:empty{display:none}#chDetail .chcard{margin-top:0;border:0;padding:0}
+.sendme{border-top:1px solid var(--line);margin-top:14px;padding-top:12px;text-align:left;display:grid;gap:10px}.sendme h4{margin:0;font-family:var(--f-display);font-size:22px;text-align:center}.smf{display:grid;gap:4px;font-size:14px;font-weight:700}.smf select,.smf input,.smf textarea{font:inherit;font-weight:400;font-size:16px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);width:100%;box-sizing:border-box}.smgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.smgrid .smf:first-child{grid-column:1/-1}.smphotos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.smph{display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;font-size:13px;cursor:pointer}.smph .hint{font-size:11.5px;line-height:1.2}.smimg{position:relative;width:100%;aspect-ratio:1;border:2px dashed var(--line);border-radius:12px;display:grid;place-items:center;font-size:28px;color:var(--muted);overflow:hidden;background:var(--sunk)}.smimg img{width:100%;height:100%;object-fit:cover}.smimg small{position:absolute;bottom:2px;right:4px;font-size:10px;background:rgba(255,255,255,.85);border-radius:4px;padding:0 3px;color:var(--ink)}
 .chwrap{margin:0 0 14px;display:grid}.chwrap>.btn{justify-self:stretch}#chanceBtn[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
 .chcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:12px}.chhead{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.chhead h3{margin:2px 0 0;font-family:var(--f-display);font-size:26px;line-height:1}.chnum{font-family:var(--f-mono);font-size:12px;color:var(--muted)}.chkm{font-size:13px;font-weight:700;background:var(--sunk);border-radius:999px;padding:4px 10px;white-space:nowrap}.rose{position:relative;width:calc(100% - 44px);max-width:300px;aspect-ratio:1;margin:8px auto 0}.rose>svg{position:absolute;inset:0;width:100%;height:100%}.rlab{position:absolute;transform:translate(-50%,-50%);width:66px;text-align:center;font-size:11.5px;line-height:1.15}.rlab b{font-size:13px}.rmid{position:absolute;inset:22%;display:flex;flex-direction:column;align-items:center;justify-content:center}.rpct{font-family:var(--f-display);font-size:40px;font-weight:800;line-height:.9}.rlbl{font-size:13px;font-weight:700}.chsum{text-align:center;margin:6px 0 0;font-size:14px}.chbest{text-align:center;margin:4px 0 0;font-size:14px;font-weight:700}.chwhy{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;display:grid;gap:8px}.chft{display:flex;justify-content:space-between;gap:8px;font-size:14px}.chbar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden;margin-top:3px}.chbar>div{height:6px;border-radius:3px}
 .zapis{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:10px;padding:8px 12px;border-radius:12px;background:var(--surface);border:1px dashed var(--line);font-size:14px;line-height:1.35;text-align:left}
@@ -58,7 +59,7 @@ html,body{margin:0}
 .donatenote{text-align:center;font-size:13px;color:var(--muted);margin:8px auto 0;max-width:420px}
 .linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--muted);text-decoration:underline;cursor:pointer}
 .radbar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
-.gintro{text-align:left;background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin:8px 0 6px;font-size:14px;line-height:1.45}.gintro p{margin:6px 0}.gintro ul{padding-left:18px;margin:4px 0}#guardPanel{overflow-wrap:break-word}#guardPanel h3{font-size:18px;line-height:1.25}#guardPanel ol{padding-left:22px}
+.gintro{margin-top:72px!important;text-align:left;background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin:8px 0 6px;font-size:14px;line-height:1.45}.gintro p{margin:6px 0}.gintro ul{padding-left:18px;margin:4px 0}#guardPanel{overflow-wrap:break-word}#guardPanel h3{font-size:18px;line-height:1.25}#guardPanel ol{padding-left:22px}
 .gh{margin:16px 0 6px;font-size:16px;text-align:left}.gd{text-align:left;border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:6px 0;background:var(--surface);font-size:14px}.gd summary{cursor:pointer;font-weight:700;color:var(--ink)}.gd ul{padding-left:18px;margin:8px 0}.gd li{margin:5px 0}.gt{margin:8px 0;font-size:13.5px}.gtr{border-top:1px solid var(--line);padding:6px 0}.gtr span{display:block}.gtr b{display:block;color:var(--accent)}
 .ask{margin:14px 0;text-align:left;padding:12px;border-radius:14px;background:var(--accent-soft)}.askinput{width:100%;box-sizing:border-box;font-size:18px;padding:14px 16px;border:2px solid var(--accent);border-radius:12px;background:var(--surface);color:var(--ink);margin:4px 0 6px}.askinput:focus{outline:3px solid color-mix(in srgb,var(--accent) 35%,transparent)}.askcard{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:14px}.askcard p{margin:4px 0}.askh{font-weight:700;font-size:15px}.askcard summary{cursor:pointer;color:var(--accent);margin-top:6px}.ask label{display:block;margin-bottom:6px;font-size:14px}.askhit{border-left:3px solid var(--accent);padding:4px 10px;margin:8px 0;font-size:14px;background:var(--sunk);border-radius:0 8px 8px 0}.askhit p{margin:2px 0}
 .ulovek ol{text-align:left;padding-left:20px;margin:10px 0}.ulovek li{margin:6px 0;font-size:14px}.ulovek .hint{text-align:left}
@@ -325,6 +326,26 @@ html,body{margin:0}
       <li><b>U vody:</b> Odkaz si ulož do záložek nebo si aplikaci přidej na plochu, ať se ke Kartě rybáře dostaneš jedním klepnutím.</li>
     </ol>
     <p class="hint"><b>Máš papírovou povolenku?</b> Pak dál platí zápis do papíru (oddíl II – Evidence docházky a úlovků): před začátkem lovu datum a číslo revíru, potom jen ponechané ryby se skutečnou hmotností. Nic si neponecháš? Řádek proškrtni. Elektronický zápis papír nahrazuje jen u elektronické povolenky.</p>
+    <div class="sendme" id="sendMe">
+      <h4>Poslat sobě</h4>
+      <p class="hint">Ulož si záznam o lovu do e-mailu: revír, úlovek, až 3 fotky a podmínky v tu chvíli (počasí, průtok, slunce, zarybnění).</p>
+      <label class="smf">Revír<select id="smRev"></select></label>
+      <div class="smgrid">
+        <label class="smf">Ryba<select id="smFish"><option value="">— nevybráno —</option></select></label>
+        <label class="smf">Délka (cm)<input id="smLen" type="number" inputmode="decimal" min="1" max="300"></label>
+        <label class="smf">Hmotnost (kg)<input id="smKg" type="number" inputmode="decimal" step="0.01" min="0" placeholder="odhad z délky"></label>
+      </div>
+      <div class="smphotos">
+        <label class="smph"><input type="file" accept="image/*" data-ph="0" hidden><span class="smimg" id="smImg0">+</span><b>1 · Úlovek</b><span class="hint">pro RIS, zmenším do 600 kB</span></label>
+        <label class="smph"><input type="file" accept="image/*" data-ph="1" hidden><span class="smimg" id="smImg1">+</span><b>2 · Místo lovu</b><span class="hint">okolí, voda</span></label>
+        <label class="smph"><input type="file" accept="image/*" data-ph="2" hidden><span class="smimg" id="smImg2">+</span><b>3 · Nástraha</b><span class="hint">nebo jiná fotka</span></label>
+      </div>
+      <button class="btn" id="smRis" type="button" hidden>Uložit fotku úlovku pro RIS</button>
+      <label class="smf">Poznámka<textarea id="smNote" rows="2" placeholder="Např. chyceno na nymfu pod jezem…"></textarea></label>
+      <label class="smf">Tvůj e-mail <span class="hint">(zapamatuji si ho jen v tomto telefonu)</span><input id="smMail" type="email" autocomplete="email" placeholder="jmeno@email.cz"></label>
+      <button class="btn primary" id="smSend" type="button">Poslat sobě</button>
+      <div id="smOut"></div>
+    </div>
   </div>
   <div class="panel rad" id="radPanel" hidden>
     <h3>Rybářský řád ČRS</h3>
@@ -844,7 +865,7 @@ function radRender(q){ if(!RAD) return; q=(q||"").trim(); const nq=norm(q);
     return `<details class="part" ${nq||ci===2?"open":""}><summary>${esc(c.nazev)}</summary>${odd.map(o=>`<details class="odd" ${nq?"open":""}><summary>${esc(o.c)}. ${hl(o.nazev)}</summary>${o.t.map(t=>`<p class="${cls(t)}">${hl(t)}</p>`).join("")}</details>`).join("")}</details>`; }).join("");
   $("radBody").innerHTML=html||`<p class="hint">Nic nenalezeno.</p>`; }
 $("guardBtn").onclick=()=>{ const el=$("guardPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(open) el.scrollIntoView({behavior:"smooth",block:"nearest"}); };
-$("catchBtn").onclick=()=>{ const el=$("catchPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(open) el.scrollIntoView({behavior:"smooth",block:"nearest"}); };
+$("catchBtn").onclick=()=>{ const el=$("catchPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(open){ smOpen(); } if(open) el.scrollIntoView({behavior:"smooth",block:"nearest"}); };
 $("radBtn").onclick=async()=>{ const el=$("radPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(!open) return;
   if(!RAD){ $("radBody").innerHTML=statusBox("Načítám rybářský řád…"); RAD=await getData("rad.json");
     if(!RAD){ $("radBody").innerHTML=`<p class="hint">Rybářský řád se nepodařilo načíst.</p>`; return; }
@@ -1016,6 +1037,74 @@ function miniRing(c,km){ const C=2*Math.PI*100, col=chColor(c);
   return `<span class="mring" title="Šance na záběr"><svg viewBox="0 0 236 236" aria-hidden="true"><circle cx="118" cy="118" r="100" fill="none" stroke="var(--sunk)" stroke-width="26"/><circle cx="118" cy="118" r="100" fill="none" stroke="${col}" stroke-width="26" stroke-linecap="round" stroke-dasharray="${(C*c.pct/100).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 118 118)"/></svg><b>${c.closed?"–":c.pct+"%"}</b></span><small>${km}</small>`; }
 async function chanceDetail(x){ const box=$("chDetail"); if(!box) return; box.innerHTML=statusBox("Počítám šanci na záběr…");
   try{ const c=await chanceFor(x); if($("chDetail")!==box) return; box.innerHTML=chanceCard(x,0,c,true); }catch(e){ box.innerHTML=""; } }
+
+/* ---------- poslat sobě (záznam o lovu e-mailem) ---------- */
+const SM={ph:[null,null,null]};
+function lsGet(k){ try{ return localStorage.getItem(k)||""; }catch(e){ return ""; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+async function shrinkImg(file,maxBytes,maxDim){
+  const url=URL.createObjectURL(file); const img=new Image(); img.src=url; await img.decode(); URL.revokeObjectURL(url);
+  let dim=Math.min(maxDim,Math.max(img.naturalWidth,img.naturalHeight)), q=.85, blob=null;
+  for(let k=0;k<12;k++){ const s=dim/Math.max(img.naturalWidth,img.naturalHeight); const c=document.createElement("canvas");
+    c.width=Math.round(img.naturalWidth*s); c.height=Math.round(img.naturalHeight*s); c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    blob=await new Promise(r=>c.toBlob(r,"image/jpeg",q)); if(!maxBytes||blob.size<=maxBytes) break;
+    if(q>.55) q-=.1; else dim=Math.round(dim*.85); }
+  return blob; }
+const kB=b=>Math.round(b.size/1024)+" kB";
+async function smOpen(){ await loadRis(); RYBY=RYBY||await getData("ryby.json");
+  const rs=$("smRev"), cur=rs.value; const opts=[]; const seen=new Set(); const add=(rr,l)=>{ if(!rr||seen.has(rr.c)) return; seen.add(rr.c); opts.push({v:"r:"+rr.c,l}); };
+  if(S.results&&S.sel!=null&&S.results[S.sel]?.r) add(S.results[S.sel].r,`${S.results[S.sel].r.n} – vybraný revír`);
+  if(S.loc&&RIS.all){ const near=RIS.all.filter(x=>x.segs.length).map(x=>({r:x,d:risDist(x,S.loc).d})).sort((a,b)=>a.d-b.d);
+    near.filter(o=>o.r.t===S.typ).slice(0,6).forEach(o=>add(o.r,`${o.r.n} · ${fmtKm(o.d)} km`));
+    near.filter(o=>o.r.t!==S.typ).slice(0,3).forEach(o=>add(o.r,`${o.r.n} · ${fmtKm(o.d)} km (${o.r.t==="P"?"pstruhový":"mimopstruhový"})`)); }
+  rs.innerHTML=opts.length?opts.map(o=>`<option value="${esc(o.v.slice(2))}">${esc(o.l)}</option>`).join(""):`<option value="">Nejdřív zvol polohu (krok 2)</option>`;
+  if(cur&&opts.some(o=>o.v.slice(2)===cur)) rs.value=cur;
+  const fs=$("smFish"); if(RYBY&&fs.options.length<2) fs.insertAdjacentHTML("beforeend",RYBY.druhy.map(d=>`<option value="${esc(d.id)}">${esc(d.cz)}</option>`).join(""));
+  if(!$("smMail").value) $("smMail").value=lsGet("smMail"); }
+document.querySelectorAll('#sendMe input[type=file]').forEach(inp=>inp.onchange=async()=>{ const i=+inp.dataset.ph, f=inp.files[0]; if(!f) return;
+  const box=$("smImg"+i); box.textContent="…";
+  try{ const blob=await shrinkImg(f,i===0?600*1024:1200*1024,i===0?1600:1800);
+    const name=["lov-1-ulovek.jpg","lov-2-misto.jpg","lov-3-nastraha.jpg"][i];
+    SM.ph[i]=new File([blob],name,{type:"image/jpeg"}); const u=URL.createObjectURL(blob);
+    box.innerHTML=`<img src="${u}" alt=""><small>${kB(blob)}</small>`;
+    if(i===0){ $("smRis").hidden=false; $("smRis").textContent=`Uložit fotku úlovku pro RIS (${kB(blob)})`; }
+  }catch(e){ box.textContent="!"; } });
+$("smRis").onclick=async()=>{ const f=SM.ph[0]; if(!f) return;
+  try{ if(navigator.canShare&&navigator.canShare({files:[f]})){ await navigator.share({files:[f],title:"Úlovek"}); return; } }catch(e){ if(e.name==="AbortError") return; }
+  const a=document.createElement("a"); a.href=URL.createObjectURL(f); a.download=f.name; document.body.appendChild(a); a.click(); a.remove(); };
+$("smMail").onchange=()=>lsSet("smMail",$("smMail").value.trim());
+$("smSend").onclick=async()=>{ const out=$("smOut"); const code=$("smRev").value; const r=(RIS.all||[]).find(x=>x.c===code);
+  if(!r){ out.innerHTML=`<p class="hint">Vyber revír.</p>`; return; }
+  out.innerHTML=statusBox("Sbírám údaje o podmínkách…"); lsSet("smMail",$("smMail").value.trim());
+  const now=new Date(), x=S.loc?{r,...risDist(r,S.loc)}:{r,d:NaN,lat:NaN,lon:NaN}, pt=isFinite(x.lat)?{lat:x.lat,lon:x.lon}:S.loc;
+  const [w,fl,st,p]=await Promise.all([pt?wxAt(pt.lat,pt.lon):null,revFlow(r),revStock(r),getData(`podminky/${r.c}.json`)]);
+  const ch=chanceScore(r,w,fl,st,p), F=n=>ch.F.find(f=>f.name===n)?.text||"";
+  const d=RYBY?.druhy.find(z=>z.id===$("smFish").value), L=parseFloat(String($("smLen").value).replace(",",".")); let kg=parseFloat(String($("smKg").value).replace(",","."));
+  let kgTxt=""; if(isFinite(kg)&&kg>0) kgTxt=kg.toLocaleString("cs-CZ")+" kg"; else if(d&&isFinite(L)&&d.lw){ const g=d.lw[0]*Math.pow(L,d.lw[1]); kgTxt=(g/1000).toFixed(2).replace(".",",")+" kg (odhad z délky)"; }
+  let mira=""; if(d){ const m=(p?.miry||[]).find(m=>norm(m.d).includes(norm(d.cz).split(" ")[0])); if(m) mira=`lovná míra na revíru ${m.min?m.min+" cm":"–"}${m.max?" až "+m.max+" cm":""}${m.hajen?", dnes hájen":""}${isFinite(L)&&m.min?(L>=+m.min?" – nad mírou":" – POD MÍROU"):""}`; }
+  const doba=(p?.doba||[]).filter(covers)[0]?.h||"";
+  let sun=""; if(w?.daily){ const d0=w.daily.time.indexOf(new Date(now.getTime()-now.getTimezoneOffset()*6e4).toISOString().slice(0,10)); if(d0>=0) sun=`východ ${w.daily.sunrise[d0].slice(11)}, západ ${w.daily.sunset[d0].slice(11)}`; }
+  const ts=`${now.toLocaleDateString("cs-CZ")} ${now.getHours()}:${String(now.getMinutes()).padStart(2,"0")}`;
+  const subj=`Lov ryb ${now.toLocaleDateString("cs-CZ")}`;
+  const L1=[subj,"",`Čas: ${ts}`,`Revír: ${r.n} (${fmtNum(r.c)}), MO ${r.o}, ${SVN[r.s]||"ČRS"}, ${r.t==="P"?"pstruhový":"mimopstruhový"}`,`Karta revíru: ${risUrl(r)}`];
+  if(pt) L1.push(`Poloha: ${pt.lat.toFixed(5)}, ${pt.lon.toFixed(5)} – https://mapy.cz/zakladni?x=${pt.lon.toFixed(5)}&y=${pt.lat.toFixed(5)}&z=15&source=coor&id=${pt.lon.toFixed(5)}%2C${pt.lat.toFixed(5)}`);
+  if(d||isFinite(L)||kgTxt){ L1.push("",`Úlovek: ${d?d.cz:"ryba"}${isFinite(L)?`, ${String(L).replace(".",",")} cm`:""}${kgTxt?`, ${kgTxt}`:""}`); if(mira) L1.push(`  ${mira}`); }
+  const note=$("smNote").value.trim(); if(note) L1.push(`Poznámka: ${note}`);
+  L1.push("","Podmínky v době lovu:");
+  if(F("Teplota")) L1.push(`- Teplota: ${F("Teplota")}`); if(F("Tlak")) L1.push(`- Tlak: ${F("Tlak")}`); if(F("Vítr a obloha")) L1.push(`- Počasí: ${F("Vítr a obloha")}`);
+  L1.push(`- Průtok: ${F("Průtok")}`); if(sun) L1.push(`- Slunce: ${sun}`); if(doba) L1.push(`- Denní doba lovu na revíru: ${doba}`);
+  L1.push(`- Zarybnění: ${F("Zarybnění")}`); L1.push(`- Šance na záběr podle aplikace: ${ch.closed?"lov není povolen":ch.pct+" %"}`);
+  const files=SM.ph.filter(Boolean); if(files.length) L1.push("",`Fotky: ${files.map((f,i)=>["úlovek (pro RIS, "+kB(f)+")","místo lovu","nástraha"][SM.ph.indexOf(f)]).join(", ")}`);
+  L1.push("",`Odesláno z aplikace ${document.title} – ${location.origin}${location.pathname}`);
+  const body=L1.join("\n"), mail=$("smMail").value.trim();
+  const mailto=`mailto:${encodeURIComponent(mail)}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+  if(files.length&&navigator.canShare&&navigator.canShare({files})){
+    out.innerHTML=`<p class="hint">Otevře se nabídka sdílení – vyber <b>Mail</b> (nebo Gmail). Předmět: <b>${esc(subj)}</b>.</p>`;
+    try{ await navigator.share({title:subj,text:body,files}); out.innerHTML=`<p class="hint">Hotovo. Kdyby se ti nevyplnil předmět, napiš „${esc(subj)}“.</p>`; }
+    catch(e){ if(e.name!=="AbortError") out.innerHTML=`<p class="hint">Sdílení se nepovedlo. <a href="${esc(mailto)}">Poslat jen text e-mailem</a></p>`; else out.innerHTML=""; }
+    return; }
+  out.innerHTML=`<p class="hint">${files.length?"Tento prohlížeč neumí poslat fotky přímo – text otevřu v e-mailu a fotky si ulož a přilož ručně.":"Otevírám e-mail…"}</p>`;
+  location.href=mailto; };
 
 /* ---------- tlačítka: druhé kliknutí obsah skryje ---------- */
 var ACTIVE=null, ACTIVE_LOC="";

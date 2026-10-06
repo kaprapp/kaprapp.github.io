@@ -363,7 +363,7 @@ ul.plain li{margin:3px 0}
   <section class="step" aria-labelledby="s3">
     <div class="eyebrow" id="s3"><b>3</b> Revíry</div>
     <div class="actions">
-      <button class="btn primary big" id="findBtn" disabled>Najít 3 nejbližší revíry<small class="btnsub">a jejich šanci na záběr dnes</small></button>
+      <button class="btn primary big" id="findBtn" disabled>Najít 3 nejbližší revíry</button>
       <button class="btn big" id="stockBtn" style="font-size:19px">
         <svg width="28" height="17" viewBox="0 0 84 52" aria-hidden="true" style="color:var(--accent)"><use href="#fish-sm"/></svg>
         Zarybněno za posledních 6 týdnů
@@ -676,12 +676,11 @@ $("placeForm").addEventListener("submit",async e=>{
 /* ---------- 3 nejbližší ---------- */
 $("findBtn").onclick=async()=>{
   if(!S.loc) return; $("detail").innerHTML=""; S.sel=null; $("out").dataset.view="";
-  $("out").innerHTML=statusBox("Hledám nejbližší revíry a počítám šanci na záběr…");
+  $("out").innerHTML=statusBox("Hledám nejbližší revíry…");
   await loadRis();
   const list=risOfTyp(); if(!list.length){ $("out").innerHTML=`<div class="status">${RIS.all?"Nepstruhové revíry se doplní při nejbližší ranní aktualizaci dat.":"Data revírů se nepodařilo načíst. Zkus to za chvíli."}</div>`; return; }
   S.results=list.map(r=>({r,...risDist(r,S.loc)})).filter(x=>x.d<1e8).sort((a,b)=>a.d-b.d).slice(0,3).map(risResult);
-  renderResults(`Tři nejbližší ${S.typ==="P"?"pstruhové":"nepstruhové"} revíry`,`<div id="chTip">${statusBox("Počítám šanci na záběr…")}</div>`);
-  chanceList();
+  renderResults(`Tři nejbližší ${S.typ==="P"?"pstruhové":"nepstruhové"} revíry`);
   fitTo([S.loc,...S.results]);
 };
 function renderResults(title,extra=""){
@@ -1172,8 +1171,6 @@ function chanceCard(x,i,c,inDetail){ const r=x.r, p=c.pct;
       <div class="rmid"><svg viewBox="0 0 120 64" aria-hidden="true" style="width:86px;height:46px;transform:scale(${scale})"><path d="M6 32 L-8 16 L-4 32 L-8 48 Z" transform="translate(14 0)" fill="${col}"/><path d="M18 32 C34 8, 86 6, 112 30 C108 36, 104 40, 98 44 C78 58, 36 56, 18 32 Z" fill="${col}"/><path d="M54 14 C60 4, 74 4, 80 12" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round"/><circle cx="96" cy="27" r="4" fill="#fff"/></svg>
         <div class="rpct">${p}&nbsp;%</div><div class="rlbl" style="color:${col}">${lab}</div></div></div>
     <p class="chsum">${esc(c.sum)}</p>${c.best?`<p class="chbest">Nejlepší čas: ${esc(c.best)}</p>`:""}
-    <div class="chwhy"><div class="hint" style="font-weight:700">Proč takové hodnocení</div>
-      ${c.F.map(f=>`<div class="chf"><div class="chft"><span><b>${esc(f.name)}</b> · ${esc(f.text)}</span><b style="color:${fcol(f.pts)}">${sign(f.pts)}</b></div><div class="chbar"><div style="width:${Math.min(100,20+Math.abs(f.pts)*5)}%;background:${f.pts>0?"var(--ok)":f.pts<0?"var(--bad)":"#9AABA3"}"></div></div></div>`).join("")}</div>
     ${inDetail?`<p class="hint" style="margin:8px 0 0">Odhad z počasí (Open-Meteo), průtoku (ČHMÚ), zarybnění, denní doby a sezóny – nejde o záruku.</p>`:""}</article>`; }
 
 const CH={};
@@ -1184,16 +1181,6 @@ async function chanceFor(x){ const k=x.r.c; if(CH[k]) return CH[k];
 const chColor=c=>c.closed?"var(--muted)":c.pct<35?"var(--warn)":c.pct<65?"var(--accent)":"var(--ok)";
 function miniRing(c,km){ const C=2*Math.PI*100, col=chColor(c);
   return `<span class="mring" title="Šance na záběr"><svg viewBox="0 0 236 236" aria-hidden="true"><circle cx="118" cy="118" r="100" fill="none" stroke="var(--sunk)" stroke-width="26"/><circle cx="118" cy="118" r="100" fill="none" stroke="${col}" stroke-width="26" stroke-linecap="round" stroke-dasharray="${(C*c.pct/100).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 118 118)"/></svg><b>${c.closed?"–":c.pct+"%"}</b></span><small>${km}</small>`; }
-async function chanceList(){ if(!S.results) return; const tip=$("chTip"); const list=S.results.slice();
-  const res=await Promise.all(list.map(x=>chanceFor(x).catch(()=>null)));
-  if(S.results!==list&&S.results?.[0]?.r!==list[0]?.r) return;
-  $("out").querySelectorAll(".card").forEach(b=>{ const i=+b.dataset.i, c=res[i], d=b.querySelector(".dist"); if(!c||!d) return;
-    d.classList.add("chd"); d.innerHTML=miniRing(c,isFinite(list[i]._d)?fmtKm(list[i]._d)+" km":""); });
-  if(!tip) return; const ok=res.map((c,i)=>({c,i})).filter(o=>o.c&&!o.c.closed).sort((a,b)=>b.c.pct-a.c.pct);
-  if(!ok.length){ tip.innerHTML=`<div class="chtip"><b>Na těchto revírech dnes lovit nelze.</b> <span class="hint">${esc(res.find(Boolean)?.sum||"")}</span></div>`; return; }
-  const b=ok[0], x=list[b.i];
-  tip.innerHTML=`<button class="chtip" data-i="${b.i}"><svg width="30" height="18" viewBox="0 0 84 52" aria-hidden="true" style="color:${chColor(b.c)};flex:none"><use href="#fish-sm"/></svg><span>Dnes nejspíš zabere na <b>${esc(x.r.n)}</b> – šance <b>${b.c.pct}&nbsp;%</b>${b.c.best?`, ${esc(b.c.best)}`:""}.<br><span class="hint">Klepni na revír a uvidíš proč.</span></span></button>`;
-  tip.querySelector("button").onclick=()=>openDetail(b.i); }
 async function chanceDetail(x){ const box=$("chDetail"); if(!box) return; box.innerHTML=statusBox("Počítám šanci na záběr…");
   try{ const c=await chanceFor(x); if($("chDetail")!==box) return; box.innerHTML=chanceCard(x,0,c,true); }catch(e){ box.innerHTML=""; } }
 

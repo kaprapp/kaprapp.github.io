@@ -198,6 +198,7 @@ ul.plain li{margin:3px 0}
 .pin{width:26px;height:34px;margin-left:-13px;margin-top:-34px}
 .numpin{display:grid;place-items:center;width:28px;height:28px;margin-left:-14px;margin-top:-14px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:800 15px var(--f-display);border:2px solid var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.35)}
 .leaflet-tooltip{font-family:var(--f-body);font-weight:700}
+.btnsub{display:block;font-family:var(--f-body);font-size:14px;letter-spacing:0;font-weight:400;opacity:.92;margin-top:2px}.dist.chd{display:flex;flex-direction:column;align-items:center;gap:2px}.mring{position:relative;width:58px;height:58px;display:block}.mring svg{position:absolute;inset:0;width:100%;height:100%}.mring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-size:19px;font-weight:800;color:var(--ink)}.dist.chd small{font-size:12px;font-weight:700;letter-spacing:0;color:var(--muted)}.chtip{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:var(--accent-soft);border:0;border-radius:var(--r);padding:12px 14px;margin:0 0 12px;font:inherit;font-size:15px;line-height:1.4;color:var(--ink);cursor:pointer}.chdh{margin:0 0 4px;text-align:center;font-family:var(--f-display);font-size:22px}#chDetail:empty{display:none}#chDetail .chcard{margin-top:0;border:0;padding:0}
 .chwrap{margin:0 0 14px;display:grid}.chwrap>.btn{justify-self:stretch}#chanceBtn[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
 .chcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:12px}.chhead{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.chhead h3{margin:2px 0 0;font-family:var(--f-display);font-size:26px;line-height:1}.chnum{font-family:var(--f-mono);font-size:12px;color:var(--muted)}.chkm{font-size:13px;font-weight:700;background:var(--sunk);border-radius:999px;padding:4px 10px;white-space:nowrap}.rose{position:relative;width:calc(100% - 44px);max-width:300px;aspect-ratio:1;margin:8px auto 0}.rose>svg{position:absolute;inset:0;width:100%;height:100%}.rlab{position:absolute;transform:translate(-50%,-50%);width:66px;text-align:center;font-size:11.5px;line-height:1.15}.rlab b{font-size:13px}.rmid{position:absolute;inset:22%;display:flex;flex-direction:column;align-items:center;justify-content:center}.rpct{font-family:var(--f-display);font-size:40px;font-weight:800;line-height:.9}.rlbl{font-size:13px;font-weight:700}.chsum{text-align:center;margin:6px 0 0;font-size:14px}.chbest{text-align:center;margin:4px 0 0;font-size:14px;font-weight:700}.chwhy{border-top:1px solid var(--line);margin-top:10px;padding-top:8px;display:grid;gap:8px}.chft{display:flex;justify-content:space-between;gap:8px;font-size:14px}.chbar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden;margin-top:3px}.chbar>div{height:6px;border-radius:3px}
 .zapis{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:10px;padding:8px 12px;border-radius:12px;background:var(--surface);border:1px dashed var(--line);font-size:14px;line-height:1.35;text-align:left}
@@ -362,7 +363,7 @@ ul.plain li{margin:3px 0}
   <section class="step" aria-labelledby="s3">
     <div class="eyebrow" id="s3"><b>3</b> Revíry</div>
     <div class="actions">
-      <button class="btn primary big" id="findBtn" disabled>Najít 3 nejbližší revíry</button>
+      <button class="btn primary big" id="findBtn" disabled>Najít 3 nejbližší revíry<small class="btnsub">a jejich šanci na záběr dnes</small></button>
       <button class="btn big" id="stockBtn" style="font-size:19px">
         <svg width="28" height="17" viewBox="0 0 84 52" aria-hidden="true" style="color:var(--accent)"><use href="#fish-sm"/></svg>
         Zarybněno za posledních 6 týdnů
@@ -675,12 +676,12 @@ $("placeForm").addEventListener("submit",async e=>{
 /* ---------- 3 nejbližší ---------- */
 $("findBtn").onclick=async()=>{
   if(!S.loc) return; $("detail").innerHTML=""; S.sel=null; $("out").dataset.view="";
-  $("out").innerHTML=statusBox("Hledám nejbližší revíry…");
+  $("out").innerHTML=statusBox("Hledám nejbližší revíry a počítám šanci na záběr…");
   await loadRis();
   const list=risOfTyp(); if(!list.length){ $("out").innerHTML=`<div class="status">${RIS.all?"Nepstruhové revíry se doplní při nejbližší ranní aktualizaci dat.":"Data revírů se nepodařilo načíst. Zkus to za chvíli."}</div>`; return; }
   S.results=list.map(r=>({r,...risDist(r,S.loc)})).filter(x=>x.d<1e8).sort((a,b)=>a.d-b.d).slice(0,3).map(risResult);
-  renderResults(`Tři nejbližší ${S.typ==="P"?"pstruhové":"nepstruhové"} revíry`,`<div class="chwrap"><button class="btn primary big" id="chanceBtn" aria-pressed="false"><svg width="28" height="17" viewBox="0 0 84 52" aria-hidden="true" style="color:currentColor"><use href="#fish-sm"/></svg> Šance na záběr</button><div id="chanceOut"></div></div>`);
-  $("chanceBtn").onclick=showChance;
+  renderResults(`Tři nejbližší ${S.typ==="P"?"pstruhové":"nepstruhové"} revíry`,`<div id="chTip">${statusBox("Počítám šanci na záběr…")}</div>`);
+  chanceList();
   fitTo([S.loc,...S.results]);
 };
 function renderResults(title,extra=""){
@@ -709,7 +710,8 @@ async function openDetail(i){
   box.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
   const p=await getData(`podminky/${r.c}.json`);
   if(S.results[i]!==x) return;
-  box.innerHTML=`<article class="sheet">${head(r,x,p)}${p?await body(r,x,p):`<section class="sec"><p class="hint">Podmínky tohoto revíru se doplní při nejbližší ranní aktualizaci. Zatím je najdeš na kartě revíru v RIS.</p></section>`}${links(r,x)}</article>`;
+  box.innerHTML=`<article class="sheet">${head(r,x,p)}<section class="sec" id="chDetail"></section>${p?await body(r,x,p):`<section class="sec"><p class="hint">Podmínky tohoto revíru se doplní při nejbližší ranní aktualizaci. Zatím je najdeš na kartě revíru v RIS.</p></section>`}${links(r,x)}</article>`;
+  chanceDetail(x);
 }
 const risUrl=r=>"https://ris.rybsvaz.cz/karta-reviru/-/"+r.url;
 function head(r,x,p){ p=p||{};
@@ -1155,7 +1157,7 @@ function chanceScore(r,w,fl,st,p){
   const sum=closed||[pos.length?"Pomáhá: "+pos.join(", ")+".":"",neg.length?"Brzdí: "+neg.join(", ")+".":""].filter(Boolean).join(" ")||"Podmínky jsou průměrné.";
   return {pct,F,best,sum,closed:!!closed};
 }
-function chanceCard(x,i,c){ const r=x.r, p=c.pct;
+function chanceCard(x,i,c,inDetail){ const r=x.r, p=c.pct;
   const col=c.closed?"var(--muted)":p<35?"var(--warn)":p<65?"var(--accent)":"var(--ok)";
   const lab=c.closed?"Lov není povolen":p<20?"Slabá šance":p<40?"Spíš slabší":p<65?"Dobrá šance":p<85?"Velmi dobrá":"Výborná šance";
   const C=150,R=106,LR=140,n=c.F.length,gap=4, ptA=(a,rr)=>[C+rr*Math.sin(a*Math.PI/180),C-rr*Math.cos(a*Math.PI/180)];
@@ -1164,7 +1166,7 @@ function chanceCard(x,i,c){ const r=x.r, p=c.pct;
     return {d:`M${p0[0].toFixed(1)} ${p0[1].toFixed(1)} A${R} ${R} 0 0 1 ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}`,sc,op,l,f}; });
   const sign=v=>v>0?"+"+v:v<0?"−"+Math.abs(v):"0", fcol=v=>v>0?"var(--ok)":v<0?"var(--bad)":"var(--muted)";
   const scale=(0.45+0.75*p/100).toFixed(2);
-  return `<article class="chcard"><div class="chhead"><div><div class="chnum">${esc(fmtNum(r.c))}</div><h3>${esc(r.n)}</h3><div class="hint">MO ${esc(r.o)}</div></div><span class="chkm">${esc(fmtKm(x._d))} km</span></div>
+  return `<article class="chcard">${inDetail?`<h3 class="chdh">Šance na záběr dnes</h3>`:`<div class="chhead"><div><div class="chnum">${esc(fmtNum(r.c))}</div><h3>${esc(r.n)}</h3><div class="hint">MO ${esc(r.o)}</div></div><span class="chkm">${esc(fmtKm(x._d))} km</span></div>`}
     <div class="rose"><svg viewBox="0 0 300 300" aria-hidden="true">${segs.map(s=>`<path d="${s.d}" fill="none" stroke="var(--sunk)" stroke-width="24"/><path d="${s.d}" fill="none" stroke="${s.sc}" stroke-opacity="${s.op}" stroke-width="24"/>`).join("")}</svg>
       ${segs.map(s=>`<div class="rlab" style="left:${(s.l[0]/3).toFixed(2)}%;top:${(s.l[1]/3).toFixed(2)}%"><div>${esc(s.f.short)}</div><b style="color:${fcol(s.f.pts)}">${sign(s.f.pts)}</b></div>`).join("")}
       <div class="rmid"><svg viewBox="0 0 120 64" aria-hidden="true" style="width:86px;height:46px;transform:scale(${scale})"><path d="M6 32 L-8 16 L-4 32 L-8 48 Z" transform="translate(14 0)" fill="${col}"/><path d="M18 32 C34 8, 86 6, 112 30 C108 36, 104 40, 98 44 C78 58, 36 56, 18 32 Z" fill="${col}"/><path d="M54 14 C60 4, 74 4, 80 12" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round"/><circle cx="96" cy="27" r="4" fill="#fff"/></svg>
@@ -1172,17 +1174,28 @@ function chanceCard(x,i,c){ const r=x.r, p=c.pct;
     <p class="chsum">${esc(c.sum)}</p>${c.best?`<p class="chbest">Nejlepší čas: ${esc(c.best)}</p>`:""}
     <div class="chwhy"><div class="hint" style="font-weight:700">Proč takové hodnocení</div>
       ${c.F.map(f=>`<div class="chf"><div class="chft"><span><b>${esc(f.name)}</b> · ${esc(f.text)}</span><b style="color:${fcol(f.pts)}">${sign(f.pts)}</b></div><div class="chbar"><div style="width:${Math.min(100,20+Math.abs(f.pts)*5)}%;background:${f.pts>0?"var(--ok)":f.pts<0?"var(--bad)":"#9AABA3"}"></div></div></div>`).join("")}</div>
-    <p style="margin:8px 0 0"><button class="linkbtn" data-chopen="${i}">Otevřít detail revíru</button></p></article>`; }
-async function showChance(){ const box=$("chanceOut"), btn=$("chanceBtn"); if(!box||!S.results) return;
-  if(box.innerHTML.trim()){ box.innerHTML=""; btn.setAttribute("aria-pressed","false"); return; }
-  btn.setAttribute("aria-pressed","true"); box.innerHTML=statusBox("Počítám šanci na záběr…");
-  const res=await Promise.all(S.results.map(async x=>{ const pt=isFinite(x.lat)?{lat:x.lat,lon:x.lon}:S.loc;
-    const [w,fl,st,p]=await Promise.all([wxAt(pt.lat,pt.lon),revFlow(x.r),revStock(x.r),getData(`podminky/${x.r.c}.json`)]); return chanceScore(x.r,w,fl,st,p); }));
-  const now=new Date();
-  box.innerHTML=`<p class="hint" style="text-align:center;margin:8px 0 0">Dnes ${now.getHours()}:${String(now.getMinutes()).padStart(2,"0")} · seřazeno podle vzdálenosti</p>
-    ${S.results.map((x,i)=>chanceCard(x,i,res[i])).join("")}
-    <p class="hint" style="margin-top:10px">Odhad z předpovědi počasí (Open-Meteo), průtoku (ČHMÚ), zarybnění (RIS a svazy), denní doby a ročního období. Nejde o záruku – ryby mají i své dny.</p>`;
-  box.querySelectorAll("[data-chopen]").forEach(b=>b.onclick=()=>openDetail(+b.dataset.chopen)); }
+    ${inDetail?`<p class="hint" style="margin:8px 0 0">Odhad z počasí (Open-Meteo), průtoku (ČHMÚ), zarybnění, denní doby a sezóny – nejde o záruku.</p>`:""}</article>`; }
+
+const CH={};
+async function chanceFor(x){ const k=x.r.c; if(CH[k]) return CH[k];
+  CH[k]=(async()=>{ const pt=isFinite(x.lat)?{lat:x.lat,lon:x.lon}:S.loc||{lat:49.8,lon:15.5};
+    const [w,fl,st,p]=await Promise.all([wxAt(pt.lat,pt.lon),revFlow(x.r),revStock(x.r),getData(`podminky/${x.r.c}.json`)]); return chanceScore(x.r,w,fl,st,p); })();
+  setTimeout(()=>{ delete CH[k]; },20*60e3); return CH[k]; }
+const chColor=c=>c.closed?"var(--muted)":c.pct<35?"var(--warn)":c.pct<65?"var(--accent)":"var(--ok)";
+function miniRing(c,km){ const C=2*Math.PI*100, col=chColor(c);
+  return `<span class="mring" title="Šance na záběr"><svg viewBox="0 0 236 236" aria-hidden="true"><circle cx="118" cy="118" r="100" fill="none" stroke="var(--sunk)" stroke-width="26"/><circle cx="118" cy="118" r="100" fill="none" stroke="${col}" stroke-width="26" stroke-linecap="round" stroke-dasharray="${(C*c.pct/100).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 118 118)"/></svg><b>${c.closed?"–":c.pct+"%"}</b></span><small>${km}</small>`; }
+async function chanceList(){ if(!S.results) return; const tip=$("chTip"); const list=S.results.slice();
+  const res=await Promise.all(list.map(x=>chanceFor(x).catch(()=>null)));
+  if(S.results!==list&&S.results?.[0]?.r!==list[0]?.r) return;
+  $("out").querySelectorAll(".card").forEach(b=>{ const i=+b.dataset.i, c=res[i], d=b.querySelector(".dist"); if(!c||!d) return;
+    d.classList.add("chd"); d.innerHTML=miniRing(c,isFinite(list[i]._d)?fmtKm(list[i]._d)+" km":""); });
+  if(!tip) return; const ok=res.map((c,i)=>({c,i})).filter(o=>o.c&&!o.c.closed).sort((a,b)=>b.c.pct-a.c.pct);
+  if(!ok.length){ tip.innerHTML=`<div class="chtip"><b>Na těchto revírech dnes lovit nelze.</b> <span class="hint">${esc(res.find(Boolean)?.sum||"")}</span></div>`; return; }
+  const b=ok[0], x=list[b.i];
+  tip.innerHTML=`<button class="chtip" data-i="${b.i}"><svg width="30" height="18" viewBox="0 0 84 52" aria-hidden="true" style="color:${chColor(b.c)};flex:none"><use href="#fish-sm"/></svg><span>Dnes nejspíš zabere na <b>${esc(x.r.n)}</b> – šance <b>${b.c.pct}&nbsp;%</b>${b.c.best?`, ${esc(b.c.best)}`:""}.<br><span class="hint">Klepni na revír a uvidíš proč.</span></span></button>`;
+  tip.querySelector("button").onclick=()=>openDetail(b.i); }
+async function chanceDetail(x){ const box=$("chDetail"); if(!box) return; box.innerHTML=statusBox("Počítám šanci na záběr…");
+  try{ const c=await chanceFor(x); if($("chDetail")!==box) return; box.innerHTML=chanceCard(x,0,c,true); }catch(e){ box.innerHTML=""; } }
 
 /* ---------- tlačítka: druhé kliknutí obsah skryje ---------- */
 var ACTIVE=null, ACTIVE_LOC="";

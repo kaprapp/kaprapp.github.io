@@ -1,9 +1,9 @@
 # Kapr
 
 Webová aplikace pro kapraře: nejbližší nepstruhové (i pstruhové) revíry ČRS podle polohy, podmínky lovu z RIS Portálu,
-průtoky nížinných řek z ČHMÚ, zarybnění a kapří aktuality. Sesterská aplikace k [Pstruhovi](https://pstruhapp.github.io).
+průtoky nížinných řek z ČHMÚ, zarybnění a kapří aktuality. Sesterská aplikace k [Pstruhovi](https://pstruh.iryba.cz).
 
-**Stránka:** https://kaprapp.github.io
+**Stránka:** https://kapr.iryba.cz
 
 ## Jak to funguje
 - `index.html` – celá aplikace (mapa OpenStreetMap přes Leaflet).

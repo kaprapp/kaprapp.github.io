@@ -1,5 +1,5 @@
 // Kapr: jednoduchá offline záloha. Vždy zkouší síť, při výpadku použije poslední uloženou verzi.
-const CACHE = "kapr-v23";
+const CACHE = "kapr-v24";
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
 self.addEventListener("fetch", (e) => {

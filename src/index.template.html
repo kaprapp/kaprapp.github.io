@@ -466,24 +466,18 @@ function setLoc(lat,lon,label,source,zoom=true){
 function renderLoc(){
   const on=!!S.loc;$("locBox").hidden=!on;$("findBtn").disabled=!on;
   if(!on) return;
-  const src={gps:"GPS",misto:"hledané místo",mapa:"upřesněno v mapě",ukazka:"ukázková poloha"}[S.loc.source]||"";
+  const src={gps:"GPS",misto:"hledané místo",mapa:"upřesněno v mapě"}[S.loc.source]||"";
   $("locName").textContent=S.loc.label;
   $("locCoord").textContent=fmtC(S.loc.lat,S.loc.lon)+(src?" · "+src:"");
 }
 function resetResults(){ACTIVE=null;markActive();S.results=null;S.sel=null;$("out").innerHTML="";$("out").dataset.view="";$("detail").innerHTML="";drawResults();}
 
 /* ---------- GPS ---------- */
-const DEF_LOC={lat:50.0755,lon:14.4378};
-function useDefault(why){ if(S.loc&&S.loc.source!=="ukazka") return false;
-  setLoc(DEF_LOC.lat,DEF_LOC.lon,null,"ukazka",false); map.setView([DEF_LOC.lat,DEF_LOC.lon],10);
-  msg("gpsMsg",(why?why+" ":"")+"Zatím ukazuji ukázkovou polohu – zadej své místo (Podle místa) nebo klikni do mapy.",!!why); return true; }
 function locate(silent){
-  if(!navigator.geolocation){ if(!useDefault("Tento prohlížeč polohu nezjistí.")&&!silent) msg("gpsMsg","Tento prohlížeč polohu nenabízí. Vlož souřadnice v nápovědě.",true); return; }
+  if(!navigator.geolocation){ if(!silent) msg("gpsMsg","Tento prohlížeč polohu nenabízí. Vlož souřadnice v nápovědě.",true); return; }
   msg("gpsMsg","Zjišťuji polohu…");
   navigator.geolocation.getCurrentPosition(p=>{msg("gpsMsg",`Poloha načtena (přesnost asi ${Math.round(p.coords.accuracy)} m). Bod můžeš upřesnit v mapě.`);setLoc(p.coords.latitude,p.coords.longitude,null,"gps");},
-    e=>{ const why=e.code===1?"Poloha není povolená.":"Polohu se nepodařilo zjistit.";
-      if(useDefault(why)) return;
-      if(silent){msg("gpsMsg","Telefon se zeptá na povolení polohy.");return;}
+    e=>{ if(silent){msg("gpsMsg","Telefon se zeptá na povolení polohy.");return;}
       msg("gpsMsg",e.code===1?"Poloha není povolená. Povol ji prohlížeči (viz nápověda níže) a zkus to znovu.":"Polohu se nepodařilo zjistit. Zkus to venku nebo za chvíli znovu.",true); },
     {enableHighAccuracy:true,timeout:15000,maximumAge:60000});
 }
@@ -1148,11 +1142,8 @@ function markActive(){ ["findBtn","stockBtn","flowBtn","newsBtn","fishBtn"].forE
 renderToggles(); renderLoc(); drawLoc();
 if(S.loc) map.setView([S.loc.lat,S.loc.lon],10);
 loadRis().then(()=>drawRevs());
-if(!readHashLoc()){
-  if(!S.loc) useDefault("");
-  else if(S.loc.source==="ukazka") msg("gpsMsg","Zatím ukazuji ukázkovou polohu – klepni na Zjistit polohu, zadej své místo nebo klikni do mapy.");
-  if(S.mode==="gps" && navigator.permissions?.query)
-    navigator.permissions.query({name:"geolocation"}).then(st=>{ if(st.state==="granted") locate(true); }).catch(()=>{}); }
+if(!readHashLoc() && S.mode==="gps" && navigator.permissions?.query){
+  navigator.permissions.query({name:"geolocation"}).then(st=>{ if(st.state==="granted") locate(true); }).catch(()=>{}); }
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();
 </script>

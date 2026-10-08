@@ -236,7 +236,9 @@ let list = null;
 if (want("reviry")) steps.push(["reviry", async () => { list = await reviry(); return { reviru: list.length }; }]);
 if (want("podminky")) steps.push(["podminky", async () => {
   if (!list) { const r = await readJSON("reviry.json"); list = r?.reviry?.filter((x) => x[6]) || []; }
-  return podminky(list.filter((x) => x[3] !== "MRS"));
+  // RIS občas vede dva revíry se stejným číslem – podmínky ukládáme jen jednou, jinak se soubor poškodí souběžným zápisem
+  const seenC = new Set();
+  return podminky(list.filter((x) => x[3] !== "MRS" && !seenC.has(x[0]) && seenC.add(x[0])));
 }]);
 if (want("prutoky")) steps.push(["prutoky", prutoky]);
 if (want("aktuality")) steps.push(["aktuality", aktuality]);

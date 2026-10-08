@@ -143,6 +143,25 @@ export function parseKml(kml) {
   return by;
 }
 
+// Dočasné zákazy lovu, které pobočné spolky vyhlašují na svých webech (zatím MRS Hodonín)
+const ZAKAZY = [{ ps: "Hodonín", url: "https://www.mrshodo.cz/" }];
+const isoD = (d) => { const m = String(d).match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})/); return m ? `${m[3]}-${m[2].padStart(2, "0")}-${m[1].padStart(2, "0")}` : null; };
+export function parseZakazy(html, ps) {
+  const t = decodeEntities(stripTags(String(html).replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, "").replace(/<br\s*\/?>|<\/p>|<\/div>|<\/li>|<\/h\d>/gi, "\n"))).replace(/\u00a0/g, " ");
+  const out = [];
+  // oznámení končí podpisem spolku; v každém bloku se zákazem hledáme revír a data
+  for (let b of t.split(/Moravský rybářský svaz,?\s*z\.\s*s\./i)) {
+    const i0 = b.search(/ZÁKAZ\s+RYBOLOVU/i); if (i0 < 0) continue; b = b.slice(i0);
+    const why = ((b.match(/(Z\s+důvodu[^\n]*?)(?:\s+je\s+na\s+revíru|:|\n)/i) || [])[1] || "").trim();
+    const od = isoD((b.match(/Od[^\d\n]{0,20}(\d{1,2}\.\s*\d{1,2}\.\s*\d{4})/i) || [])[1]);
+    const doo = isoD((b.match(/do[^\d\n]{0,20}(\d{1,2}\.\s*\d{1,2}\.\s*\d{4})/i) || [])[1]);
+    if (!od || !doo) continue;
+    for (const c of b.matchAll(/(?:^|\n)\s*(\d{3})\s?(\d{3})\s+([A-ZÁ-Ž][^\n]*)/g))
+      out.push({ code: c[1] + c[2], od, do: doo, duvod: `Zákaz lovu – vyhlásil PS ${ps}${why ? ": " + why.replace(/\s+/g, " ") : ""}` });
+  }
+  return out;
+}
+
 const clean = (html) => decodeEntities(stripTags(String(html || "").replace(/<\/p>|<br\s*\/?>/gi, "\n"))).replace(/ /g, " ").replace(/[ \t]+/g, " ").replace(/\n\s*\n+/g, "\n").trim();
 const cap = (s) => s.toUpperCase();
 
@@ -200,5 +219,12 @@ export async function mrsAll({ today, log = console.log }) {
     r[7] = [[Math.round(c.x / c.n), Math.round(c.y / c.n)]]; r[8] = 1;
   }
   log("MRS revíry", rows.length, "(bez jakékoli polohy vynecháno", drop + ")");
+  for (const z of ZAKAZY) {
+    try {
+      const list = parseZakazy(await req(z.url), z.ps).filter((k) => k.do >= today);
+      for (const k of list) { const p = pod.find((x) => x.c === k.code); if (p) p.kratkodobe.push({ od: k.od, do: k.do, duvod: k.duvod }); }
+      log("MRS zákazy", z.ps, list.length);
+    } catch (e) { log("MRS zákazy chyba", z.ps, e.message); }
+  }
   return { rows, pod };
 }

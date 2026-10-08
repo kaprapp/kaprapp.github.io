@@ -75,7 +75,7 @@ async function reviry() {
     log("MRS chyba – ponechávám včerejší", e.message);
     const old = (await readJSON("reviry.json"))?.reviry?.filter((r) => r[3] === "MRS") || [];
     list.push(...old);
-    for (const r of old) { const p = await readJSON(`podminky/${r[0]}.json`); if (p?.mrs) await writeJSON(`podminky/${r[0]}.json`, { ...p, stav: now.date, ...mrsConditions(now.date, p.t, p.mrs.flags || {}) }); }
+    for (const r of old) { const p = await readJSON(`podminky/${r[0]}.json`); if (p?.mrs) await writeJSON(`podminky/${r[0]}.json`, { ...p, stav: now.date, ...mrsConditions(now.date, p.t, p.mrs.flags || {}), kratkodobe: (p.kratkodobe || []).filter((k) => !k.do || k.do >= now.date) }); }
   }
   list.sort((a, b) => a[1].localeCompare(b[1], "cs"));
   await writeJSON("reviry.json", { aktualizovano: now.iso, zdroj: "RIS Portál ČRS a MRS", reviry: list });

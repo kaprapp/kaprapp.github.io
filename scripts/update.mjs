@@ -4,6 +4,7 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { buildStanice } from "./stanice.mjs";
 import { zarybneniSvazy } from "./zarybneni-svazy.mjs";
+import { mrsAll, mrsConditions } from "./mrs.mjs";
 import { get, pool, pragueNow, encodeGeom, stripTags, decodeEntities, parseCzDate, parseStockingText } from "./lib.mjs";
 
 const DATA = new URL("../data/", import.meta.url).pathname;
@@ -62,9 +63,22 @@ async function reviry() {
     }
     log("revíry bez mapy doplněny", add, "z úplného seznamu", (all.items || []).length);
   } catch (e) { log("úplný seznam revírů chyba", e.message); }
-  list.sort((a, b) => a[1].localeCompare(b[1], "cs"));
   if (list.length < 500) throw new Error("podezřele málo revírů: " + list.length);
-  await writeJSON("reviry.json", { aktualizovano: now.iso, zdroj: "RIS Portál ČRS", reviry: list });
+  // Revíry Moravského rybářského svazu (mimo RIS). Když MRS selže, ponecháme včerejší.
+  try {
+    const m = await mrsAll({ today: now.date, log });
+    if (m.rows.length < 100) throw new Error("podezřele málo revírů MRS: " + m.rows.length);
+    list.push(...m.rows);
+    for (const p of m.pod) await writeJSON(`podminky/${p.c}.json`, p);
+    log("MRS uloženo", m.rows.length);
+  } catch (e) {
+    log("MRS chyba – ponechávám včerejší", e.message);
+    const old = (await readJSON("reviry.json"))?.reviry?.filter((r) => r[3] === "MRS") || [];
+    list.push(...old);
+    for (const r of old) { const p = await readJSON(`podminky/${r[0]}.json`); if (p?.mrs) await writeJSON(`podminky/${r[0]}.json`, { ...p, stav: now.date, ...mrsConditions(now.date, p.t, p.mrs.flags || {}) }); }
+  }
+  list.sort((a, b) => a[1].localeCompare(b[1], "cs"));
+  await writeJSON("reviry.json", { aktualizovano: now.iso, zdroj: "RIS Portál ČRS a MRS", reviry: list });
   log("revíry uloženy", list.length);
   return list;
 }
@@ -222,7 +236,7 @@ let list = null;
 if (want("reviry")) steps.push(["reviry", async () => { list = await reviry(); return { reviru: list.length }; }]);
 if (want("podminky")) steps.push(["podminky", async () => {
   if (!list) { const r = await readJSON("reviry.json"); list = r?.reviry?.filter((x) => x[6]) || []; }
-  return podminky(list);
+  return podminky(list.filter((x) => x[3] !== "MRS"));
 }]);
 if (want("prutoky")) steps.push(["prutoky", prutoky]);
 if (want("aktuality")) steps.push(["aktuality", aktuality]);
@@ -231,7 +245,7 @@ if (want("zarybneni")) steps.push(["zarybneni", zarybneni]);
 // ať víme, kdy ČRS data začne plnit (pak je začneme používat pro celé Česko).
 if (want("zarybneni") && (new Date().getDay() === 1 || process.argv.includes("rissonda"))) steps.push(["risStatistika", async () => {
   const rv = (await readJSON("reviry.json")).reviry; const y = +now.date.slice(0, 4);
-  const sample = rv.filter((_, i) => i % Math.ceil(rv.length / 40) === 0);
+  const crs = rv.filter((r) => r[3] !== "MRS"); const sample = crs.filter((_, i) => i % Math.ceil(crs.length / 40) === 0);
   let plnych = 0, dotazu = 0;
   for (const r of sample) for (const id of [34, 58, 59]) {
     try { dotazu++; const j = await get(`${API}/statistika/${r[6]}/zarybneni?rokOd=${y - 1}&rokDo=${y}&idRyby=${id}`, { json: true, tries: 1 }); if ((j.items || []).length) plnych++; } catch {}

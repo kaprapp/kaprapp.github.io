@@ -533,7 +533,7 @@ ul.plain li{margin:3px 0}
     <p><a class="btn primary" id="contactSend" href="#">Odeslat e-mailem</a></p>
     <p>nebo přímo na <a id="contactMail" href="#"></a></p>
   </div>
-  <p class="foot" id="foot">Revíry a podmínky lovu z RIS Portálu ČRS, průtoky z ČHMÚ, mapa © přispěvatelé OpenStreetMap. Data se obnovují každé ráno. Před lovem si vždy ověř aktuální podmínky na kartě revíru v RIS. Revíry Moravského rybářského svazu zatím nejsou zahrnuty.</p>
+  <p class="foot" id="foot">Revíry a podmínky lovu z RIS Portálu ČRS a Moravského rybářského svazu, průtoky z ČHMÚ, mapa © přispěvatelé OpenStreetMap. Data se obnovují každé ráno. Před lovem si vždy ověř aktuální podmínky na kartě revíru. Aplikace neobsahuje soukromé revíry.</p>
   <p class="foot" style="font-size:13px;opacity:.85"><a href="https://iryba.cz/#instalace">📲 Jak si aplikaci dát na plochu telefonu i počítače – iryba.cz</a></p>
   <p class="foot contactline" id="contactLine" hidden>Chybí vám revír, nesedí údaj nebo máte nápad na zlepšení? Napište nám: <a id="contactLink" href="#"></a><br><span style="font-size:12px">Pište prosím jen k aplikaci – co nesedí, u kterého revíru a jak je to správně.</span></p>
 </div>
@@ -544,7 +544,8 @@ ul.plain li{margin:3px 0}
 const DATA_BASES=["data/"];
 const TOWNS=[["Praha",50.08,14.42,1],["Brno",49.19,16.61,1],["Ostrava",49.83,18.29,1],["Plzeň",49.74,13.38,1],["Liberec",50.77,15.06,1],["Olomouc",49.59,17.25,1],["České Budějovice",48.97,14.47,1],["Hradec Králové",50.21,15.83,1],["Ústí nad Labem",50.66,14.03,1],["Pardubice",50.04,15.78,1],["Zlín",49.23,17.67,1],["Karlovy Vary",50.23,12.87,1],["Jihlava",49.40,15.59,1],["Havířov",49.78,18.43,2],["Kladno",50.15,14.10,2],["Most",50.50,13.64,2],["Opava",49.94,17.90,2],["Frýdek-Místek",49.68,18.35,2],["Karviná",49.85,18.54,2],["Teplice",50.64,13.82,2],["Děčín",50.78,14.21,2],["Chomutov",50.46,13.42,2],["Jablonec nad Nisou",50.72,15.17,2],["Mladá Boleslav",50.41,14.90,2],["Prostějov",49.47,17.11,2],["Přerov",49.46,17.45,2],["Třebíč",49.21,15.88,2],["Česká Lípa",50.69,14.54,2],["Tábor",49.41,14.66,2],["Znojmo",48.86,16.05,2],["Příbram",49.69,14.01,2],["Cheb",50.08,12.37,2],["Trutnov",50.56,15.91,2],["Kolín",50.03,15.20,2],["Písek",49.31,14.15,2],["Kroměříž",49.30,17.39,2],["Šumperk",49.97,16.97,2],["Vsetín",49.34,17.99,2],["Valašské Meziříčí",49.47,17.97,2],["Litoměřice",50.53,14.13,2],["Uherské Hradiště",49.07,17.46,2],["Hodonín",48.85,17.13,2],["Břeclav",48.76,16.88,2],["Český Krumlov",48.81,14.32,2],["Strakonice",49.26,13.90,2],["Klatovy",49.40,13.30,2],["Sokolov",50.18,12.64,2],["Beroun",49.96,14.07,2],["Kutná Hora",49.95,15.27,2],["Havlíčkův Brod",49.61,15.58,2],["Žďár nad Sázavou",49.56,15.94,2],["Náchod",50.42,16.16,2],["Jindřichův Hradec",49.14,15.00,2],["Benešov",49.78,14.69,2],["Rakovník",50.10,13.73,2],["Louny",50.36,13.80,2],["Žatec",50.33,13.55,2],["Semily",50.60,15.33,2],["Turnov",50.59,15.16,2],["Jičín",50.44,15.35,2],["Vrchlabí",50.63,15.61,2],["Krnov",50.09,17.70,2],["Bruntál",49.99,17.46,2],["Jeseník",50.23,17.20,2],["Ústí nad Orlicí",49.97,16.39,2],["Svitavy",49.76,16.47,2],["Blansko",49.36,16.64,2],["Vyškov",49.28,17.00,2],["Pelhřimov",49.43,15.22,2],["Prachatice",49.01,14.00,2],["Sušice",49.23,13.52,2],["Domažlice",49.44,12.93,2],["Tachov",49.80,12.63,2],["Rokycany",49.74,13.59,2],["Mělník",50.35,14.47,2],["Nymburk",50.19,15.04,2],["Rychnov nad Kněžnou",50.16,16.27,2],["Vyšší Brod",48.62,14.31,3],["Lipno nad Vltavou",48.64,14.22,3],["Kamenice nad Lipou",49.30,15.08,3],["Sázava",49.87,14.90,3],["Zruč nad Sázavou",49.74,15.11,3],["Ledeč nad Sázavou",49.69,15.28,3],["Světlá nad Sázavou",49.67,15.40,3],["Hřensko",50.87,14.24,3],["Frymburk",48.66,14.17,3],["Rožmberk nad Vltavou",48.65,14.37,3],["Kašperské Hory",49.14,13.56,3],["Železná Ruda",49.14,13.23,3],["Harrachov",50.77,15.43,3],["Špindlerův Mlýn",50.73,15.61,3],["Rožnov pod Radhoštěm",49.46,18.14,3],["Frenštát pod Radhoštěm",49.55,18.21,3],["Frýdlant nad Ostravicí",49.59,18.36,3],["Hranice",49.55,17.73,3],["Tišnov",49.35,16.42,3],["Bystřice nad Pernštejnem",49.52,16.26,3],["Vranov nad Dyjí",48.89,15.81,3],["Kraslice",50.32,12.52,3],["Nejdek",50.32,12.73,3],["Loket",50.19,12.75,3],["Kadaň",50.38,13.27,3],["Telč",49.18,15.45,3],["Slavonice",49.00,15.35,3],["Nové Hrady",48.79,14.78,3],["Třeboň",49.00,14.77,3],["Veselí nad Lužnicí",49.18,14.70,3],["Týn nad Vltavou",49.22,14.42,3],["Orlík nad Vltavou",49.51,14.17,3],["Davle",49.89,14.40,3],["Lenora",48.93,13.79,3],["Vimperk",49.05,13.78,3],["Bělá pod Pradědem",50.17,17.20,3],["Hanušovice",50.07,16.94,3],["Králíky",50.08,16.76,3],["Broumov",50.59,16.33,3],["Kostelec nad Orlicí",50.12,16.21,3],["Žamberk",50.09,16.47,3],["Nové Město na Moravě",49.56,16.07,3],["Jablunkov",49.58,18.76,3],["Bílá",49.44,18.45,3],["Vizovice",49.22,17.85,3],["Luhačovice",49.10,17.76,3],["Mikulov",48.81,16.64,3]];
 const MO_LOC={"ÚN Rozkoš":[16.07,50.37],"ÚN Pastviny":[16.57,50.09],"Smiřice":[15.865,50.30],"Holice":[15.986,50.066],"Moravany":[15.94,50.00],"Chroustovice":[15.99,49.95],"Červený Kostelec":[16.09,50.476],"Košťálov":[15.40,50.57],"Libáň":[15.217,50.375],"Ronov nad Doubravou":[15.58,49.89],"Přelouč":[15.56,50.04],"Borohrádek":[16.09,50.10],"Týniště nad Orlicí":[16.08,50.15],"Třebechovice":[15.99,50.20],"Starý Ples":[15.88,50.36],"Česká Skalice":[16.04,50.39],"Havlovice":[16.01,50.48],"Jaroměř":[15.92,50.356],"Hradec Králové":[15.83,50.21],"Pardubice":[15.78,50.04]};
-const SVN={"JČ":"ČRS Jihočeský ÚS","MS":"ČRS Moravskoslezský ÚS","SČ":"ČRS Severočeský ÚS","STČ":"ČRS Středočeský ÚS","VČ":"ČRS Východočeský ÚS","ZČ":"ČRS Západočeský ÚS","PHA":"ČRS ÚS města Prahy","":"ČRS"};
+const SVN={"JČ":"ČRS Jihočeský ÚS","MS":"ČRS Moravskoslezský ÚS","SČ":"ČRS Severočeský ÚS","STČ":"ČRS Středočeský ÚS","VČ":"ČRS Východočeský ÚS","ZČ":"ČRS Západočeský ÚS","PHA":"ČRS ÚS města Prahy","MRS":"Moravský rybářský svaz","":"ČRS"};
+const isMRS=r=>!!r&&r.s==="MRS"; const orgL=r=>(isMRS(r)?"PS ":"MO ")+r.o;
 
 /* ---------- pomocné ---------- */
 const $=id=>document.getElementById(id);
@@ -705,7 +706,7 @@ function renderResults(title,extra=""){
   const items=S.results.map((x,i)=>{const r=x.r;
     return `<button class="card" data-i="${i}" ${S.sel===i?'aria-current="true"':""}>
       <span class="num">${esc(x._label??i+1)}</span>
-      <div><h3>${esc(x.title||r?.n||"")}</h3><div class="meta">${esc(x.sub||(r?fmtNum(r.c)+" · MO "+r.o:""))}</div>
+      <div><h3>${esc(x.title||r?.n||"")}</h3><div class="meta">${esc(x.sub||(r?fmtNum(r.c)+" · "+orgL(r):""))}</div>
       ${x.pozn?`<div class="meta">${esc(x.pozn)}</div>`:""}${r?.approx?`<div class="meta">Poloha přibližná – RIS u revíru nemá mapu</div>`:""}
       ${x.pill?`<div class="meta" style="margin-top:4px"><span class="pill vysoka">${esc(x.pill)}</span></div>`:""}</div>
       <span class="dist">${isFinite(x._d)?fmtKm(x._d)+"<small>KM VZDUŠNĚ</small>":x._date?dShort(x._date)+"<small>NAPOSLEDY</small>":""}</span></button>`;}).join("");
@@ -730,10 +731,10 @@ async function openDetail(i){
   box.innerHTML=`<article class="sheet">${head(r,x,p)}<section class="sec" id="chDetail"></section>${p?await body(r,x,p):`<section class="sec"><p class="hint">Podmínky tohoto revíru se doplní při nejbližší ranní aktualizaci. Zatím je najdeš na kartě revíru v RIS.</p></section>`}${links(r,x)}</article>`;
   chanceDetail(x);
 }
-const risUrl=r=>"https://ris.rybsvaz.cz/karta-reviru/-/"+r.url;
+const risUrl=r=>isMRS(r)?"https://mrsbrno.cz/reviry/"+String(r.url).replace(/^mrs:/,""):"https://ris.rybsvaz.cz/karta-reviru/-/"+r.url;
 function head(r,x,p){ p=p||{};
   return `<div class="sheet-head"><div class="rid">${esc(fmtNum(r.c))} · ${esc(SVN[r.s]||"ČRS")} · ${r.t==="P"?"pstruhový":"mimopstruhový"}</div>
-  <h2>${esc(r.n)}</h2><p>Hospodaří MO ${esc(r.o)}${p.delka?` · délka ${esc(p.delka)} km`:""}${p.rozloha?` · ${esc(p.rozloha)} ha`:""}</p>
+  <h2>${esc(r.n)}</h2><p>Hospodaří ${esc(orgL(r))}${p.delka?` · délka ${esc(String(p.delka).replace(".",","))} km`:""}${p.rozloha?` · ${esc(String(p.rozloha).replace(".",","))} ha`:""}</p>
   ${isFinite(x._d)?`<p class="hint" style="margin-top:4px">${r.approx?"asi ":""}${fmtKm(x._d)} km vzdušnou čarou od tvého bodu${r.approx?" (poloha přibližná – RIS u revíru nemá mapu, přesný úsek najdeš v popisu)":""}</p>`:""}${zapisLine(r)}</div>`; }
 function zapisLine(r){ const d=new Date(); const ds=`${d.getDate()}. ${d.getMonth()+1}. ${d.getFullYear()}`;
   return `<div class="zapis"><div><span class="hint">Zápis do povolenky (před začátkem lovu)</span><br><b>${esc(ds)}</b> · <span style="white-space:nowrap">revír <b>${esc(fmtNum(r.c))}</b></span> <span class="hint">(${esc(r.n)})</span></div><button class="btn small" type="button" data-copy="${esc(r.n)}">Kopírovat revír</button></div>`; }
@@ -776,11 +777,11 @@ async function body(r,x,p){
     ${sec("Lovné míry a hájení",tbl)}
     ${sec("Limity úlovků",lim)}
     ${sec("Zarybnění místní organizace",z)}
-    <section class="sec"><p class="hint">Podmínky podle RIS ke dni ${esc(dCZ(p.stav||todayISO))}. Závazné jsou údaje na kartě revíru v RIS a v bližších podmínkách svazu.</p></section>`;
+    <section class="sec"><p class="hint">${isMRS(r)?`Podmínky podle Bližších podmínek MRS a popisu revíru ke dni ${esc(dCZ(p.stav||todayISO))}. Závazné jsou Bližší podmínky MRS a popis revíru.`:`Podmínky podle RIS ke dni ${esc(dCZ(p.stav||todayISO))}. Závazné jsou údaje na kartě revíru v RIS a v bližších podmínkách svazu.`}</p></section>`;
 }
 function links(r,x){ const ll=isFinite(x.lat)?`${x.lat},${x.lon}`:"";
   return `<section class="sec"><h3>Odkazy</h3><div class="links">
-    <a href="${risUrl(r)}" target="_blank" rel="noopener">Karta revíru v RIS</a>
+    <a href="${risUrl(r)}" target="_blank" rel="noopener">${isMRS(r)?"Karta revíru na webu MRS":"Karta revíru v RIS"}</a>
     ${ll?`<a href="https://maps.apple.com/?daddr=${ll}" target="_blank" rel="noopener">Navigovat (Apple)</a><a href="https://www.google.com/maps/dir/?api=1&destination=${ll}" target="_blank" rel="noopener">Navigovat (Google)</a><a href="https://mapy.cz/zakladni?x=${x.lon}&y=${x.lat}&z=14&source=coor&id=${x.lon}%2C${x.lat}" target="_blank" rel="noopener">Mapy.cz</a>`:""}
   </div></section>`; }
 
@@ -793,7 +794,7 @@ async function lastStock(r){ const Z2=await getData("zarybneni-svazy.json");
   const own=(Z2?.zaznamy||[]).filter(z=>z.revir===r.c&&(r.t==="P")===isTroutSp(z.druh)).sort((a,b)=>b.datum.localeCompare(a.datum));
   if(own.length){ const d=own[0].datum, same=own.filter(z=>z.datum===d);
     return `<div class="flownow"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true" style="width:34px;flex:none"><use href="#fish-sm"/></svg><div><span class="lvltxt">Poslední známé zarybnění ${esc(dCZ(d))}</span><br>${same.slice(0,4).map(z=>`${esc(z.druh)}${z.mn!=null?` ${esc(z.mn.toLocaleString("cs-CZ"))} ${esc(z.j)}`:""}${z.kat?` (${esc(z.kat)})`:""}`).join(", ")}<br><span class="hint">přímo do tohoto revíru · ${esc(own[0].svaz==="Praha"?"ÚS města Prahy":"Jihočeský ÚS")}</span></div></div>`; }
-  const Z=await getData("zarybneni.json"); if(!Z) return "";
+  if(isMRS(r)) return ""; const Z=await getData("zarybneni.json"); if(!Z) return "";
   const k=moKey(r.o); const all=(Z.zaznamy||[]).filter(z=>moMatch(k,moKey(z.mo)));
   if(!all.length) return "";
   const pref=all.filter(z=>(r.t==="P")===isTroutSp(z.druh)); if(!pref.length) return ""; const pick=pref.sort((a,b)=>b.datum.localeCompare(a.datum));
@@ -802,7 +803,7 @@ async function lastStock(r){ const Z2=await getData("zarybneni-svazy.json");
 async function stockFor(r){ const Z2=await getData("zarybneni-svazy.json");
   const own=(Z2?.zaznamy||[]).filter(z=>z.revir===r.c).sort((a,b)=>b.datum.localeCompare(a.datum));
   if(own.length) return `<div class="stock">${own.slice(0,10).map(z=>`<div class="stock-item"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true"><use href="#fish-sm"/></svg><div><strong>${esc(z.druh)}${z.mn!=null?` ${esc(z.mn.toLocaleString("cs-CZ"))} ${esc(z.j)}`:""}</strong><div class="hint">${esc(dCZ(z.datum))}${z.kat?` · ${esc(z.kat)}`:""}</div></div></div>`).join("")}</div><p class="hint" style="margin-top:6px">Vysazení přímo do tohoto revíru za poslední rok (${esc(own[0].svaz==="Praha"?"ÚS města Prahy":"Jihočeský ÚS")}).</p>`;
-  const Z=await getData("zarybneni.json"); if(!Z) return "";
+  if(isMRS(r)) return ""; const Z=await getData("zarybneni.json"); if(!Z) return "";
   const k=moKey(r.o), od60=new Date(today.getTime()-60*864e5).toISOString().slice(0,10); const recs=(Z.zaznamy||[]).filter(z=>z.datum>=od60&&moMatch(k,moKey(z.mo))).sort((a,b)=>b.datum.localeCompare(a.datum));
   if(!recs.length) return r.s==="VČ"?`<p class="hint">Za posledních 60 dní žádné vysazení této organizace.</p>`:"";
   return `<div class="stock">${recs.slice(0,8).map(z=>`<div class="stock-item"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true"><use href="#fish-sm"/></svg><div><strong>${esc(z.druh)} ${esc(z.mn.toLocaleString("cs-CZ"))} ${esc(z.j)}</strong><div class="hint">${esc(dCZ(z.datum))} · ${esc(z.kat)}</div></div></div>`).join("")}</div><p class="hint" style="margin-top:6px">Ryby dostává místní organizace pro své revíry, ne nutně přímo tento.</p>`; }
@@ -829,7 +830,7 @@ async function renderZar(){
   for(const g of g2.values()){ const z=g.z, r=z.revir?(RIS.all||[]).find(x=>x.c===z.revir):null;
     let lat=z.lat, lon=z.lon, d=Infinity; if(r&&here){const x=risDist(r,here); d=x.d; lat=x.lat; lon=x.lon;} else if(here&&lat!=null) d=hav(here,{lat,lon});
     g.items.sort((a,b)=>b.datum.localeCompare(a.datum));
-    res.push({r,lat:lat??NaN,lon:lon??NaN,_d:d,_date:g.items[0].datum,title:r?r.n:z.rn,sub:r?`${fmtNum(r.c)} · MO ${r.o}`:`${z.svaz} územní svaz`,
+    res.push({r,lat:lat??NaN,lon:lon??NaN,_d:d,_date:g.items[0].datum,title:r?r.n:z.rn,sub:r?`${fmtNum(r.c)} · ${orgL(r)}`:`${z.svaz} územní svaz`,
       pozn:g.items.slice(0,6).map(x=>`${x.druh}${x.mn!=null?` ${x.mn.toLocaleString("cs-CZ")} ${x.j}`:""}${x.kat?` (${x.kat})`:""} · ${dShort(x.datum)}`).join(" · "),pill:`ověřeno · ${z.svaz==="Praha"?"ÚS Praha":"JčÚS"}`}); }
   /* zprávy svazů bez určení revíru */
   const trout=/pstruh|siven|lipan|hlavat/i;
@@ -1017,7 +1018,7 @@ async function fishVerdict(d,rv,L){
   let w="";
   if(hasL){ const g=d.lw[0]*Math.pow(L,d.lw[1]); w=`<p style="margin:8px 0 0">Odhad hmotnosti při ${esc(String(L))} cm: <b>${g>=1000?(g/1000).toFixed(g>=10000?0:1).replace(".",",")+" kg":Math.round(g/10)*10+" g"}</b> <span class="hint">(odhad)</span></p>`; }
   return `<div class="verdict ${cls}"><b class="big">${esc(title)}</b>${why.length?`<ul>${why.map(x=>`<li>${esc(x.replace(/\.\.$/,"."))}</li>`).join("")}</ul>`:""}${info.length?`<ul>${[...new Set(info)].map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}${w}</div>
-    <p class="hint" style="margin-top:6px">${r?`Podle podmínek revíru ${esc(r.n)} v RIS a Rybářského řádu ČRS.`:`Obecná pravidla Rybářského řádu ČRS pro ${typ==="P"?"pstruhový":"mimopstruhový"} revír.`} Stav k ${esc(dCZ(todayISO))}.</p>`; }
+    <p class="hint" style="margin-top:6px">${r?(isMRS(r)?`Podle popisu revíru ${esc(r.n)} a Bližších podmínek MRS.`:`Podle podmínek revíru ${esc(r.n)} v RIS a Rybářského řádu ČRS.`):`Obecná pravidla Rybářského řádu ČRS pro ${typ==="P"?"pstruhový":"mimopstruhový"} revír.`} Stav k ${esc(dCZ(todayISO))}.</p>`; }
 
 /* ---------- rybářský řád ---------- */
 let RAD=null;
@@ -1112,7 +1113,7 @@ async function revFlow(r){ const d=await getData("prutoky.json"); if(!d) return 
 async function revStock(r){ const Z2=await getData("zarybneni-svazy.json");
   const own=(Z2?.zaznamy||[]).filter(z=>z.revir===r.c&&(r.t==="P")===isTroutSp(z.druh)).sort((a,b)=>b.datum.localeCompare(a.datum));
   if(own.length) return {datum:own[0].datum,druh:own[0].druh,own:true};
-  const Z=await getData("zarybneni.json"); if(!Z) return null; const k=moKey(r.o);
+  if(isMRS(r)) return null; const Z=await getData("zarybneni.json"); if(!Z) return null; const k=moKey(r.o);
   const pick=(Z.zaznamy||[]).filter(z=>moMatch(k,moKey(z.mo))&&(r.t==="P")===isTroutSp(z.druh)).sort((a,b)=>b.datum.localeCompare(a.datum));
   return pick.length?{datum:pick[0].datum,druh:pick[0].druh,own:false}:null; }
 const hm=m=>`${Math.floor(m/60)}:${String(Math.round(m%60)).padStart(2,"0")}`;
@@ -1185,7 +1186,7 @@ function chanceCard(x,i,c,inDetail){ const r=x.r, p=c.pct;
     return {d:`M${p0[0].toFixed(1)} ${p0[1].toFixed(1)} A${R} ${R} 0 0 1 ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}`,sc,op,l,f}; });
   const sign=v=>v>0?"+"+v:v<0?"−"+Math.abs(v):"0", fcol=v=>v>0?"var(--ok)":v<0?"var(--bad)":"var(--muted)";
   const scale=(0.45+0.75*p/100).toFixed(2);
-  return `<article class="chcard">${inDetail?`<h3 class="chdh">Šance na záběr dnes</h3>`:`<div class="chhead"><div><div class="chnum">${esc(fmtNum(r.c))}</div><h3>${esc(r.n)}</h3><div class="hint">MO ${esc(r.o)}</div></div><span class="chkm">${esc(fmtKm(x._d))} km</span></div>`}
+  return `<article class="chcard">${inDetail?`<h3 class="chdh">Šance na záběr dnes</h3>`:`<div class="chhead"><div><div class="chnum">${esc(fmtNum(r.c))}</div><h3>${esc(r.n)}</h3><div class="hint">${esc(orgL(r))}</div></div><span class="chkm">${esc(fmtKm(x._d))} km</span></div>`}
     <div class="rose"><svg viewBox="0 0 300 300" aria-hidden="true">${segs.map(s=>`<path d="${s.d}" fill="none" stroke="var(--sunk)" stroke-width="24"/><path d="${s.d}" fill="none" stroke="${s.sc}" stroke-opacity="${s.op}" stroke-width="24"/>`).join("")}</svg>
       ${segs.map(s=>`<div class="rlab" style="left:${(s.l[0]/3).toFixed(2)}%;top:${(s.l[1]/3).toFixed(2)}%"><div>${esc(s.f.short)}</div><b style="color:${fcol(s.f.pts)}">${sign(s.f.pts)}</b></div>`).join("")}
       <div class="rmid"><svg viewBox="0 0 120 64" aria-hidden="true" style="width:86px;height:46px;transform:scale(${scale})"><path d="M6 32 L-8 16 L-4 32 L-8 48 Z" transform="translate(14 0)" fill="${col}"/><path d="M18 32 C34 8, 86 6, 112 30 C108 36, 104 40, 98 44 C78 58, 36 56, 18 32 Z" fill="${col}"/><path d="M54 14 C60 4, 74 4, 80 12" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round"/><circle cx="96" cy="27" r="4" fill="#fff"/></svg>
@@ -1275,7 +1276,7 @@ $("smSend").onclick=async()=>{ const out=$("smOut"); const code=$("smRev").value
   let sun=""; if(w?.daily){ const d0=w.daily.time.indexOf(new Date(now.getTime()-now.getTimezoneOffset()*6e4).toISOString().slice(0,10)); if(d0>=0) sun=`východ ${w.daily.sunrise[d0].slice(11)}, západ ${w.daily.sunset[d0].slice(11)}`; }
   const ts=`${now.toLocaleDateString("cs-CZ")} ${now.getHours()}:${String(now.getMinutes()).padStart(2,"0")}`;
   const subj=`Lov ryb ${now.toLocaleDateString("cs-CZ")}`;
-  const L1=[subj,"",`Čas: ${ts}`,`Revír: ${r.n} (${fmtNum(r.c)}), MO ${r.o}, ${SVN[r.s]||"ČRS"}, ${r.t==="P"?"pstruhový":"mimopstruhový"}`,`Karta revíru: ${risUrl(r)}`];
+  const L1=[subj,"",`Čas: ${ts}`,`Revír: ${r.n} (${fmtNum(r.c)}), ${orgL(r)}, ${SVN[r.s]||"ČRS"}, ${r.t==="P"?"pstruhový":"mimopstruhový"}`,`Karta revíru: ${risUrl(r)}`];
   if(pt) L1.push(`Poloha: ${pt.lat.toFixed(5)}, ${pt.lon.toFixed(5)} – https://mapy.cz/zakladni?x=${pt.lon.toFixed(5)}&y=${pt.lat.toFixed(5)}&z=15&source=coor&id=${pt.lon.toFixed(5)}%2C${pt.lat.toFixed(5)}`);
   if(catches.length){ L1.push("",`Úlovky (${catches.length} ks):`);
     catches.forEach((c,i)=>{ L1.push(`${i+1}. ${c.d?c.d.cz:"ryba"}${isFinite(c.L)?`, ${String(c.L).replace(".",",")} cm`:""}${isFinite(c.w)?`, ${kgF(c.w)}${c.est?" (odhad z délky)":""}`:""}`); if(c.mira) L1.push(`   ${c.mira}`); const pf=c.ph.map((f,j)=>f?["úlovek pro RIS ("+kB(f)+")","místo lovu","nástraha"][j]:"").filter(Boolean); if(pf.length) L1.push(`   fotky: ${pf.join(", ")}`); });

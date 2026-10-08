@@ -707,7 +707,7 @@ function renderResults(title,extra=""){
     return `<button class="card" data-i="${i}" ${S.sel===i?'aria-current="true"':""}>
       <span class="num">${esc(x._label??i+1)}</span>
       <div><h3>${esc(x.title||r?.n||"")}</h3><div class="meta">${esc(x.sub||(r?fmtNum(r.c)+" · "+orgL(r):""))}</div>
-      ${x.pozn?`<div class="meta">${esc(x.pozn)}</div>`:""}${r?.approx?`<div class="meta">Poloha přibližná – RIS u revíru nemá mapu</div>`:""}
+      ${x.pozn?`<div class="meta">${esc(x.pozn)}</div>`:""}${r?.approx?`<div class="meta">Poloha přibližná – revír nemá zákres v mapě</div>`:""}
       ${x.pill?`<div class="meta" style="margin-top:4px"><span class="pill vysoka">${esc(x.pill)}</span></div>`:""}</div>
       <span class="dist">${isFinite(x._d)?fmtKm(x._d)+"<small>KM VZDUŠNĚ</small>":x._date?dShort(x._date)+"<small>NAPOSLEDY</small>":""}</span></button>`;}).join("");
   $("out").innerHTML=`<h2 style="font-size:26px;margin-bottom:10px;text-align:center">${esc(title)}</h2>${extra}<div class="list">${items}</div><p class="hint" style="margin-top:8px">Klepni na revír pro podmínky lovu.</p>`;
@@ -735,7 +735,7 @@ const risUrl=r=>isMRS(r)?"https://mrsbrno.cz/reviry/"+String(r.url).replace(/^mr
 function head(r,x,p){ p=p||{};
   return `<div class="sheet-head"><div class="rid">${esc(fmtNum(r.c))} · ${esc(SVN[r.s]||"ČRS")} · ${r.t==="P"?"pstruhový":"mimopstruhový"}</div>
   <h2>${esc(r.n)}</h2><p>Hospodaří ${esc(orgL(r))}${p.delka?` · délka ${esc(String(p.delka).replace(".",","))} km`:""}${p.rozloha?` · ${esc(String(p.rozloha).replace(".",","))} ha`:""}</p>
-  ${isFinite(x._d)?`<p class="hint" style="margin-top:4px">${r.approx?"asi ":""}${fmtKm(x._d)} km vzdušnou čarou od tvého bodu${r.approx?" (poloha přibližná – RIS u revíru nemá mapu, přesný úsek najdeš v popisu)":""}</p>`:""}${zapisLine(r)}</div>`; }
+  ${isFinite(x._d)?`<p class="hint" style="margin-top:4px">${r.approx?"asi ":""}${fmtKm(x._d)} km vzdušnou čarou od tvého bodu${r.approx?" (poloha přibližná – revír nemá zákres v mapě, přesný úsek najdeš v popisu)":""}</p>`:""}${zapisLine(r)}</div>`; }
 function zapisLine(r){ const d=new Date(); const ds=`${d.getDate()}. ${d.getMonth()+1}. ${d.getFullYear()}`;
   return `<div class="zapis"><div><span class="hint">Zápis do povolenky (před začátkem lovu)</span><br><b>${esc(ds)}</b> · <span style="white-space:nowrap">revír <b>${esc(fmtNum(r.c))}</b></span> <span class="hint">(${esc(r.n)})</span></div><button class="btn small" type="button" data-copy="${esc(r.n)}">Kopírovat revír</button></div>`; }
 document.addEventListener("click",async e=>{ const b=e.target.closest("[data-copy]"); if(!b) return;
@@ -831,7 +831,7 @@ async function renderZar(){
     let lat=z.lat, lon=z.lon, d=Infinity; if(r&&here){const x=risDist(r,here); d=x.d; lat=x.lat; lon=x.lon;} else if(here&&lat!=null) d=hav(here,{lat,lon});
     g.items.sort((a,b)=>b.datum.localeCompare(a.datum));
     res.push({r,lat:lat??NaN,lon:lon??NaN,_d:d,_date:g.items[0].datum,title:r?r.n:z.rn,sub:r?`${fmtNum(r.c)} · ${orgL(r)}`:`${z.svaz} územní svaz`,
-      pozn:g.items.slice(0,6).map(x=>`${x.druh}${x.mn!=null?` ${x.mn.toLocaleString("cs-CZ")} ${x.j}`:""}${x.kat?` (${x.kat})`:""} · ${dShort(x.datum)}`).join(" · "),pill:`ověřeno · ${z.svaz==="Praha"?"ÚS Praha":"JčÚS"}`}); }
+      pozn:g.items.slice(0,6).map(x=>`${x.druh}${x.mn!=null?` ${x.mn.toLocaleString("cs-CZ")} ${x.j}`:""}${x.kat?` (${x.kat})`:""} · ${dShort(x.datum)}`).join(" · "),pill:`ověřeno · ${z.zdroj||(z.svaz==="Praha"?"ÚS Praha":"JčÚS")}`}); }
   /* zprávy svazů bez určení revíru */
   const trout=/pstruh|siven|lipan|hlavat/i;
   const news=(Z2?.zpravy||[]).filter(z=>z.datum>=from&&((S.typ==="P")===trout.test(z.titul+" "+z.text)));
@@ -840,7 +840,7 @@ async function renderZar(){
   const sortD=ZSORT==="dist"&&here;
   res.sort(sortD?(a,b)=>a._d-b._d:(a,b)=>b._date.localeCompare(a._date)||a._d-b._d); res.forEach((x,i)=>x._label=i+1); S.results=res;
   const chips=`<div class="chips" role="group" aria-label="Řazení"><button class="chip" data-s="datum" aria-pressed="${!sortD}">Nejnovější</button>${here?`<button class="chip" data-s="dist" aria-pressed="${!!sortD}">Nejblíž mně</button>`:""}</div>`;
-  const note=`<p class="note" style="margin:0 0 10px;border-left-color:var(--ok)">Skutečná vysazení ${S.typ==="P"?"pstruhů, sivenů a lipanů":"ryb do mimopstruhových revírů"} od ${esc(dCZ(from))} podle zpráv svazů: <a href="https://vcus.rybsvaz.cz/aktuality" target="_blank" rel="noopener">Východočeský</a> (po MO), <a href="https://www.rybaripraha.cz/rybolov/zarybneni/" target="_blank" rel="noopener">Praha</a> a <a href="https://www.jcus.cz/zarybnovani-reviru/" target="_blank" rel="noopener">Jihočeský</a> (po revírech). Ostatní svazy přehledy po revírech nezveřejňují.</p>`;
+  const note=`<p class="note" style="margin:0 0 10px;border-left-color:var(--ok)">Skutečná vysazení ${S.typ==="P"?"pstruhů, sivenů a lipanů":"ryb do mimopstruhových revírů"} od ${esc(dCZ(from))} podle zpráv svazů: <a href="https://vcus.rybsvaz.cz/aktuality" target="_blank" rel="noopener">Východočeský</a> (po MO), <a href="https://www.rybaripraha.cz/rybolov/zarybneni/" target="_blank" rel="noopener">Praha</a> a <a href="https://www.jcus.cz/zarybnovani-reviru/" target="_blank" rel="noopener">Jihočeský</a> (po revírech), na Moravě spolky <a href="https://www.rybariboskovice.cz/zarybneni/" target="_blank" rel="noopener">MRS Boskovice</a>, <a href="https://www.mrshodo.cz/" target="_blank" rel="noopener">MRS Hodonín</a> a <a href="https://www.crsmosumperk.cz/informace/" target="_blank" rel="noopener">ČRS MO Šumperk</a>. Ostatní svazy a spolky přehledy po revírech nezveřejňují.</p>`;
   renderResults("Zarybněno za 6 týdnů",chips+note);
   if(newsHtml) $("out").insertAdjacentHTML("beforeend",newsHtml);
   $("out").querySelectorAll(".chip[data-s]").forEach(b=>b.onclick=()=>{ZSORT=b.dataset.s;renderZar();});

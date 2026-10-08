@@ -147,7 +147,7 @@ html,body{margin:0}
   <section class="step" aria-labelledby="s1">
     <div class="eyebrow" id="s1"><b>1</b> Typ vody</div>
     <div class="seg" role="group" aria-label="Typ revíru">
-      <button id="tM" aria-pressed="true"><span class="dot"></span>Nepstruhové</button>
+      <button id="tM" aria-pressed="true"><span class="dot"></span>Mimopstruhové</button>
       <button id="tP" aria-pressed="false"><span class="dot"></span>Pstruhové</button>
     </div>
   </section>
@@ -528,9 +528,9 @@ $("findBtn").onclick=async()=>{
   if(!S.loc) return; $("detail").innerHTML=""; S.sel=null; $("out").dataset.view="";
   $("out").innerHTML=statusBox("Hledám nejbližší revíry…");
   await loadRis();
-  const list=risOfTyp(); if(!list.length){ $("out").innerHTML=`<div class="status">${RIS.all?"Nepstruhové revíry se doplní při nejbližší ranní aktualizaci dat.":"Data revírů se nepodařilo načíst. Zkus to za chvíli."}</div>`; return; }
+  const list=risOfTyp(); if(!list.length){ $("out").innerHTML=`<div class="status">${RIS.all?"Mimopstruhové revíry se doplní při nejbližší ranní aktualizaci dat.":"Data revírů se nepodařilo načíst. Zkus to za chvíli."}</div>`; return; }
   S.results=list.map(r=>({r,...risDist(r,S.loc)})).filter(x=>x.d<1e8).sort((a,b)=>a.d-b.d).slice(0,3).map(risResult);
-  renderResults(`Tři nejbližší ${S.typ==="P"?"pstruhové":"nepstruhové"} revíry`);
+  renderResults(`Tři nejbližší ${S.typ==="P"?"pstruhové":"mimopstruhové"} revíry`);
   fitTo([S.loc,...S.results]);
 };
 function renderResults(title,extra=""){
@@ -667,11 +667,11 @@ async function renderZar(){
   const trout=/pstruh|siven|lipan|hlavat/i;
   const news=(Z2?.zpravy||[]).filter(z=>z.datum>=from&&((S.typ==="P")===trout.test(z.titul+" "+z.text)));
   const newsHtml=news.length?`<section class="sec" style="margin-top:12px"><h3>Zprávy svazů o vysazení</h3><p class="hint">Bez určení konkrétních revírů.</p><div class="news">${news.map(z=>`<a class="newsitem" href="${esc(z.url)}" target="_blank" rel="noopener"><span class="nm">${esc(dCZ(z.datum))} · ${esc(z.svaz)} územní svaz</span><span class="nt">${esc(z.titul)}</span>${z.text?`<span class="nx">${esc(z.text)}</span>`:""}</a>`).join("")}</div></section>`:"";
-  if(!res.length){ $("out").innerHTML=`<div class="status">Za posledních 6 týdnů nejsou žádná zveřejněná vysazení ${S.typ==="P"?"pstruhových":"nepstruhových"} ryb.</div>${newsHtml}`; return; }
+  if(!res.length){ $("out").innerHTML=`<div class="status">Za posledních 6 týdnů nejsou žádná zveřejněná vysazení ryb do ${S.typ==="P"?"pstruhových":"mimopstruhových"} revírů.</div>${newsHtml}`; return; }
   const sortD=ZSORT==="dist"&&here;
   res.sort(sortD?(a,b)=>a._d-b._d:(a,b)=>b._date.localeCompare(a._date)||a._d-b._d); res.forEach((x,i)=>x._label=i+1); S.results=res;
   const chips=`<div class="chips" role="group" aria-label="Řazení"><button class="chip" data-s="datum" aria-pressed="${!sortD}">Nejnovější</button>${here?`<button class="chip" data-s="dist" aria-pressed="${!!sortD}">Nejblíž mně</button>`:""}</div>`;
-  const note=`<p class="note" style="margin:0 0 10px;border-left-color:var(--ok)">Skutečná vysazení ${S.typ==="P"?"pstruhů, sivenů a lipanů":"nepstruhových ryb"} od ${esc(dCZ(from))} podle zpráv svazů: <a href="https://vcus.rybsvaz.cz/aktuality" target="_blank" rel="noopener">Východočeský</a> (po MO), <a href="https://www.rybaripraha.cz/rybolov/zarybneni/" target="_blank" rel="noopener">Praha</a> a <a href="https://www.jcus.cz/zarybnovani-reviru/" target="_blank" rel="noopener">Jihočeský</a> (po revírech). Ostatní svazy přehledy po revírech nezveřejňují.</p>`;
+  const note=`<p class="note" style="margin:0 0 10px;border-left-color:var(--ok)">Skutečná vysazení ${S.typ==="P"?"pstruhů, sivenů a lipanů":"ryb do mimopstruhových revírů"} od ${esc(dCZ(from))} podle zpráv svazů: <a href="https://vcus.rybsvaz.cz/aktuality" target="_blank" rel="noopener">Východočeský</a> (po MO), <a href="https://www.rybaripraha.cz/rybolov/zarybneni/" target="_blank" rel="noopener">Praha</a> a <a href="https://www.jcus.cz/zarybnovani-reviru/" target="_blank" rel="noopener">Jihočeský</a> (po revírech). Ostatní svazy přehledy po revírech nezveřejňují.</p>`;
   renderResults("Zarybněno za 6 týdnů",chips+note);
   if(newsHtml) $("out").insertAdjacentHTML("beforeend",newsHtml);
   $("out").querySelectorAll(".chip[data-s]").forEach(b=>b.onclick=()=>{ZSORT=b.dataset.s;renderZar();});
@@ -700,7 +700,7 @@ function renderFlows(d){ const out=$("out");
     return `<tr><td><div class="river">${esc(s.tok)}</div><div class="stn">${esc(s.stanice)}${s._d!=null?` · ${fmtKm(s._d)} km`:""}</div></td><td class="n">${fq(s.q)}</td><td class="n">${fq(s.qa)}</td>
     <td>${L?`<span class="lvl"><span class="bar"><i style="width:${Math.min(L.r/2,1)*100}%;background:${L.c}"></i></span><small style="color:${L.c}">${Math.round(L.r*100)} % · ${esc(L.t)}</small></span>`:"—"}</td>
     <td><span class="tr ${esc(s.trend)}" title="${t[1]}" aria-label="${t[1]}">${t[0]}</span></td></tr>`;}).join("");
-  out.innerHTML=`<div class="flowhead"><h2 style="font-size:26px">Průtok nepstruhových řek</h2><span class="hint" style="${age>30?"color:var(--warn)":""}">Stav k ${esc(isNaN(when)?"?":when.toLocaleString("cs-CZ",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}))}</span></div>
+  out.innerHTML=`<div class="flowhead"><h2 style="font-size:26px">Průtok mimopstruhových řek</h2><span class="hint" style="${age>30?"color:var(--warn)":""}">Stav k ${esc(isNaN(when)?"?":when.toLocaleString("cs-CZ",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}))}</span></div>
     <div class="chips" role="group" aria-label="Oblast">${chips}</div>
     <div class="flowwrap"><table class="flow"><thead><tr><th>Řeka · stanice</th><th>Teď m³/s</th><th>Běžně m³/s</th><th>Stav</th><th>Trend</th></tr></thead><tbody>${rows}</tbody></table></div>
     <p class="hint" style="margin-top:8px">„Běžně“ je dlouhodobý průměrný roční průtok (Qa) podle ČHMÚ. Na podzim bývá průtok přirozeně pod průměrem. Aktuální stav každé stanice najdeš na <a href="https://hydro.chmi.cz/hppsoldv/hpps_oplist.php" target="_blank" rel="noopener">webu ČHMÚ</a>.</p>`;

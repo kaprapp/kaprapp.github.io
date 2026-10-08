@@ -1,7 +1,7 @@
 {
   "name": "Kapr",
   "short_name": "Kapr",
-  "description": "Nejbližší nepstruhové revíry v Česku pro kapraře – podmínky lovu, průtoky, zarybnění a aktuality.",
+  "description": "Nejbližší mimopstruhové revíry v Česku pro kapraře – podmínky lovu, průtoky, zarybnění a aktuality.",
   "lang": "cs",
   "start_url": "./",
   "scope": "./",

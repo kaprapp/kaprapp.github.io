@@ -1,6 +1,6 @@
 # Kapr
 
-Webová aplikace pro kapraře: nejbližší nepstruhové (i pstruhové) revíry ČRS podle polohy, podmínky lovu z RIS Portálu,
+Webová aplikace pro kapraře: nejbližší mimopstruhové (i pstruhové) revíry ČRS podle polohy, podmínky lovu z RIS Portálu,
 průtoky nížinných řek z ČHMÚ, zarybnění a kapří aktuality. Sesterská aplikace k [Pstruhovi](https://pstruh.iryba.cz).
 
 **Stránka:** https://kapr.iryba.cz

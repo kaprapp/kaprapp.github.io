@@ -1316,6 +1316,15 @@ if(!readHashLoc() && S.mode==="gps" && navigator.permissions?.query){
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();
 </script>
+<script>
+/* Anonymní měření: spuštění z ikony na ploše a přidání na plochu (bez cookies) */
+(function(){
+  function gc(p,t,n){ n=n||0; var g=window.goatcounter; if(g&&g.count){ try{ g.count({path:p,title:t,event:true}); }catch(e){} } else if(n<20) setTimeout(function(){ gc(p,t,n+1); },1000); }
+  var plocha=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
+  if(plocha) gc("spusteno-z-plochy","Spuštěno z plochy");
+  window.addEventListener("appinstalled",function(){ gc("pridano-na-plochu","Přidáno na plochu"); });
+})();
+</script>
 <script data-goatcounter="https://kapr.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>

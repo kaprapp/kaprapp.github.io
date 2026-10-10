@@ -18,3 +18,7 @@ průtoky nížinných řek z ČHMÚ, zarybnění a kapří aktuality. Sesterská
 - Mapa: © přispěvatelé [OpenStreetMap](https://www.openstreetmap.org/copyright)
 
 Údaje jsou orientační. Závazné jsou podmínky na kartě revíru v RIS a bližší podmínky výkonu rybářského práva.
+
+## Autorská práva
+
+© 2026 Tým Pstruh & Kapr. Všechna práva vyhrazena. Kód je zveřejněn jen kvůli provozu webu, nejde o open source. Podrobnosti v souboru [LICENSE](LICENSE).

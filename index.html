@@ -551,6 +551,18 @@ const isMRS=r=>!!r&&r.s==="MRS"; const orgL=r=>(isMRS(r)?"PS ":"MO ")+r.o;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const norm=s=>String(s).normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim();
+/* Text popisu/limitů: **tučně** a u řádků o dnes hájeném druhu poznámka „dnes hájen“ */
+function revText(txt,miry){
+  const haj=(miry||[]).filter(m=>m.hajen).map(m=>{ const w=norm(m.d).split(/\s+/); return {a:w[0].slice(0,Math.max(4,w[0].length-1)),b:(w[1]||"").slice(0,4)}; });
+  return String(txt||"").split("\n").map(line=>{
+    let h=esc(line).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\*\*/g,"");
+    const n=norm(line);
+    if(n&&/mir|ponech|kus|ks\b|limit|denne|privlast/.test(n)){
+      const m=haj.find(x=>n.includes(x.a)&&(!x.b||n.includes(x.b)));
+      if(m) h+=` <span class="st-h">– dnes hájen, nelze ponechat</span>`;
+    }
+    return h; }).join("\n");
+}
 const hav=(a,b)=>{const R=6371,t=x=>x*Math.PI/180;const dLa=t(b.lat-a.lat),dLo=t(b.lon-a.lon);const h=Math.sin(dLa/2)**2+Math.cos(t(a.lat))*Math.cos(t(b.lat))*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(h));};
 const fmtC=(lat,lon)=>`${lat.toFixed(5)}° N, ${lon.toFixed(5)}° E`;
 const fmtKm=d=>d<10?d.toFixed(1).replace(".",","):Math.round(d)+"";
@@ -768,12 +780,12 @@ async function body(r,x,p){
   const top=S.typ==="P"?/pstruh|lipan|siven|hlavat|losos/i:/kapr|amur|štik|candát|sumec|lín/i;
   const miry=(p.miry||[]).slice().sort((a,b)=>(top.test(b.d)-top.test(a.d))||a.d.localeCompare(b.d,"cs"));
   const tbl=miry.length?`<div class="tblwrap"><table class="tbl"><tr><th>Druh</th><th>Lovná míra</th><th>Dnes</th></tr>${miry.map(m=>`<tr><td>${esc(m.d)}${m.pozn?`<div class="hint">${esc(m.pozn)}</div>`:""}</td><td class="n">${m.min?esc(m.min)+" cm":"—"}${m.max?" až "+esc(m.max)+" cm":""}</td><td>${m.hajen?'<span class="st-h">hájen</span>':'<span class="st-l">lze lovit</span>'}</td></tr>`).join("")}</table></div>`:"";
-  const lim=(p.limity||[]).length?`<p class="popis">${esc(p.limity.join("\n\n"))}</p>`:"";
+  const lim=(p.limity||[]).length?`<p class="popis">${revText(p.limity.join("\n\n"),miry)}</p>`:"";
   const z=await stockFor(r);
   const flow=await flowNow(r), last=await lastStock(r);
   return `${alert||flow||last?`<section class="sec" style="display:grid;gap:8px">${alert}${flow}${last}</section>`:""}
     ${sec("Dnes na revíru",dnes)}
-    ${sec("Popis revíru",p.popis?`<p class="popis">${esc(p.popis)}</p>`:"")}
+    ${sec("Popis revíru",p.popis?`<p class="popis">${revText(p.popis,miry)}</p>`:"")}
     ${sec("Lovné míry a hájení",tbl)}
     ${sec("Limity úlovků",lim)}
     ${sec("Zarybnění místní organizace",z)}

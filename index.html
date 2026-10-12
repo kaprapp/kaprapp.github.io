@@ -932,7 +932,7 @@ const toggle=(id)=>{ const el=$(id), open=el.hidden; ["donatePanel","contactPane
 const hasStripe=!!CFG.stripe;
 if(CFG.iban||hasStripe){
   const iban=(CFG.iban||"").replace(/\s+/g,"").toUpperCase(); let amt=CFG.castky[1]||CFG.castky[0];
-  $("donateCard").hidden=false; $("donateNote").hidden=false; $("donateBtn").hidden=!iban; $("donateAcct").textContent=CFG.ucet||CFG.iban; $("donateBank").hidden=!iban;
+  /* tlačítko „Jakou nástrahu?“ dole skryté – je přímo u revíru */ $("donateBtn").hidden=!iban; $("donateAcct").textContent=CFG.ucet||CFG.iban; $("donateBank").hidden=!iban;
   const draw=async()=>{
     $("donateAmt").innerHTML=CFG.castky.map(a=>`<button class="chip" aria-pressed="${a===amt}" data-a="${a}">${a} Kč</button>`).join("");
     $("donateAmt").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{amt=+b.dataset.a;draw();});

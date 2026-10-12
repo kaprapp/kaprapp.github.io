@@ -1,0 +1,109 @@
+{
+  "aktualizovano": "2026-10-12",
+  "pozn": "Katalog typů nástrah a návnad pro rady „Nástrahy dnes“ v aplikaci Kapr. Odkazy vedou na kategorie obchodů a zatím se nezobrazují. Kontroluje se jednou měsíčně.",
+  "typy": {
+    "boilies": {
+      "n": "Boilies",
+      "vel": "16–24 mm, potápivé nebo pop-up",
+      "odkazy": []
+    },
+    "pelety": {
+      "n": "Pelety",
+      "vel": "nástraha 8–20 mm, krmení 2–6 mm",
+      "odkazy": []
+    },
+    "kukurice": {
+      "n": "Kukuřice",
+      "vel": "2–3 zrna nebo umělá na vlasci",
+      "odkazy": []
+    },
+    "method": {
+      "n": "Method feeder",
+      "vel": "krmítko 20–40 g, nástraha 8–10 mm (dumbell, peletka)",
+      "odkazy": []
+    },
+    "feeder": {
+      "n": "Klasický feeder",
+      "vel": "krmítko 20–60 g, háček 12–16",
+      "odkazy": []
+    },
+    "zizala": {
+      "n": "Žížala",
+      "vel": "háček 6–10",
+      "odkazy": []
+    },
+    "cervi": {
+      "n": "Červi",
+      "vel": "háček 14–18",
+      "odkazy": []
+    },
+    "patentka": {
+      "n": "Patentka",
+      "vel": "háček 18–20",
+      "odkazy": []
+    },
+    "testo": {
+      "n": "Těsto",
+      "vel": "kulička velikosti hrachu, háček 10–14",
+      "odkazy": []
+    },
+    "pkukurice": {
+      "n": "Kukuřice na plavanou",
+      "vel": "1 zrno, háček 10–12",
+      "odkazy": []
+    },
+    "pzizala": {
+      "n": "Žížala na plavanou",
+      "vel": "kousek, háček 8–12",
+      "odkazy": []
+    },
+    "guma": {
+      "n": "Gumová rybka (ripper, shad)",
+      "vel": "7–12 cm, jigová hlavička 7–20 g",
+      "odkazy": []
+    },
+    "twister": {
+      "n": "Twister",
+      "vel": "5–8 cm, hlavička 3–7 g",
+      "odkazy": []
+    },
+    "kwob": {
+      "n": "Wobler",
+      "vel": "7–12 cm, plovoucí nebo pomalu se potápějící",
+      "odkazy": []
+    },
+    "krot": {
+      "n": "Rotačka",
+      "vel": "č. 2–4, 5–12 g",
+      "odkazy": [
+        {
+          "o": "Moje přívlač – Mepps",
+          "u": "https://www.mojeprivlac.cz/mepps-rotacni-trpytky/"
+        },
+        {
+          "o": "Moje přívlač – Blue Fox",
+          "u": "https://www.mojeprivlac.cz/blue-fox-rotacni-trpytky/"
+        }
+      ]
+    },
+    "kplan": {
+      "n": "Plandavka",
+      "vel": "10–25 g",
+      "odkazy": [
+        {
+          "o": "Moje přívlač – Mepps",
+          "u": "https://www.mojeprivlac.cz/mepps-plandavky/"
+        },
+        {
+          "o": "Moje přívlač – Rapala",
+          "u": "https://www.mojeprivlac.cz/rapala-plandavky/"
+        }
+      ]
+    },
+    "povrch": {
+      "n": "Povrchová nástraha (popper, stickbait)",
+      "vel": "7–11 cm",
+      "odkazy": []
+    }
+  }
+}

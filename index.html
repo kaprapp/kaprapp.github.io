@@ -803,7 +803,7 @@ async function body(r,x,p){
   const flow=await flowNow(r), last=await lastStock(r);
   return `${alert||flow||last?`<section class="sec" style="display:grid;gap:8px">${alert}${flow}${last}</section>`:""}
     ${sec("Dnes na revíru",dnes)}
-    ${tbl?`<section class="sec mirysec"><h3>Lovné míry a hájení dnes</h3>${miryQuick}<button class="btn donate nabtn mirybtn" type="button">📏 Všechny druhy (${miry.length})</button><div class="miryin" hidden><div class="nahead"><h3>Všechny lovné míry a hájení</h3><button class="btn small naclosebtn miryclose" type="button">Zavřít lovné míry ✕</button></div>${tbl}</div></section>`:""}
+    ${tbl?`<section class="sec mirysec"><h3>Lovné míry a hájení dnes</h3>${miryQuick}<button class="btn donate nabtn mirybtn" type="button"><img src="icons/icon-192.png" alt="">Všechny druhy (${miry.length})</button><div class="miryin" hidden><div class="nahead"><h3>Všechny lovné míry a hájení</h3><button class="btn small naclosebtn miryclose" type="button">Zavřít lovné míry ✕</button></div>${tbl}</div></section>`:""}
     ${sec("Popis revíru",p.popis?`<p class="popis">${revText(p.popis,miry)}</p>`:"")}
     ${sec("Limity úlovků",lim)}
     ${sec("Zarybnění místní organizace",z)}

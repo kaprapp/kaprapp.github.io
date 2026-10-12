@@ -394,8 +394,8 @@ ul.plain li{margin:3px 0}
     <a class="btn donate" id="donateCard" href="#" target="_blank" rel="noopener" hidden><img src="icons/icon-192.png" alt="">Jakou nástrahu?</a>
     <button class="btn" id="contactBtn" hidden>Napište nám</button>
   </div>
-  <p class="donatenote" id="donateNote" hidden>Za 25 Kč ti otevřeme nejlepší nástrahy pro vodu, kde právě lovíš, a vysvětlíme, proč se hodí. A uděláš radost týmu Pstruh a Kapr. <button class="linkbtn" id="donateBtn" hidden>Platba QR kódem</button></p>
-  <p class="donatenote" id="naSoon" hidden><b>Nástrahy na dnešek připravujeme.</b> Brzy si tu za 25 Kč odemkneš rozety nejlepších nástrah a barev pro revír, kde lovíš.</p>
+  <p class="donatenote" id="donateNote" hidden>Otevři kterýkoli revír a pod Šancí na záběr najdeš nástrahy a barvy, které se hodí na dnešní vodu, počasí a denní dobu – i s vysvětlením proč. Teď zdarma na vyzkoušení. <button class="linkbtn" id="donateBtn" hidden>Platba QR kódem</button></p>
+  <p class="donatenote" id="naSoon" hidden><b>Nejdřív si vyber revír.</b> Najdi revíry podle polohy a otevři ten, kde lovíš – nástrahy na dnešek jsou hned pod Šancí na záběr.</p>
   <div class="radbar"><button class="btn" id="radBtn">📖 Rybářský řád</button><button class="btn" id="catchBtn">✍️ Zapsat úlovek</button></div>
   <div class="radbar" style="margin-top:10px"><button class="btn" id="guardBtn">🛡️ Jak u kontroly rybářské stráže</button></div>
   <div class="panel ulovek" id="guardPanel" hidden>
@@ -944,7 +944,8 @@ if(CFG.iban||hasStripe){
   };
   /* „Jakou nástrahu?“ – platba a odemčení se připravují; do té doby jen informace */
   $("donateCard").removeAttribute("target"); $("donateCard").href="#";
-  $("donateCard").onclick=(e)=>{ e.preventDefault(); const n=$("naSoon"); n.hidden=!n.hidden; };
+  $("donateCard").onclick=(e)=>{ e.preventDefault(); const t=$("naDetail");
+    if(t){ t.scrollIntoView({behavior:"smooth",block:"start"}); $("naSoon").hidden=true; } else { const n=$("naSoon"); n.hidden=!n.hidden; } };
   if(false) $("donateCard").href=CFG.stripe;
 
   $("donateBtn").onclick=()=>{ toggle("donatePanel"); if(!$("donatePanel").hidden) draw().catch(()=>{$("donateQr").textContent="QR kód se nepodařilo načíst.";}); };
@@ -1237,7 +1238,7 @@ async function chanceDetail(x){ const box=$("chDetail"); if(!box) return; box.in
   try{ const c=await chanceFor(x); if($("chDetail")!==box) return; box.innerHTML=chanceCard(x,0,c,true); }catch(e){ box.innerHTML=""; } }
 
 /* ---------- Nástrahy dnes (mimopstruhové revíry; zatím skryté – zapne se adresou s #nastrahy) ---------- */
-const NA_ON=(()=>{ const h=location.hash||""; try{ if(/nastrahy-off/.test(h)) localStorage.removeItem("nastrahy"); else if(/nastrahy/.test(h)) localStorage.setItem("nastrahy","1"); return localStorage.getItem("nastrahy")==="1"; }catch(e){ return /nastrahy/.test(h)&&!/off/.test(h); } })();
+const NA_ON=true; /* Nástrahy dnes otevřené pro všechny */
 const NA_SHOPS=false; /* odkazy na obchody skryté, dokud nebude spolupráce domluvena */
 function naCtx(w,fl,p){
   const now=new Date(), mon=now.getMonth()+1, nm=now.getHours()*60+now.getMinutes();

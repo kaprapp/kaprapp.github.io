@@ -801,7 +801,7 @@ async function body(r,x,p){
   return `${alert||flow||last?`<section class="sec" style="display:grid;gap:8px">${alert}${flow}${last}</section>`:""}
     ${sec("Dnes na revíru",dnes)}
     ${sec("Popis revíru",p.popis?`<p class="popis">${revText(p.popis,miry)}</p>`:"")}
-    ${sec("Lovné míry a hájení",tbl)}
+    ${tbl?`<section class="sec mirysec"><button class="btn donate nabtn mirybtn" type="button">📏 Lovné míry a hájení</button><div class="miryin" hidden><div class="nahead"><h3>Lovné míry a hájení</h3><button class="btn small naclosebtn miryclose" type="button">Zavřít lovné míry ✕</button></div>${tbl}</div></section>`:""}
     ${sec("Limity úlovků",lim)}
     ${sec("Zarybnění místní organizace",z)}
     <section class="sec"><p class="hint">${isMRS(r)?`Podmínky podle Bližších podmínek MRS a popisu revíru ke dni ${esc(dCZ(p.stav||todayISO))}. Závazné jsou Bližší podmínky MRS a popis revíru.`:`Podmínky podle RIS ke dni ${esc(dCZ(p.stav||todayISO))}. Závazné jsou údaje na kartě revíru v RIS a v bližších podmínkách svazu.`}</p></section>`;
@@ -1237,6 +1237,9 @@ function miniRing(c,km){ const C=2*Math.PI*100, col=chColor(c);
 async function chanceDetail(x){ const box=$("chDetail"); if(!box) return; box.innerHTML=statusBox("Počítám šanci na záběr…");
   try{ const c=await chanceFor(x); if($("chDetail")!==box) return; box.innerHTML=chanceCard(x,0,c,true); }catch(e){ box.innerHTML=""; } }
 
+document.addEventListener("click",e=>{ const o=e.target.closest(".mirybtn"), c=e.target.closest(".miryclose"); if(!o&&!c) return;
+  const sec=(o||c).closest(".mirysec"); const open=!!o; sec.querySelector(".mirybtn").hidden=open; sec.querySelector(".miryin").hidden=!open;
+  if(!open) sec.scrollIntoView({behavior:"smooth",block:"nearest"}); });
 /* ---------- Nástrahy dnes (mimopstruhové revíry; zatím skryté – zapne se adresou s #nastrahy) ---------- */
 const NA_ON=true; /* Nástrahy dnes otevřené pro všechny */
 const NA_SHOPS=false; /* odkazy na obchody skryté, dokud nebude spolupráce domluvena */

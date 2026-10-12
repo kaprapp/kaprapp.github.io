@@ -391,10 +391,11 @@ ul.plain li{margin:3px 0}
 
   <div class="sharebar">
     <button class="btn" id="shareBtn">Poslat Kapra kamarádovi</button>
-    <a class="btn donate" id="donateCard" href="#" target="_blank" rel="noopener" hidden><img src="icons/icon-192.png" alt="">Přispět 25,- Kč</a>
+    <a class="btn donate" id="donateCard" href="#" target="_blank" rel="noopener" hidden><img src="icons/icon-192.png" alt="">Jakou nástrahu?</a>
     <button class="btn" id="contactBtn" hidden>Napište nám</button>
   </div>
-  <p class="donatenote" id="donateNote" hidden>Kapr je zdarma a bez reklam. Můžeš přispět i vícekrát – třeba když ti pomohu chytit rybu! Děkujeme! <button class="linkbtn" id="donateBtn" hidden>Platba QR kódem</button></p>
+  <p class="donatenote" id="donateNote" hidden>Za 25 Kč ti otevřeme nejlepší nástrahy pro vodu, kde právě lovíš, a vysvětlíme, proč se hodí. A uděláš radost týmu Pstruh a Kapr. <button class="linkbtn" id="donateBtn" hidden>Platba QR kódem</button></p>
+  <p class="donatenote" id="naSoon" hidden><b>Nástrahy na dnešek připravujeme.</b> Brzy si tu za 25 Kč odemkneš rozety nejlepších nástrah a barev pro revír, kde lovíš.</p>
   <div class="radbar"><button class="btn" id="radBtn">📖 Rybářský řád</button><button class="btn" id="catchBtn">✍️ Zapsat úlovek</button></div>
   <div class="radbar" style="margin-top:10px"><button class="btn" id="guardBtn">🛡️ Jak u kontroly rybářské stráže</button></div>
   <div class="panel ulovek" id="guardPanel" hidden>
@@ -941,9 +942,11 @@ if(CFG.iban||hasStripe){
     const q=qrcode(0,"M"); q.addData(`SPD*1.0*ACC:${iban}*AM:${amt.toFixed(2)}*CC:CZK*MSG:KAPR`); q.make();
     $("donateQr").innerHTML=q.createSvgTag({cellSize:4,margin:2,scalable:true});
   };
-  if(hasStripe) $("donateCard").href=CFG.stripe;
-  else { $("donateCard").removeAttribute("target"); $("donateCard").lastChild.textContent="Přispět QR platbou";
-    $("donateCard").onclick=(e)=>{e.preventDefault();$("donateBtn").click();}; }
+  /* „Jakou nástrahu?“ – platba a odemčení se připravují; do té doby jen informace */
+  $("donateCard").removeAttribute("target"); $("donateCard").href="#";
+  $("donateCard").onclick=(e)=>{ e.preventDefault(); const n=$("naSoon"); n.hidden=!n.hidden; };
+  if(false) $("donateCard").href=CFG.stripe;
+
   $("donateBtn").onclick=()=>{ toggle("donatePanel"); if(!$("donatePanel").hidden) draw().catch(()=>{$("donateQr").textContent="QR kód se nepodařilo načíst.";}); };
 }
 if(CFG.kontaktDole && CFG.email){ $("contactLine").hidden=false; $("contactLink").textContent=CFG.email; const MB="Dobrý den,\n\nTýká se: chyba v údajích / chybějící revír / nápad na zlepšení (nehodící se smažte)\n\nRevír (název nebo číslo):\n\nCo nesedí nebo chybí:\n\nSprávný údaj a odkud ho víte (povolenka, web svazu, odkaz):\n\nDěkujeme, že pomáháte aplikaci zpřesnit.\n"; $("contactLink").href="mailto:"+CFG.email+"?subject="+encodeURIComponent("Kapr – oprava / nápad")+"&body="+encodeURIComponent(MB).replace(/%0A/g,"%0D%0A"); }

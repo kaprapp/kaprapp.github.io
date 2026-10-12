@@ -1481,7 +1481,7 @@ async function naRender(x,p){ const box=$("naDetail"); if(!box) return;
     const c=naCtxK(w,fl,p), ch=chanceScore(r,w,fl,null,p);
     if(ch.closed){ box.innerHTML=`<h3>Nástrahy dnes</h3><p class="hint">Dnes se na tomto revíru nesmí lovit, rada se nezobrazuje.</p>`; return; }
     const why=naWhyK(c);
-    let h=`<div class="nahead"><h3>Nástrahy dnes</h3><button class="btn small naclosebtn" type="button">Zavřít ✕</button></div>`;
+    let h=`<div class="nahead"><h3>Nástrahy dnes</h3><button class="btn small naclosebtn" type="button">Zavřít nástrahy ✕</button></div>`;
     if(c.voda==="vysoka"&&c.q>3) h+=`<div class="alert">Voda je velmi vysoká (${Math.round(c.q*100)} % běžného průtoku) – dnes raději nejezdit.</div>`;
     if(c.zakrm) h+=`<div class="alert">Na tomto revíru platí zákaz zakrmování – nástrahy a krmítko bez dalšího přikrmování.</div>`;
     if(c.pol) h+=naCard("Položená a feeder","pol",c,why); else h+=`<p class="hint naoff"><b>Položená</b> je na tomto revíru zakázaná.</p>`;

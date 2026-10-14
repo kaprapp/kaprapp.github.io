@@ -87,12 +87,12 @@ async function reviry() {
 const plat = (a) => (a || []).filter((x) => x.platny !== false);
 function condense(p) {
   return {
-    doba: plat(p.denniDobaLovu).map((x) => ({ od: x.datumOd, do: x.datumDo, h: x.hodOd && x.hodDo ? `${x.hodOd}–${x.hodDo}` : "", zakaz: !!x.jeZakazano })),
-    kratkodobe: plat(p.kratkodobeHajeni).map((x) => ({ od: x.datumOd, do: x.datumDo, duvod: (x.duvod || "").trim() })),
+    doba: plat(p.denniDobaLovu).map((x) => ({ od: x.datumOd, do: x.datumDo, h: x.hodOd && x.hodDo ? `${x.hodOd}–${x.hodDo}` : "", zakaz: !!x.jeZakazano, pozn: (x.poznamka || "").trim() })),
+    kratkodobe: plat(p.kratkodobeHajeni).map((x) => ({ od: x.datumOd, do: x.datumDo, duvod: (x.duvod || "").trim(), pozn: (x.poznamka || "").trim() })),
     miry: plat(p.miryAHajeni).map((x) => ({ d: x.druhRyby?.popis || "", min: x.dolniMira ?? null, max: x.horniMira ?? null, hajen: !!x.jeHajen, od: x.datumOd, do: x.datumDo, pozn: (x.poznamka || "").trim() })),
     limity: plat(p.limitPonechanychRyb).map((x) => (x.popis || "").trim()).filter(Boolean),
-    lov: plat(p.podminkaLovu).map((x) => ({ co: (x.druhPodminkyLovu?.popis || "").trim(), zakaz: !!x.jeZakazano, od: x.datumOd, do: x.datumDo })),
-    technika: plat(p.rybolovnaTechnika).map((x) => ({ co: (x.druhRybolovneTech?.popis || "").trim(), zakaz: !!x.jeZakazano })),
+    lov: plat(p.podminkaLovu).map((x) => ({ co: (x.druhPodminkyLovu?.popis || "").trim(), zakaz: !!x.jeZakazano, od: x.datumOd, do: x.datumDo, pozn: (x.poznamka || "").trim() })),
+    technika: plat(p.rybolovnaTechnika).map((x) => ({ co: (x.druhRybolovneTech?.popis || "").trim(), zakaz: !!x.jeZakazano, pozn: (x.poznamka || "").trim() })),
   };
 }
 async function podminky(list) {

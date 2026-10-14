@@ -1,0 +1,57 @@
+{
+ "datum": "2026-10-14",
+ "zjisteno": "2026-10-14T18:24:17.762Z",
+ "ok": true,
+ "problemy": [],
+ "info": [
+  {
+   "t": "Lov ryb dnes zakázán bez upřesnění (32 revírů) – ověřit, že jde o celý revír",
+   "x": [
+    "BÍLINA 3",
+    "BÍLINA 9",
+    "BOBŘÍ POTOK 2",
+    "BULOVSKÝ POTOK 1",
+    "BYLANKA 1 P",
+    "ČERNÝ POTOK 1",
+    "DESNÁ 1",
+    "HERLIČKA 1",
+    "HOŘINA 1",
+    "JEŠTĚDKA 1",
+    "JEŠTĚDSKÝ POTOK 1",
+    "JIŘÍKOVSKÝ POTOK 1",
+    "KLENOS 1",
+    "KOUŘIMKA 2 A",
+    "KRUPÁ 2",
+    "LAZNICKÝ POTOK 1 (Říka)",
+    "LIBOCKÝ POTOK 1",
+    "LOSINKA 1",
+    "MALÁ ÚPA 1",
+    "MORÁVKA 2",
+    "OLEŠNICE JESENICKÁ 1",
+    "OPAVA 9 P",
+    "PLOUČNICE 8",
+    "POLICKÝ POTOK 1",
+    "PORUBKA 1",
+    "PRUNÉŘOVSKÝ POTOK 1",
+    "RYBNÍK VÁCLAV",
+    "SKOROŠICKÝ POTOK 1",
+    "STAŘÍČ 1",
+    "VÁCLAVICKÝ POTOK 1",
+    "VELKÁ ÚPA 1",
+    "VELKÝ RYBNÍK"
+   ]
+  },
+  {
+   "t": "Ruční poznámka u revíru 443012 není ověřená u MO"
+  }
+ ],
+ "pocty": {
+  "reviry": 1773,
+  "prutoky": 273
+ },
+ "rad": {
+  "platnost": "1. 1. 2026 – 31. 12. 2027",
+  "mirP": 16,
+  "mirM": 21
+ }
+}

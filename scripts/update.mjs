@@ -103,11 +103,11 @@ async function podminky(list) {
     const prev = await readJSON(f, {});
     const out = { ...prev, c, n, t, s, o, url, stav: now.date };
     try {
-      if (!prev.popis || monday) {
+      if (!prev.popis || monday || prev.mistni === undefined) {
         const d = await get(`${API}/reviry/by-friendly-url/${encodeURIComponent(url)}`, { json: true });
         Object.assign(out, { popis: (d.popis || "").trim(), delka: d.delka ?? null, rozloha: d.rozloha ?? null,
           lat: d.gpsSouradniceSirka ? +d.gpsSouradniceSirka : null, lon: d.gpsSouradniceDelka ? +d.gpsSouradniceDelka : null,
-          mo_web: d.organizace?.webUrl || "", mo_tel: d.organizace?.telefon || "", mo_mail: d.organizace?.email || "" });
+          mistni: !!d.mistniVyznam, mo_web: d.organizace?.webUrl || "", mo_tel: d.organizace?.telefon || "", mo_mail: d.organizace?.email || "" });
       }
       const p = await get(`${API}/reviry/by-sid/${sid}/podminky?datum=${now.date}`, { json: true });
       Object.assign(out, condense(p));

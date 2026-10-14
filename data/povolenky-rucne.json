@@ -1,0 +1,6 @@
+{
+  "pozn": "Ruční upozornění na povolenky, které v datech RIS chybějí. Klíč = číslo revíru. Každou položku ověřit u MO a datum ověření zapsat.",
+  "reviry": {
+    "443012": { "txt": "Podle zkušeností rybářů se na Horské Kamenici 1 dříve kupovala denní povolenka navíc k běžné povolence. V oficiálních údajích revíru to uvedeno není – před lovem si to ověř u MO Železný Brod.", "overeno": "" }
+  }
+}

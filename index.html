@@ -211,7 +211,7 @@ ul.plain li{margin:3px 0}
 .flownow .big{font-family:var(--f-display);font-size:26px;font-weight:700;line-height:1;white-space:nowrap}
 .flownow .big small{font-size:14px;font-weight:600;color:var(--muted)}
 .flownow .lvltxt{font-weight:700}
-.alert{padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--bad) 13%,var(--surface));border:1px solid color-mix(in srgb,var(--bad) 45%,transparent);color:var(--ink);font-size:15px}
+.alert.mistni{margin:8px 0 6px;font-size:14.5px;line-height:1.4}.alert.mistni a{color:inherit}.mpill{margin-top:4px}.alert{padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--bad) 13%,var(--surface));border:1px solid color-mix(in srgb,var(--bad) 45%,transparent);color:var(--ink);font-size:15px}
 .alert b{color:var(--bad)}
 .okbox{padding:10px 14px;border-radius:12px;background:color-mix(in srgb,var(--ok) 12%,var(--surface));font-size:15px}
 .popis{white-space:pre-line;font-size:15px;margin:0}
@@ -721,6 +721,7 @@ function renderResults(title,extra=""){
       <span class="dist">${isFinite(x._d)?fmtKm(x._d)+"<small>KM VZDUŠNĚ</small>":x._date?dShort(x._date)+"<small>NAPOSLEDY</small>":""}</span></button>`;}).join("");
   $("out").innerHTML=`<h2 style="font-size:26px;margin-bottom:10px;text-align:center">${esc(title)}</h2>${extra}<div class="list">${items}</div><p class="hint" style="margin-top:8px">Klepni na revír pro podmínky lovu.</p>`;
   $("out").querySelectorAll(".card").forEach(b=>b.onclick=()=>openDetail(+b.dataset.i));
+  S.results.forEach((x,i)=>{ if(!x.r||!x.r.c) return; getData(`podminky/${x.r.c}.json`).then(p=>{ if(mistniP(p)!=="all") return; const el=$("out").querySelector(`.card[data-i="${i}"] h3`); if(el&&!el.parentNode.querySelector(".mpill")) el.insertAdjacentHTML("afterend",`<div class="meta mpill"><span class="pill vysoka">Jen místní povolenka</span></div>`); }).catch(()=>{}); });
   drawResults();
 }
 
@@ -742,9 +743,16 @@ async function openDetail(i){
   chanceDetail(x); nastrahyDetail(x,p);
 }
 const risUrl=r=>isMRS(r)?"https://mrsbrno.cz/reviry/"+String(r.url).replace(/^mrs:/,""):"https://ris.rybsvaz.cz/karta-reviru/-/"+r.url;
+const MP_ALL=/(?:na\s+(?:celém\s+)?revíru|zde)\s*,?\s+platí\s+(?:pouze|jen|výhradně)\s+(?:zvláštní\s+)?místní\s+povolenk/i, MP_ANY=/platí\s+(?:pouze|jen|výhradně)\s+(?:zvláštní\s+)?místní\s+povolenk/i;
+const mistniP=p=>!p?"":(p.mistni||MP_ALL.test(p.popis||""))?"all":MP_ANY.test(p.popis||"")?"part":"";
+function mistniBox(r,p){ const k=mistniP(p); if(!k) return "";
+  const kde=p.mo_web?` (<a href="${esc(p.mo_web)}" target="_blank" rel="noopener">web MO</a>${p.mo_tel?`, tel. ${esc(p.mo_tel)}`:""})`:p.mo_tel?` (tel. ${esc(p.mo_tel)})`:"";
+  if(k==="all") return `<div class="alert mistni"><b>Pozor: jen místní povolenka.</b> Tento revír je místního významu – běžná územní ani celosvazová povolenka tu <b>neplatí</b>. Povolenku na něj prodává ${esc(orgL(r))}${kde}.</div>`;
+  const t=String(p.popis||"").replace(/<[^>]+>|\*\*/g," ").replace(/\s+/g," "); const mi=t.search(MP_ANY); let st=0; for(const q of t.slice(0,mi).matchAll(/(?:^|[.!?)]\s+)(?=(?:Na|K|V|Revír|Do|Pro)\s)/g)) st=q.index+q[0].length; const en=t.slice(mi).search(/\.(?:\s+[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ*]|\s*$)/); const m=[t.slice(st,en<0?t.length:mi+en+1)];
+  return `<div class="alert mistni"><b>Pozor: na části revíru jen místní povolenka.</b> ${esc((m?m[0]:"").trim())} Tam běžná územní ani celosvazová povolenka neplatí.</div>`; }
 function head(r,x,p){ p=p||{};
   return `<div class="sheet-head"><div class="rid">${esc(fmtNum(r.c))} · ${esc(SVN[r.s]||"ČRS")} · ${r.t==="P"?"pstruhový":"mimopstruhový"}</div>
-  <h2>${esc(r.n)}</h2><p>Hospodaří ${esc(orgL(r))}${p.delka?` · délka ${esc(String(p.delka).replace(".",","))} km`:""}${p.rozloha?` · ${esc(String(p.rozloha).replace(".",","))} ha`:""}</p>
+  <h2>${esc(r.n)}</h2>${mistniBox(r,p)}<p>Hospodaří ${esc(orgL(r))}${p.delka?` · délka ${esc(String(p.delka).replace(".",","))} km`:""}${p.rozloha?` · ${esc(String(p.rozloha).replace(".",","))} ha`:""}</p>
   ${isFinite(x._d)?`<p class="hint" style="margin-top:4px">${r.approx?"asi ":""}${fmtKm(x._d)} km vzdušnou čarou od tvého bodu${r.approx?" (poloha přibližná – revír nemá zákres v mapě, přesný úsek najdeš v popisu)":""}</p>`:""}${zapisLine(r)}${isFinite(x.lat)?`<div class="navrow"><a class="btn small" href="${/iPhone|iPad|Macintosh/.test(navigator.userAgent)?`https://maps.apple.com/?daddr=${x.lat},${x.lon}`:`https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lon}`}" target="_blank" rel="noopener">🧭 Navigovat k revíru</a></div>`:""}</div>`; }
 function zapisLine(r){ const d=new Date(); const ds=`${d.getDate()}. ${d.getMonth()+1}. ${d.getFullYear()}`;
   return `<div class="zapis"><div><span class="hint">Zápis do povolenky (před začátkem lovu)</span><br><b>${esc(ds)}</b> · <span style="white-space:nowrap">revír <b>${esc(fmtNum(r.c))}</b></span> <span class="hint">(${esc(r.n)})</span></div><button class="btn small" type="button" data-copy="${esc(r.n)}">Kopírovat revír</button></div>`; }

@@ -795,21 +795,24 @@ function rezimMimo(r,p){
   return {kratce:`${nm[0].toUpperCase()+nm.slice(1)} režim platí jen od ${+m[1]}. ${+m[2]}. do ${+m[3]}. ${+m[4]}.`,
     txt:`Tato voda má kombinovaný režim. ${nm[0].toUpperCase()+nm.slice(1)} režim tu platí jen od ${+m[1]}. ${+m[2]}. do ${+m[3]}. ${+m[4]}., dnes podle tohoto revíru lovit nelze. Mimo toto období se řiď podmínkami ${r.t==="P"?"mimopstruhového":"pstruhového"} revíru stejného jména (v aplikaci Pstruh), pokud v tu dobu platí.`};
 }
+const jenCast=l=>!!(l&&l.zakaz&&l.pozn&&!/celý\s+revír|celého\s+revíru|hlavní\s+tok|mimo\s+provoz/i.test(l.pozn)), techCast=t=>!!(t&&t.zakaz&&/(?:pouze|jen)\s+(?:na|v)\s/i.test(t.pozn||""));
+const upr=t=>t?` <span class="hint upr">Upřesnění: ${esc(t)}</span>`:"";
 async function body(r,x,p){
   const sec=(t,h)=>h?`<section class="sec"><h3>${t}</h3>${h}</section>`:"";
   const kr=(p.kratkodobe||[]).filter(covers);
   const rz=rezimMimo(r,p);
-  const alert=(rz?`<div class="alert"><b>Dnes mimo režim revíru:</b> ${esc(rz.txt)}</div>`:"")+(kr.length?`<div class="alert"><b>Platí omezení:</b> ${kr.map(k=>esc(k.duvod)+(k.do?` <span class="hint">(do ${esc(dCZ(k.do))})</span>`:"")).join("<br>")}</div>`:"");
+  const alert=(rz?`<div class="alert"><b>Dnes mimo režim revíru:</b> ${esc(rz.txt)}</div>`:"")+(kr.length?`<div class="alert"><b>Platí omezení:</b> ${kr.map(k=>esc(k.duvod)+(k.pozn?" – "+esc(k.pozn):"")+(k.do?` <span class="hint">(do ${esc(dCZ(k.do))})</span>`:"")).join("<br>")}</div>`:"");
   const lov=(p.lov||[]).filter(covers);
   const lovRyb=lov.find(l=>/^lov ryb/i.test(l.co));
   const doba=(p.doba||[]).filter(covers);
   let dnes="";
-  if(lovRyb) dnes+=`<p style="margin:0 0 8px">${lovRyb.zakaz||kr.length||rz?`<span class="st-h">Lov ryb dnes není povolen.</span>${rz?` <span class="hint">${esc(rz.kratce)}</span>`:""}`:`<span class="st-l">Lov ryb je povolen</span>${doba[0]?.h?` · denní doba lovu <b>${esc(doba[0].h)}</b>`:""}.`}</p>`;
+  const lovCast=jenCast(lovRyb);
+  if(lovRyb) dnes+=`<p style="margin:0 0 8px">${(lovRyb.zakaz&&!lovCast)||kr.length||rz?`<span class="st-h">Lov ryb dnes není povolen.</span>${rz?` <span class="hint">${esc(rz.kratce)}</span>`:""}${lovRyb.zakaz?upr(lovRyb.pozn):""}`:`<span class="st-l">Lov ryb je povolen</span>${doba[0]?.h?` · denní doba lovu <b>${esc(doba[0].h)}</b>`:""}.${doba[0]?.pozn?upr(doba[0].pozn):""}`}</p>${lovCast&&!kr.length&&!rz?`<div class="alert" style="margin:0 0 8px"><b>Zákaz lovu ryb${lovRyb.od&&lovRyb.do?` (${esc(dCZ(lovRyb.od))} – ${esc(dCZ(lovRyb.do))})`:""} s upřesněním svazu:</b> ${esc(lovRyb.pozn)}</div>`:""}`;
   else if(doba[0]?.h) dnes+=`<p style="margin:0 0 8px">Denní doba lovu: <b>${esc(doba[0].h)}</b></p>`;
   const tech=(p.technika||[]);
-  if(tech.length) dnes+=`<div class="chiprow">${tech.map(t=>`<span class="${t.zakaz?"c-no":"c-ok"}">${esc(t.co)}</span>`).join("")}</div>`;
-  const ost=lov.filter(l=>l!==lovRyb&&l.zakaz).map(l=>l.co);
-  if(ost.length) dnes+=`<p class="hint" style="margin-top:8px">Zakázáno: ${esc(ost.join(", "))}</p>`;
+  if(tech.length) dnes+=`<div class="chiprow">${tech.map(t=>`<span class="${t.zakaz?"c-no":"c-ok"}">${esc(t.co)}${t.pozn?" *":""}</span>`).join("")}</div>${tech.filter(t=>t.pozn).map(t=>`<p class="hint" style="margin:6px 0 0">* <b>${esc(t.co)}</b>${t.zakaz?" – zakázáno":" – povoleno"}: ${esc(t.pozn)}</p>`).join("")}`;
+  const ost=lov.filter(l=>l!==lovRyb&&l.zakaz);
+  if(ost.length) dnes+=`<p class="hint" style="margin-top:8px">Zakázáno: ${ost.map(l=>esc(l.co)+(l.pozn?` (${esc(l.pozn)})`:"")).join(", ")}</p>`;
   const top=S.typ==="P"?/pstruh|lipan|siven|hlavat|losos/i:/kapr|amur|štik|candát|sumec|lín/i;
   const miry=(p.miry||[]).slice().sort((a,b)=>(top.test(b.d)-top.test(a.d))||a.d.localeCompare(b.d,"cs"));
   const tbl=miry.length?`<div class="tblwrap"><table class="tbl"><tr><th>Druh</th><th>Lovná míra</th><th>Dnes</th></tr>${miry.map(m=>`<tr><td>${esc(m.d)}${m.pozn?`<div class="hint">${esc(m.pozn)}</div>`:""}</td><td class="n">${m.min?esc(m.min)+" cm":"—"}${m.max?" až "+esc(m.max)+" cm":""}</td><td>${m.hajen?'<span class="st-h">hájen</span>':rz?'<span class="st-h">mimo režim</span>':'<span class="st-l">lze lovit</span>'}</td></tr>`).join("")}</table></div>`:"";
@@ -1043,7 +1046,7 @@ async function fishVerdict(d,rv,L){
   }
   if(d.chranen&&!["vranka","piskor","losos"].includes(d.id)) info.push(d.chranen);
   if(rv.startsWith("r:")&&r&&!p) info.push("Podmínky revíru se nepodařilo načíst – použita obecná pravidla.");
-  if(r&&p){ const lovOk=(p.lov||[]).find(l=>/^lov ryb/i.test(l.co)&&!l.zakaz&&(!l.od||l.od<=todayISO)&&(!l.do||l.do>=todayISO));
+  if(r&&p){ const lovOk=(p.lov||[]).find(l=>/^lov ryb/i.test(l.co)&&(!l.zakaz||jenCast(l))&&(!l.od||l.od<=todayISO)&&(!l.do||l.do>=todayISO));
     const kr=(p.kratkodobe||[]).filter(k=>(!k.od||k.od<=todayISO)&&(!k.do||k.do>=todayISO));
     if(kr.length){ hajen=true; why.push("Na revíru teď platí omezení: "+kr.map(k=>k.duvod.trim()).join("; ")); }
     else if(rezimMimo(r,p)){ hajen=true; why.push(rezimMimo(r,p).txt); }
@@ -1176,7 +1179,7 @@ function chanceScore(r,w,fl,st,p){
   if(P&&(mon===12||mon<=3||(mon===4&&now.getDate()<=15))) closed="Pstruhový revír má hájení (1. 12.–15. 4.).";
   const kr=(p?.kratkodobe||[]).filter(covers); const lr=(p?.lov||[]).filter(covers).find(l=>/^lov ryb/i.test(l.co));
   const rzm=rezimMimo(r,p); if(rzm) closed=closed||(rzm.kratce+" Dnes podle tohoto revíru lovit nelze.");
-  if(kr.length||lr?.zakaz) closed=closed||("Na revíru dnes platí omezení: "+(kr[0]?.duvod||"lov ryb není povolen")+".");
+  if(kr.length||(lr?.zakaz&&!jenCast(lr))) closed=closed||("Na revíru dnes platí omezení: "+(kr[0]?.duvod||"lov ryb není povolen")+".");
   // počasí
   let sr=null,ss=null, iNow=-1;
   if(w?.hourly?.time){ const loc=new Date(now.getTime()-now.getTimezoneOffset()*6e4).toISOString().slice(0,13)+":00"; iNow=w.hourly.time.indexOf(loc); }
@@ -1282,7 +1285,7 @@ function naCtx(w,fl,p){
   const q=fl&&fl.qa>0?fl.q/fl.qa:null, up=fl?.trend==="stoupa";
   const voda=q==null?"?":q<0.6?"nizka":q<1.3?"bezna":q<2?"zvysena":"vysoka";
   let cir="cira"; if((q!=null&&q>1.6)||(up&&q!=null&&q>1.1)||rain24>8) cir="kalna"; else if((q!=null&&q>1.2)||up||rain24>3) cir="mirne";
-  const tech=p?.technika||[], ok=co=>{ const t=tech.find(t=>norm(t.co)===norm(co)); return !t||!t.zakaz; };
+  const tech=p?.technika||[], ok=co=>{ const t=tech.find(t=>norm(t.co)===norm(co)); return !t||!t.zakaz||techCast(t); };
   return {mon,nm,sr,ss,sea,noc,sero,vecer,sky,cl,q,up,voda,cir,wt,rain24,fly:ok("Muškaření"),spin:ok("Přívlač")};
 }
 const NA_C={zl:["#D9A520","zlatá"],zt:["#E8C21C","žlutá"],mi:["#C46A2A","měděná"],st:["#9AA6B1","stříbrná"],ol:["#6B7A3A","olivová"],hn:["#7A5232","hnědá"],ce:["#2A2A2A","tmavá"],or:["#F26B1D","oranžová"],rz:["#E8508A","růžová"],cv:["#C8322A","červená"],sv:["#CFC7B0","světlá"],bi:["#EFEBDF","bílá"],ch:["#B7D12A","chartreuse"]};
@@ -1291,7 +1294,7 @@ function naCtxK(w,fl,p){
   const c=naCtx(w,fl,p), now=new Date(), md=now.toISOString().slice(5,10);
   let d6=0; if(w?.hourly?.time){ const loc=new Date(now.getTime()-now.getTimezoneOffset()*6e4).toISOString().slice(0,13)+":00", i=w.hourly.time.indexOf(loc); if(i>=6) d6=w.hourly.surface_pressure[i]-w.hourly.surface_pressure[i-6]; }
   c.tlak=d6<=-1.5?"klesa":d6>=1.5?"stoupa":"stala";
-  const tech=p?.technika||[], ok=co=>{ const t=tech.find(t=>norm(t.co)===norm(co)); return !t||!t.zakaz; };
+  const tech=p?.technika||[], ok=co=>{ const t=tech.find(t=>norm(t.co)===norm(co)); return !t||!t.zakaz||techCast(t); };
   c.pol=ok("Položená"); c.plav=ok("Plavaná"); c.spinOk=ok("Přívlač"); c.spinSez=md>="06-16";
   c.zakrm=(p?.lov||[]).some(l=>/zakrmov/i.test(l.co)&&l.zakaz&&covers(l));
   c.wtk=c.wt==null?"?":c.wt<8?"studena":c.wt<15?"chladna":c.wt<=24?"ideal":"tepla";

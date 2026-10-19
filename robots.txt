@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kapr.iryba.cz/sitemap.xml

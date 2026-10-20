@@ -49,7 +49,7 @@ Tento soubor čte Claude (AI asistent), když v tomto repozitáři dělá úprav
    `node -e 'const s=require("fs").readFileSync("index.html","utf8");for(const m of s.matchAll(/<script(?![^>]*src)[^>]*>([\s\S]*?)<\/script>/g)){try{new Function(m[1])}catch(e){console.log("CHYBA",e.message)}}'`
 2. Spusť lokálně (`python3 -m http.server 8768`) a projdi změnu v Playwrightu na šířce telefonu 390 px (Leaflet a open-meteo lze nahradit maketou). Zkontroluj, že v konzoli nejsou chyby.
 3. Po změně skriptů dat: `node scripts/kontrola.mjs` a ověř, že `data/kontrola.json` nehlásí nové problémy.
-4. Zvyš `CACHE` v `sw.js`.
+4. Zvyš `CACHE` v `sw.js` a aktualizuj `APP_VER` v `index.html` (datum a čas změny – zobrazuje se dole v aplikaci jako „Verze …“).
 
 ## Commit a nahrání
 - Autor i committer: `Claude <noreply@anthropic.com>`, zpráva česky, stručně co a proč.

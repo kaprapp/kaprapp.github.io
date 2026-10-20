@@ -1674,7 +1674,17 @@ if(S.loc) map.setView([S.loc.lat,S.loc.lon],10);
 loadRis().then(()=>drawRevs());
 if(!readHashLoc() && S.mode==="gps" && navigator.permissions?.query){
   navigator.permissions.query({name:"geolocation"}).then(st=>{ if(st.state==="granted") locate(true); }).catch(()=>{}); }
-if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+/* verze aplikace – zvyšuj spolu s CACHE v sw.js */
+const APP_VER="2026-10-20 22:25";
+try{ const ft=document.getElementById("foot"); if(ft) ft.insertAdjacentHTML("beforeend",`<br><span style="font-size:11px;opacity:.7">Verze ${APP_VER}</span>`); }catch(e){}
+/* aktualizace: při návratu do aplikace zkontroluj novou verzi a po jejím převzetí stránku jednou obnov */
+if("serviceWorker" in navigator){
+  const hadCtrl=!!navigator.serviceWorker.controller; let reloaded=false;
+  navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(reg=>{
+    document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") reg.update().catch(()=>{}); });
+  }).catch(()=>{});
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(hadCtrl&&!reloaded&&!FS){ reloaded=true; location.reload(); } });
+}
 })();
 </script>
 <script>

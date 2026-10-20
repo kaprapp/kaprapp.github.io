@@ -620,8 +620,15 @@ function drawLoc(){ if(!S.loc){ if(locMarker){map.removeLayer(locMarker);locMark
     locMarker.on("dragend",()=>{const p=locMarker.getLatLng(); setLoc(p.lat,p.lng,null,"mapa",false);}); }
   else locMarker.setLatLng(ll); }
 function drawResults(){ resLayer.clearLayers(); if(!S.results) return;
-  S.results.forEach((x,i)=>{ if(!isFinite(x.lat)) return; const m=L.marker([x.lat,x.lon],{icon:L.divIcon({className:"",html:`<div class="numpin">${esc(x._label??i+1)}</div>`,iconSize:[0,0]})});
-    m.on("click",()=>openDetail(i)); resLayer.addLayer(m); }); }
+  S.results.forEach((x,i)=>{ if(!isFinite(x.lat)) return;
+    const pin=(lat,lon)=>{ const m=L.marker([lat,lon],{icon:L.divIcon({className:"",html:`<div class="numpin">${esc(x._label??i+1)}</div>`,iconSize:[0,0]})}); m.on("click",()=>openDetail(i)); resLayer.addLayer(m); };
+    const ends=revEnds(x.r); if(ends) ends.forEach(p=>pin(p[1],p[0])); else pin(x.lat,x.lon); }); }
+/* začátek a konec revíru: dva nejvzdálenější konce úseků; u malých revírů (pod 300 m) jen jeden bod */
+function revEnds(r){ if(!r||!r.segs||!r.segs.length||r.approx) return null;
+  const pts=[]; for(const s of r.segs){ if(s.length){ pts.push(s[0]); if(s.length>1) pts.push(s[s.length-1]); } }
+  const km=(a,b)=>{ const dx=(a[0]-b[0])*71.5, dy=(a[1]-b[1])*111.2; return Math.hypot(dx,dy); };
+  let best=null, bd=0; for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){ const d=km(pts[i],pts[j]); if(d>bd){ bd=d; best=[pts[i],pts[j]]; } }
+  return best&&bd>=0.3?best:null; }
 function fitTo(pts){ const ll=pts.filter(p=>p&&isFinite(p.lat)).map(p=>[p.lat,p.lon]); if(!ll.length) return;
   if(ll.length===1) map.setView(ll[0],12); else map.fitBounds(ll,{padding:[36,36],maxZoom:13}); }
 map.on("click",e=>setLoc(e.latlng.lat,e.latlng.lng,null,"mapa",false));
@@ -715,7 +722,7 @@ $("findBtn").onclick=async()=>{
   const list=risOfTyp(); if(!list.length){ $("out").innerHTML=`<div class="status">${RIS.all?"Mimopstruhové revíry se doplní při nejbližší ranní aktualizaci dat.":"Data revírů se nepodařilo načíst. Zkus to za chvíli."}</div>`; return; }
   S.results=list.map(r=>({r,...risDist(r,S.loc)})).filter(x=>x.d<1e8).sort((a,b)=>a.d-b.d).slice(0,3).map(risResult);
   renderResults(`Tři nejbližší ${S.typ==="P"?"pstruhové":"mimopstruhové"} revíry`);
-  fitTo([S.loc,...S.results]);
+  fitTo([S.loc,...S.results,...S.results.flatMap(x=>(revEnds(x.r)||[]).map(p=>({lat:p[1],lon:p[0]})))]);
 };
 function renderResults(title,extra=""){
   const items=S.results.map((x,i)=>{const r=x.r;

@@ -1,6 +1,6 @@
 {
- "datum": "2026-10-19",
- "zjisteno": "2026-10-19T04:19:50.259Z",
+ "datum": "2026-10-20",
+ "zjisteno": "2026-10-20T04:17:17.764Z",
  "ok": true,
  "problemy": [],
  "info": [
@@ -46,7 +46,7 @@
   }
  ],
  "pocty": {
-  "reviry": 1773,
+  "reviry": 1774,
   "prutoky": 273
  },
  "rad": {

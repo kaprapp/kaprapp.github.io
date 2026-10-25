@@ -1,12 +1,8 @@
 {
  "datum": "2026-10-25",
- "zjisteno": "2026-10-25T17:18:57.265Z",
- "ok": false,
- "problemy": [
-  {
-   "t": "Přibylo revírů jen s přibližnou polohou: 121 → 126"
-  }
- ],
+ "zjisteno": "2026-10-25T17:30:04.142Z",
+ "ok": true,
+ "problemy": [],
  "info": [
   {
    "t": "Lov ryb dnes zakázán bez upřesnění (32 revírů) – ověřit, že jde o celý revír",

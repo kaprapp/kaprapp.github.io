@@ -43,9 +43,23 @@ if (bezUpr.length) info(`Lov ryb dnes zakázán bez upřesnění (${bezUpr.lengt
 // 4) průtoky a aktuality
 const pr = await rd("prutoky.json", {}); const st = Object.keys(pr.stanice || pr.data || {}).length || (pr.items || []).length;
 if (prev.pocty?.prutoky && st && st < prev.pocty.prutoky * 0.8) prob(`Méně stanic průtoků: ${prev.pocty.prutoky} → ${st}`);
-// 5) ruční poznámky – připomenout neověřené
+// 5) polohy revírů (update.mjs → polohy.json): přibližné, opravené podle GPS a zákresy, které nesedí s GPS
+const po = await rd("polohy.json", {});
+const nesedi = po.nesedi || [], pribl = po.pribl || [];
+if (po.datum !== today) prob("Kontrola poloh revírů dnes neproběhla");
+else {
+  const nove = nesedi.filter((x) => !(prev.polohyNesedi || []).includes(x));
+  if (nove.length) prob(`Nově nesedí zákres revíru s GPS z popisu/RIS (${nove.length}×) – ověřit`, nove);
+  const zname = nesedi.filter((x) => !nove.includes(x));
+  if (zname.length) info(`Zákres nesedí s GPS (${zname.length}×, už hlášené) – u řek může GPS v popisu patřit k tůni či přítoku`, zname);
+  if (po.opraveno?.length) info(`Poloha opravena podle GPS z popisu i RIS (${po.opraveno.length}×)`, po.opraveno);
+  if (po.katastr?.length) info(`Poloha odhadnuta podle obce/katastru (${po.katastr.length}×)`, po.katastr.slice(0, 40));
+  if (prev.pocty?.pribl != null && pribl.length > prev.pocty.pribl) prob(`Přibylo revírů jen s přibližnou polohou: ${prev.pocty.pribl} → ${pribl.length}`);
+  if (pribl.length) info(`Revíry jen s přibližnou polohou (${pribl.length}) – v RIS chybí zákres, GPS i katastr`, pribl.slice(0, 60));
+}
+// 6) ruční poznámky – připomenout neověřené
 const ru = (await rd("povolenky-rucne.json", {}))?.reviry || {};
 for (const [c, v] of Object.entries(ru)) if (!v.overeno) info(`Ruční poznámka u revíru ${c} není ověřená u MO`);
-const out = { datum: today, zjisteno: new Date().toISOString(), ok: !P.length, problemy: P, info: I, pocty: { reviry: nRv, prutoky: st || prev.pocty?.prutoky || 0 }, rad: { platnost: rad.platnost || "", mirP: Object.keys(MIN.P).length, mirM: Object.keys(MIN.M).length } };
+const out = { datum: today, zjisteno: new Date().toISOString(), ok: !P.length, problemy: P, info: I, pocty: { reviry: nRv, prutoky: st || prev.pocty?.prutoky || 0, pribl: po.datum === today ? pribl.length : prev.pocty?.pribl ?? null }, polohyNesedi: po.datum === today ? nesedi : prev.polohyNesedi || [], rad: { platnost: rad.platnost || "", mirP: Object.keys(MIN.P).length, mirM: Object.keys(MIN.M).length } };
 await fs.writeFile(new URL("kontrola.json", D), JSON.stringify(out, null, 1));
 console.log(JSON.stringify({ ok: out.ok, problemy: P.length, info: I.length, rad: out.rad }));

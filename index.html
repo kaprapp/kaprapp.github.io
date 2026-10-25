@@ -289,6 +289,7 @@ ul.plain li{margin:3px 0}
 .suggest{display:grid;gap:6px}
 .suggest button{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 12px;font-size:14px}
 .suggest button:hover{border-color:var(--accent)}
+.morenear .chips{display:flex;flex-wrap:wrap;gap:6px}.morenear .chip{font:inherit;font-size:14px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-align:left}
 </style>
 </head>
 <body>
@@ -355,7 +356,7 @@ ul.plain li{margin:3px 0}
 
     <div class="panel" id="pPlace" hidden>
       <form class="row" id="placeForm">
-        <input type="text" id="place" placeholder="Obec, řeka nebo místo" autocomplete="off" enterkeyhint="search">
+        <input type="text" id="place" placeholder="Obec, řeka, revír nebo místo" autocomplete="off" enterkeyhint="search">
         <button class="btn primary" type="submit" id="placeBtn">Najít</button>
       </form>
       <div class="suggest" id="suggest" hidden></div>
@@ -593,7 +594,7 @@ const persist=()=>store.set("kapr",{typ:S.typ,mode:S.mode,loc:S.loc});
 /* ---------- revíry ---------- */
 const RIS={all:null};
 async function loadRis(){ if(RIS.all) return RIS.all; const d=await getData("reviry.json"); if(!d) return null;
-  RIS.all=d.reviry.map(([c,n,t,s,o,url,sid,parts,approx])=>({c,n,t,s,o,url,sid,approx:approx===1,bod:approx===2,segs:(parts||[]).map(f=>{const p=[];let x=0,y=0;for(let i=0;i<f.length;i+=2){x+=f[i];y+=(f[i+1]||0);p.push([x/1000,y/1000]);}return p;}).filter(p=>p.length)}));
+  RIS.all=d.reviry.map(([c,n,t,s,o,url,sid,parts,approx,rad])=>({c,n,t,s,o,url,sid,approx:approx===1,bod:approx>=2,odhad:approx===3,rad:+rad||0,segs:(parts||[]).map(f=>{const p=[];let x=0,y=0;for(let i=0;i<f.length;i+=2){x+=f[i];y+=(f[i+1]||0);p.push([x/1000,y/1000]);}return p;}).filter(p=>p.length)}));
   RIS.stav=d.aktualizovano; return RIS.all; }
 const risOfTyp=()=>(RIS.all||[]).filter(r=>r.t===S.typ);
 function risDist(r,pt){ const K=Math.cos(pt.lat*Math.PI/180)*111.32, L=110.57; let best={d:1e9,lat:0,lon:0};
@@ -601,6 +602,7 @@ function risDist(r,pt){ const K=Math.cos(pt.lat*Math.PI/180)*111.32, L=110.57; l
       const ax=(a[0]-pt.lon)*K, ay=(a[1]-pt.lat)*L, bx=(b[0]-pt.lon)*K, by=(b[1]-pt.lat)*L;
       const dx=bx-ax, dy=by-ay, len=dx*dx+dy*dy; let t=len?-(ax*dx+ay*dy)/len:0; t=Math.max(0,Math.min(1,t));
       const x=ax+t*dx, y=ay+t*dy, d=Math.hypot(x,y); if(d<best.d) best={d,lon:pt.lon+x/K,lat:pt.lat+y/L}; } }
+  if(r.rad&&best.d<1e8) best.d=Math.max(0,best.d-r.rad); // nádrž zadaná středem: měř zhruba ke břehu
   return best; }
 const risResult=(x,i)=>({r:x.r,lat:x.lat,lon:x.lon,_d:x.d,_label:i+1});
 
@@ -700,17 +702,24 @@ $("placeForm").addEventListener("submit",async e=>{
   const hit=TOWNS.find(t=>norm(t[0])===nq);
   if(hit){setLoc(hit[1],hit[2],hit[0],"misto");msg("placeMsg","Nalezeno. Bod můžeš upřesnit v mapě.");return;}
   $("placeBtn").disabled=true;msg("placeMsg","Hledám…");
+  // revíry podle názvu nebo čísla (např. „Rozkoš“, „451200“) – nabídnou se jako první
+  let revs=[]; try{ await loadRis(); const words=nq.split(/\s+/).filter(w=>w.length>1), num=q.replace(/\s/g,"");
+    if(RIS.all&&(nq.length>=3||/^\d{5,}$/.test(num))) revs=RIS.all.filter(r=>r.c===num||(words.length&&words.every(w=>norm(r.n).includes(w)))).sort((a,b)=>(a.t===S.typ?0:1)-(b.t===S.typ?0:1)||a.n.localeCompare(b.n,"cs")).slice(0,6); }catch{}
+  const revBtns=()=>revs.map((r,i)=>`<button type="button" data-r="${i}">🎣 Revír ${esc(r.n)} · ${esc(fmtNum(r.c))}${r.t!==S.typ?` (${r.t==="P"?"pstruhový":"mimopstruhový"})`:""}</button>`).join("");
+  const bindRev=()=>$("suggest").querySelectorAll("button[data-r]").forEach(b=>b.onclick=()=>{const r=revs[+b.dataset.r]; const q0=r.segs[0]&&r.segs[0][Math.floor(r.segs[0].length/2)];
+    if(q0) setLoc(q0[1],q0[0],r.n,"misto"); $("suggest").hidden=true; msg("placeMsg","Revír je otevřený níže. Bod můžeš upřesnit v mapě."); openRev(r); setTimeout(()=>$("s3")?.scrollIntoView({behavior:"smooth",block:"start"}),80);});
   try{
     const r=await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=cz&limit=5&accept-language=cs&q=${encodeURIComponent(q)}`);
     const list=(await r.json()).filter(x=>inCZ(+x.lat,+x.lon));
-    if(!list.length){msg("placeMsg","Takové místo jsem nenašel. Zkus jiný název nebo klepni do mapy.",true);return;}
+    if(!list.length&&!revs.length){msg("placeMsg","Takové místo ani revír jsem nenašel. Zkus jiný název nebo klepni do mapy.",true);return;}
     const lab=x=>x.display_name.split(",").slice(0,3).join(",").trim();
-    setLoc(+list[0].lat,+list[0].lon,lab(list[0]),"misto");
-    msg("placeMsg","Nalezeno. Nebylo to ono? Vyber jinou možnost:");
-    if(list.length>1){ $("suggest").innerHTML=list.slice(1).map((x,i)=>`<button type="button" data-i="${i+1}">${esc(x.display_name.split(",").slice(0,4).join(","))}</button>`).join(""); $("suggest").hidden=false;
-      $("suggest").querySelectorAll("button").forEach(b=>b.onclick=()=>{const x=list[+b.dataset.i];setLoc(+x.lat,+x.lon,lab(x),"misto");$("suggest").hidden=true;msg("placeMsg","Bod můžeš upřesnit v mapě.");}); }
+    if(list.length) setLoc(+list[0].lat,+list[0].lon,lab(list[0]),"misto");
+    const rest=list.slice(1);
+    if(revs.length||rest.length){ $("suggest").innerHTML=revBtns()+rest.map((x,i)=>`<button type="button" data-i="${i+1}">${esc(x.display_name.split(",").slice(0,4).join(","))}</button>`).join(""); $("suggest").hidden=false; bindRev();
+      $("suggest").querySelectorAll("button[data-i]").forEach(b=>b.onclick=()=>{const x=list[+b.dataset.i];setLoc(+x.lat,+x.lon,lab(x),"misto");$("suggest").hidden=true;msg("placeMsg","Bod můžeš upřesnit v mapě.");});
+      msg("placeMsg",revs.length?(list.length?"Nalezeno místo i revír – revír otevřeš klepnutím:":"Nalezen revír – otevřeš ho klepnutím:"):"Nalezeno. Nebylo to ono? Vyber jinou možnost:"); }
     else msg("placeMsg","Nalezeno. Bod můžeš upřesnit v mapě.");
-  }catch{ msg("placeMsg","Vyhledávání teď nejde. Klepni přímo do mapy.",true); }
+  }catch{ if(revs.length){ $("suggest").innerHTML=revBtns(); $("suggest").hidden=false; bindRev(); msg("placeMsg","Nalezen revír – otevřeš ho klepnutím:"); } else msg("placeMsg","Vyhledávání teď nejde. Klepni přímo do mapy.",true); }
   finally{$("placeBtn").disabled=false;}
 });
 
@@ -720,8 +729,12 @@ $("findBtn").onclick=async()=>{
   $("out").innerHTML=statusBox("Hledám nejbližší revíry…");
   await loadRis();
   const list=risOfTyp(); if(!list.length){ $("out").innerHTML=`<div class="status">${RIS.all?"Mimopstruhové revíry se doplní při nejbližší ranní aktualizaci dat.":"Data revírů se nepodařilo načíst. Zkus to za chvíli."}</div>`; return; }
-  S.results=list.map(r=>({r,...risDist(r,S.loc)})).filter(x=>x.d<1e8).sort((a,b)=>a.d-b.d).slice(0,3).map(risResult);
+  const sorted=list.map(r=>({r,...risDist(r,S.loc)})).filter(x=>x.d<1e8).sort((a,b)=>a.d-b.d);
+  S.results=sorted.slice(0,3).map(risResult);
   renderResults(`Tři nejbližší ${S.typ==="P"?"pstruhové":"mimopstruhové"} revíry`);
+  const more=sorted.slice(3,8); // další v okolí – hlavně velké nádrže, které se měří od středu
+  if(more.length){ $("out").querySelector(".list")?.insertAdjacentHTML("afterend",`<div class="morenear"><p class="hint" style="margin:10px 0 4px">Další v okolí:</p><div class="chips">${more.map((x,i)=>`<button type="button" class="chip" data-m="${i}">${esc(x.r.n)} · ${fmtKm(x.d)} km</button>`).join("")}</div></div>`);
+    $("out").querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>openRev(more[+b.dataset.m].r)); }
   fitTo([S.loc,...S.results,...S.results.flatMap(x=>(revEnds(x.r)||[]).map(p=>({lat:p[1],lon:p[0]})))]);
 };
 function renderResults(title,extra=""){
@@ -729,7 +742,7 @@ function renderResults(title,extra=""){
     return `<button class="card" data-i="${i}" ${S.sel===i?'aria-current="true"':""}>
       <span class="num">${esc(x._label??i+1)}</span>
       <div><h3>${esc(x.title||r?.n||"")}</h3><div class="meta">${esc(x.sub||(r?fmtNum(r.c)+" · "+orgL(r):""))}</div>
-      ${x.pozn?`<div class="meta">${esc(x.pozn)}</div>`:""}${r?.approx?`<div class="meta">Poloha přibližná – revír nemá zákres v mapě</div>`:r?.bod?`<div class="meta">Revír nemá zákres úseku – v mapě je bod podle GPS z popisu revíru</div>`:""}
+      ${x.pozn?`<div class="meta">${esc(x.pozn)}</div>`:""}${r?.approx?`<div class="meta">Poloha přibližná – revír nemá zákres v mapě</div>`:r?.odhad?`<div class="meta">Poloha orientační – podle obce z popisu revíru</div>`:r?.bod?`<div class="meta">Revír nemá zákres úseku – v mapě je bod podle GPS z popisu revíru</div>`:""}
       ${x.pill?`<div class="meta" style="margin-top:4px"><span class="pill vysoka">${esc(x.pill)}</span></div>`:""}</div>
       <span class="dist">${isFinite(x._d)?fmtKm(x._d)+"<small>KM VZDUŠNĚ</small>":x._date?dShort(x._date)+"<small>NAPOSLEDY</small>":""}</span></button>`;}).join("");
   $("out").innerHTML=`<h2 style="font-size:26px;margin-bottom:10px;text-align:center">${esc(title)}</h2>${extra}<div class="list">${items}</div><p class="hint" style="margin-top:8px">Klepni na revír pro podmínky lovu.</p>`;
@@ -807,7 +820,7 @@ const povPill=p=>{ const i=povInfo(p); return !i||i.ice?"":i.k==="all"?"Jen mís
 function head(r,x,p){ p=p||{};
   return `<div class="sheet-head"><div class="rid">${esc(fmtNum(r.c))} · ${esc(SVN[r.s]||"ČRS")} · ${r.t==="P"?"pstruhový":"mimopstruhový"}</div>
   <h2>${esc(r.n)}</h2>${mistniBox(r,p)}<p>Hospodaří ${esc(orgL(r))}${p.delka?` · délka ${esc(String(p.delka).replace(".",","))} km`:""}${p.rozloha?` · ${esc(String(p.rozloha).replace(".",","))} ha`:""}</p>
-  ${isFinite(x._d)?`<p class="hint" style="margin-top:4px">${r.approx?"asi ":""}${fmtKm(x._d)} km vzdušnou čarou od tvého bodu${r.approx?" (poloha přibližná – revír nemá zákres v mapě, přesný úsek najdeš v popisu)":r.bod?" (revír nemá zákres úseku, bod podle GPS z popisu revíru)":""}</p>`:""}${(r.segs&&r.segs.length)||isFinite(x.lat)?`<div class="mapbox revmapbox"><div class="revmap" role="img" aria-label="Mapa revíru ${esc(r.n)}"></div><button class="fsbtn" type="button" aria-label="Zvětšit mapu na celou obrazovku">⛶ Zvětšit mapu</button><button class="fsclose" type="button">← Zpět</button></div>`:""}${zapisLine(r)}${isFinite(x.lat)?`<div class="navrow"><a class="btn small" href="${/iPhone|iPad|Macintosh/.test(navigator.userAgent)?`https://maps.apple.com/?daddr=${x.lat},${x.lon}`:`https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lon}`}" target="_blank" rel="noopener">🧭 Navigovat k revíru</a></div>`:""}</div>`; }
+  ${isFinite(x._d)?`<p class="hint" style="margin-top:4px">${r.approx?"asi ":""}${fmtKm(x._d)} km vzdušnou čarou od tvého bodu${r.approx?" (poloha přibližná – revír nemá zákres v mapě, přesný úsek najdeš v popisu)":r.odhad?" (poloha orientační – podle obce z popisu revíru)":r.bod?` (revír nemá zákres úseku${r.rad?", měřeno zhruba ke břehu":""}, bod podle GPS z popisu revíru)`:""}</p>`:""}${(r.segs&&r.segs.length)||isFinite(x.lat)?`<div class="mapbox revmapbox"><div class="revmap" role="img" aria-label="Mapa revíru ${esc(r.n)}"></div><button class="fsbtn" type="button" aria-label="Zvětšit mapu na celou obrazovku">⛶ Zvětšit mapu</button><button class="fsclose" type="button">← Zpět</button></div>`:""}${zapisLine(r)}${isFinite(x.lat)?`<div class="navrow"><a class="btn small" href="${/iPhone|iPad|Macintosh/.test(navigator.userAgent)?`https://maps.apple.com/?daddr=${x.lat},${x.lon}`:`https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lon}`}" target="_blank" rel="noopener">🧭 Navigovat k revíru</a></div>`:""}</div>`; }
 function zapisLine(r){ const d=new Date(); const ds=`${d.getDate()}. ${d.getMonth()+1}. ${d.getFullYear()}`;
   return `<div class="zapis"><div><span class="hint">Zápis do povolenky (před začátkem lovu)</span><br><b>${esc(ds)}</b> · <span style="white-space:nowrap">revír <b>${esc(fmtNum(r.c))}</b></span> <span class="hint">(${esc(r.n)})</span></div><button class="btn small" type="button" data-copy="${esc(r.n)}">Kopírovat revír</button></div>`; }
 document.addEventListener("click",async e=>{ const b=e.target.closest("[data-copy]"); if(!b) return;
@@ -1675,7 +1688,7 @@ loadRis().then(()=>drawRevs());
 if(!readHashLoc() && S.mode==="gps" && navigator.permissions?.query){
   navigator.permissions.query({name:"geolocation"}).then(st=>{ if(st.state==="granted") locate(true); }).catch(()=>{}); }
 /* verze aplikace – zvyšuj spolu s CACHE v sw.js */
-const APP_VER="2026-10-25 18:20";
+const APP_VER="2026-10-25 18:40";
 try{ const ft=document.getElementById("foot"); if(ft) ft.insertAdjacentHTML("beforeend",`<br><span style="font-size:11px;opacity:.7">Verze ${APP_VER}</span>`); }catch(e){}
 /* aktualizace: při návratu do aplikace zkontroluj novou verzi a po jejím převzetí stránku jednou obnov */
 if("serviceWorker" in navigator){

@@ -21,22 +21,68 @@ const API = RIS + "/proxy/api/public";
 const SVAZ = (n = "") => /Jihočesk/i.test(n) ? "JČ" : /Moravskoslez/i.test(n) ? "MS" : /Severočesk/i.test(n) ? "SČ" : /Středočesk/i.test(n) ? "STČ"
   : /Východočesk/i.test(n) ? "VČ" : /Západočesk/i.test(n) ? "ZČ" : /Prahy|Praha/i.test(n) ? "PHA" : "";
 
-// GPS body z popisu revíru („GPS Z: 50°17'30.9"N, 13°0'33.2"E, K: …“ i desetinné „49.39N, 15.87E“), náhradně bod z detailu RIS.
+// ---------- Polohy revírů bez zákresu a kontrola zákresů ----------
+// GPS body z popisu revíru („GPS Z: 50°17'30.9"N, 13°0'33.2"E, K: …“ i desetinné „49.39N, 15.87E“).
+// Nesmyslné hodnoty (minuty/vteřiny ≥ 60, mimo ČR) se zahodí.
 export function gpsFromText(t = "") {
   const out = [], s = String(t).replace(/[´‘’′]/g, "'").replace(/[“”″]|''|´´/g, '"');
-  const num = "(\\d{1,3}(?:[.,]\\d+)?)";
+  const num = "(\\d{1,2}(?:[.,]\\d+)?)";
   const dms = new RegExp(`(\\d{2})\\s*°\\s*(\\d{1,2})\\s*'\\s*${num}?\\s*"?\\s*([NS])[\\s,;]*(\\d{1,2})\\s*°\\s*(\\d{1,2})\\s*'\\s*${num}?\\s*"?\\s*([EV])`, "g");
+  const ok = (m, x) => +m < 60 && (!x || +String(x).replace(",", ".") < 60);
   const f = (d, m, x) => +d + +m / 60 + (x ? +String(x).replace(",", ".") : 0) / 3600;
-  for (const m of s.matchAll(dms)) out.push([f(m[5], m[6], m[7]), f(m[1], m[2], m[3])]);
+  for (const m of s.matchAll(dms)) if (ok(m[2], m[3]) && ok(m[6], m[7])) out.push([f(m[5], m[6], m[7]), f(m[1], m[2], m[3])]);
   if (!out.length) for (const m of s.matchAll(/(\d{2}[.,]\d{3,})\s*°?\s*N[\s,;]*(\d{1,2}[.,]\d{3,})\s*°?\s*E/g)) out.push([+m[2].replace(",", "."), +m[1].replace(",", ".")]);
-  return out.filter(([lon, lat]) => lat > 48.5 && lat < 51.1 && lon > 12 && lon < 18.9).slice(0, 4);
+  return out.filter(inCZ).slice(0, 4);
 }
-async function knownPoints(cislo) {
-  const p = await readJSON(`podminky/${cislo}.json`, {});
-  const g = gpsFromText(p.popis);
-  if (g.length) return g;
-  if (p.lat && p.lon && p.lat > 48.5 && p.lat < 51.1 && p.lon > 12 && p.lon < 18.9) return [[+p.lon, +p.lat]];
-  return [];
+const inCZ = ([lon, lat]) => lat > 48.55 && lat < 51.06 && lon > 12.09 && lon < 18.86;
+const kmLL = (a, b) => Math.hypot((a[0] - b[0]) * 71.5, (a[1] - b[1]) * 111.2);
+const decodeParts = (parts = []) => parts.flatMap((f) => { const p = []; let x = 0, y = 0; for (let i = 0; i < f.length; i += 2) { x += f[i]; y += f[i + 1] || 0; p.push([x / 1000, y / 1000]); } return p; });
+// U nádrže zadané jedním bodem (střed) se do 10. položky uloží přibližný poloměr v km (z rozlohy), aby se vzdálenost měřila spíš ke břehu.
+const polomer = (p, pts) => pts.length === 1 && p.rozloha > 0 ? Math.round(Math.sqrt(p.rozloha / 100 / Math.PI) * 100) / 100 : 0;
+const encodePts = (pts) => pts.map(([lon, lat]) => [Math.round(lon * 1000), Math.round(lat * 1000)]);
+// Katastrální území z popisu („v k. ú. Česká Skalice“) → souřadnice obce přes OpenStreetMap Nominatim (výsledky se pamatují v data/geokod.json).
+const kuFromText = (t = "") => (String(t).match(/k\.\s*ú\.\s*([A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ][^\t\n\r,;():.]{1,40})/) || [])[1]?.replace(/\s+(až|v|a|od|do|nad|pod|ř\.\s*km).*$/i, "").trim() || "";
+async function geokod(cache, q) {
+  if (q in cache) return cache[q];
+  try {
+    await new Promise((r) => setTimeout(r, 1100));
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=cz&limit=1&accept-language=cs&q=${encodeURIComponent(q)}`,
+      { headers: { "User-Agent": "Pstruh-a-Kapr/1.0 (pstruhakapr@gmail.com)" } });
+    const j = res.ok ? await res.json() : [];
+    const pt = j[0] ? [+(+j[0].lon).toFixed(4), +(+j[0].lat).toFixed(4)] : null;
+    cache[q] = pt && inCZ(pt) ? pt : null;
+  } catch { return null; }
+  return cache[q];
+}
+// Projde všechny revíry: 9. položka 1 = přibližně (střed organizace), 2 = GPS bod z popisu/RIS, 3 = obec katastrálního území.
+// Revír se zákresem, který o víc než 3 km nesedí s GPS z popisu i z detailu RIS (a ty dva se shodují), dostane GPS bod.
+async function polohy(list) {
+  const cache = await readJSON("geokod.json", {});
+  const rep = { datum: now.date, pribl: [], opraveno: [], nesedi: [], katastr: [] };
+  let geo = 0;
+  for (const r of list) {
+    if (r[8] === 2 || r[8] === 3) continue;
+    const p = await readJSON(`podminky/${r[0]}.json`, {});
+    const g = gpsFromText(p.popis);
+    const b = p.lat && p.lon && inCZ([+p.lon, +p.lat]) ? [+p.lon, +p.lat] : null;
+    const tag = `${r[0]} ${String(r[1]).trim()}`;
+    if (r[8] === 1) {
+      if (g.length || b) { const pts = g.length ? g : [b]; r[7] = encodePts(pts); r[8] = 2; const rad = polomer(p, pts); if (rad >= 0.1) r[9] = rad; continue; }
+      const ku = kuFromText(p.popis);
+      if (ku && geo < 80) { const pt = await geokod(cache, ku); geo++; if (pt) { r[7] = encodePts([pt]); r[8] = 3; rep.katastr.push(`${tag} – k. ú. ${ku}`); continue; } }
+      rep.pribl.push(tag); continue;
+    }
+    const z = decodeParts(r[7]); if (!z.length) continue;
+    const ref = [...g, ...(b ? [b] : [])]; if (!ref.length) continue;
+    const dmin = Math.min(...ref.flatMap((a) => z.map((c) => kmLL(a, c))));
+    if (dmin <= 3) continue;
+    const shoda = g.length && b && Math.min(...g.map((a) => kmLL(a, b))) < 1.5;
+    if (shoda && !(p.delka > 0)) { r[7] = encodePts(g); r[8] = 2; const rad = polomer(p, g); if (rad >= 0.1) r[9] = rad; rep.opraveno.push(`${tag} (zákres ${dmin.toFixed(1)} km od GPS)`); }
+    else rep.nesedi.push(`${tag}: zákres ${dmin.toFixed(1)} km od GPS v ${g.length ? "popisu" : "detailu RIS"}`);
+  }
+  await writeJSON("geokod.json", cache);
+  await writeJSON("polohy.json", rep);
+  log("polohy: přibližně", rep.pribl.length, "katastr", rep.katastr.length, "opraveno", rep.opraveno.length, "nesedí", rep.nesedi.length);
 }
 
 // ---------- 1) Revíry ČRS z RIS (polohy úseků) ----------
@@ -65,24 +111,21 @@ async function reviry() {
     x.friendlyUrl, x.sid, encodeGeom(x.uzemniVymezeni),
   ]);
   // Revíry bez mapy v RIS (bbox je nevrátí): doplníme z úplného seznamu a umístíme přibližně
-  // do středu ostatních revírů téže organizace (9. položka = 1 → poloha přibližná), pokud neznáme GPS bod.
+  // do středu ostatních revírů téže organizace (9. položka = 1 → poloha přibližná); zpřesní je polohy() níže.
   try {
     const all = await get(`${API}/reviry?size=5000`, { json: true });
     const have = new Set(list.map((r) => r[6]));
     const center = new Map();
     for (const r of list) { const g = r[7]?.[0]; if (!g) continue; const k = r[4]; const c = center.get(k) || { x: 0, y: 0, n: 0 }; c.x += g[0]; c.y += g[1]; c.n++; center.set(k, c); }
-    let add = 0, gps = 0;
+    let add = 0;
     for (const x of all.items || []) {
       if (!x.typReviru || !x.cislo || have.has(x.sid)) continue;
       const org = x.organizace?.nazev || ""; const c = center.get(org);
-      // Přednost má skutečný bod: GPS z popisu revíru (začátek/konec), jinak GPS z detailu v RIS (9. položka = 2).
-      const pts = await knownPoints(x.cislo);
-      if (pts.length) gps++;
       list.push([x.cislo, x.oficialniNazev, x.typReviru.kod === "PSTRUHOVY" ? "P" : "M", SVAZ(x.uzemniSvaz?.nazev), org, x.friendlyUrl, x.sid,
-        pts.length ? pts.map(([lon, lat]) => [Math.round(lon * 1000), Math.round(lat * 1000)]) : c ? [[Math.round(c.x / c.n), Math.round(c.y / c.n)]] : [], pts.length ? 2 : 1]);
+        c ? [[Math.round(c.x / c.n), Math.round(c.y / c.n)]] : [], 1]);
       add++;
     }
-    log("revíry bez mapy doplněny", add, "z úplného seznamu", (all.items || []).length, "– s GPS bodem", gps);
+    log("revíry bez mapy doplněny", add, "z úplného seznamu", (all.items || []).length);
   } catch (e) { log("úplný seznam revírů chyba", e.message); }
   if (list.length < 500) throw new Error("podezřele málo revírů: " + list.length);
   // Revíry Moravského rybářského svazu (mimo RIS). Když MRS selže, ponecháme včerejší.
@@ -98,6 +141,7 @@ async function reviry() {
     list.push(...old);
     for (const r of old) { const p = await readJSON(`podminky/${r[0]}.json`); if (p?.mrs) await writeJSON(`podminky/${r[0]}.json`, { ...p, stav: now.date, ...mrsConditions(now.date, p.t, p.mrs.flags || {}), kratkodobe: (p.kratkodobe || []).filter((k) => !k.do || k.do >= now.date) }); }
   }
+  try { await polohy(list); } catch (e) { log("polohy chyba", e.message); }
   list.sort((a, b) => a[1].localeCompare(b[1], "cs"));
   await writeJSON("reviry.json", { aktualizovano: now.iso, zdroj: "RIS Portál ČRS a MRS", reviry: list });
   log("revíry uloženy", list.length);

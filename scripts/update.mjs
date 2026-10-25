@@ -49,10 +49,12 @@ async function geokod(cache, q, near) {
   const vb = near ? `&bounded=1&viewbox=${near[0] - 0.5},${near[1] + 0.5},${near[0] + 0.5},${near[1] - 0.5}` : "";
   try {
     await new Promise((r) => setTimeout(r, 1100));
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=cz&limit=1&accept-language=cs${vb}&q=${encodeURIComponent(q)}`,
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=cz&limit=5&accept-language=cs${vb}&q=${encodeURIComponent(q)}`,
       { headers: { "User-Agent": "Pstruh-a-Kapr/1.0 (pstruhakapr@gmail.com)" } });
     const j = res.ok ? await res.json() : [];
-    const pt = j[0] ? [+(+j[0].lon).toFixed(4), +(+j[0].lat).toFixed(4)] : null;
+    // z nalezených obcí vezmi nejbližší k revírům organizace, nejdál 30 km
+    const cand = j.map((x) => [+(+x.lon).toFixed(4), +(+x.lat).toFixed(4)]).filter((c) => !near || kmLL(c, near) <= 30).sort((x, y) => (near ? kmLL(x, near) - kmLL(y, near) : 0));
+    const pt = cand[0] || null;
     cache[key] = pt && inCZ(pt) ? pt : null;
   } catch { return null; }
   return cache[key];

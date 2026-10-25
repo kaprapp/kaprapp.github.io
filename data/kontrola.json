@@ -1,8 +1,18 @@
 {
  "datum": "2026-10-25",
- "zjisteno": "2026-10-25T16:56:49.236Z",
- "ok": true,
- "problemy": [],
+ "zjisteno": "2026-10-25T17:14:23.588Z",
+ "ok": false,
+ "problemy": [
+  {
+   "t": "Nově nesedí zákres revíru s GPS z popisu/RIS (4×) – ověřit",
+   "x": [
+    "431145 PARDUS VELKÝ: zákres 13.3 km od GPS v detailu RIS",
+    "401232 V Luhu: zákres 42.8 km od GPS v detailu RIS",
+    "411057 LABE 25: zákres 14.4 km od GPS v detailu RIS",
+    "461078 MARKOVKA 1: zákres 3.9 km od GPS v popisu"
+   ]
+  }
+ ],
  "info": [
   {
    "t": "Lov ryb dnes zakázán bez upřesnění (32 revírů) – ověřit, že jde o celý revír",
@@ -42,13 +52,108 @@
    ]
   },
   {
+   "t": "Poloha opravena podle GPS z popisu i RIS (3×)",
+   "x": [
+    "06441131 DLAŽKOVICE (zákres 7.2 km od GPS)",
+    "461034 DYJE 19A (zákres 3.6 km od GPS)",
+    "461099 ŠAMONÍN (zákres 126.5 km od GPS)"
+   ]
+  },
+  {
+   "t": "Poloha odhadnuta podle obce/katastru (10×)",
+   "x": [
+    "451011 CIDLINA 6 – k. ú. Radim",
+    "451012 CIDLINA 7 – k. ú. Jahodnice",
+    "451025 JAVORKA 2 – k. ú. Lázně Bělohrad",
+    "451042 LIBUŇKA 1 – k. ú. Libuň",
+    "451043 LIBUŇKA 2 – k. ú. Jinolice",
+    "4510571 Oleška 2 (RMV) – k. ú. Nová Paka     2",
+    "451056 OLEŠNICE 2 – k. ú. Čistá",
+    "431107 RADBUZA 5/R – k. ú. Čermná",
+    "413044 SKALICE 5 P – k. ú. Rožmitál",
+    "04431123 U MLATU – k. ú. Vejvanov"
+   ]
+  },
+  {
+   "t": "Revíry jen s přibližnou polohou (121) – v RIS chybí zákres, GPS i katastr",
+   "x": [
+    "411119 Bělušice",
+    "413045 BEROUNKA 4 P",
+    "413010 BEROUNKA 6 P",
+    "4513951 Bezejmenný rybník",
+    "443003 BÍLINA 9",
+    "4210051 Blanice Vlašimská 3 - Staré koupaliště",
+    "413028 BLAŽEJOVICKÝ POTOK 1",
+    "4510921 Blažkovec (MO Holice)",
+    "451104 Buchťák (RMV MO Stárkov)",
+    "451002 Bylanka 1",
+    "453005 Bysterský potok 1 (SAM)",
+    "451551 Bystříček - RMV MO Jablonné nad Orlicí",
+    "443008 ČERNÝ POTOK 1",
+    "453114 CHRUDIMKA 5 B",
+    "411008 Cidlina 1",
+    "411170 Cidlina 1 A - zemník Podhradí",
+    "411009 Cidlina 1 B",
+    "411010 Cidlina 2",
+    "451804 Č.Kostelec (malá voda)",
+    "411017 Doubrava 1",
+    "451756 Dymlov",
+    "413005 HODKOVSKÝ POTOK 1",
+    "411021 Hodkovský potok 3",
+    "443012 HORSKÁ KAMENICE 1",
+    "451809 Hostinné (malá voda)",
+    "4510091 Huryšák 3",
+    "4510091 Huryšák I",
+    "453019 JAVORKA 2 P",
+    "411022 Javornice 2",
+    "413300 JAVORNICE 3",
+    "4510021 Jerkův rybník",
+    "443502 JEŠTĚDKA 1",
+    "443501 JEŠTĚDSKÝ POTOK 1",
+    "451201 Jevíčka 1 A",
+    "411149 Jez",
+    "411151 Jezero pode Dvorem",
+    "443018 JIŘÍKOVSKÝ POTOK 1",
+    "441016 JIZERA 10 A (SAM)",
+    "451027 JIZERA 8",
+    "453022 JIZERA 8 P",
+    "4510071 Jordánek",
+    "4510731 Kamenná žabka",
+    "433072 KATEŘINSKÝ POTOK 1",
+    "411135 Kaufmaňák",
+    "411034 Klejnarka 1",
+    "411036 Klejnarka 3",
+    "411038 Klenice 2",
+    "411172 Knovízský potok",
+    "411107 Konopišťský potok 3",
+    "411137 Košátecký potok 1 M",
+    "451785 Košťálov (malá voda) ( podrevír neuveden )",
+    "411159 Koupaliště Tři Dvory",
+    "433019 KRALOVICKÝ POTOK 1",
+    "451392 Kravín",
+    "4510881 Kruh",
+    "473501 KRUPÁ 2",
+    "411143 Kulatý",
+    "411162 Labe 22 A - jezero Kluk",
+    "411154 Labe 23 B - Doleháj",
+    "411109 Labe 24 B"
+   ]
+  },
+  {
    "t": "Ruční poznámka u revíru 443012 není ověřená u MO"
   }
  ],
  "pocty": {
   "reviry": 1774,
-  "prutoky": 273
+  "prutoky": 273,
+  "pribl": 121
  },
+ "polohyNesedi": [
+  "431145 PARDUS VELKÝ: zákres 13.3 km od GPS v detailu RIS",
+  "401232 V Luhu: zákres 42.8 km od GPS v detailu RIS",
+  "411057 LABE 25: zákres 14.4 km od GPS v detailu RIS",
+  "461078 MARKOVKA 1: zákres 3.9 km od GPS v popisu"
+ ],
  "rad": {
   "platnost": "1. 1. 2026 – 31. 12. 2027",
   "mirP": 16,

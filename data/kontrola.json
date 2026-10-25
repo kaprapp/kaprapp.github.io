@@ -1,16 +1,10 @@
 {
  "datum": "2026-10-25",
- "zjisteno": "2026-10-25T17:14:23.588Z",
+ "zjisteno": "2026-10-25T17:18:57.265Z",
  "ok": false,
  "problemy": [
   {
-   "t": "Nově nesedí zákres revíru s GPS z popisu/RIS (4×) – ověřit",
-   "x": [
-    "431145 PARDUS VELKÝ: zákres 13.3 km od GPS v detailu RIS",
-    "401232 V Luhu: zákres 42.8 km od GPS v detailu RIS",
-    "411057 LABE 25: zákres 14.4 km od GPS v detailu RIS",
-    "461078 MARKOVKA 1: zákres 3.9 km od GPS v popisu"
-   ]
+   "t": "Přibylo revírů jen s přibližnou polohou: 121 → 126"
   }
  ],
  "info": [
@@ -52,6 +46,15 @@
    ]
   },
   {
+   "t": "Zákres nesedí s GPS (4×, už hlášené) – u řek může GPS v popisu patřit k tůni či přítoku",
+   "x": [
+    "431145 PARDUS VELKÝ: zákres 13.3 km od GPS v detailu RIS",
+    "401232 V Luhu: zákres 42.8 km od GPS v detailu RIS",
+    "411057 LABE 25: zákres 14.4 km od GPS v detailu RIS",
+    "461078 MARKOVKA 1: zákres 3.9 km od GPS v popisu"
+   ]
+  },
+  {
    "t": "Poloha opravena podle GPS z popisu i RIS (3×)",
    "x": [
     "06441131 DLAŽKOVICE (zákres 7.2 km od GPS)",
@@ -60,22 +63,17 @@
    ]
   },
   {
-   "t": "Poloha odhadnuta podle obce/katastru (10×)",
+   "t": "Poloha odhadnuta podle obce/katastru (5×)",
    "x": [
     "451011 CIDLINA 6 – k. ú. Radim",
-    "451012 CIDLINA 7 – k. ú. Jahodnice",
-    "451025 JAVORKA 2 – k. ú. Lázně Bělohrad",
-    "451042 LIBUŇKA 1 – k. ú. Libuň",
     "451043 LIBUŇKA 2 – k. ú. Jinolice",
-    "4510571 Oleška 2 (RMV) – k. ú. Nová Paka     2",
-    "451056 OLEŠNICE 2 – k. ú. Čistá",
     "431107 RADBUZA 5/R – k. ú. Čermná",
     "413044 SKALICE 5 P – k. ú. Rožmitál",
     "04431123 U MLATU – k. ú. Vejvanov"
    ]
   },
   {
-   "t": "Revíry jen s přibližnou polohou (121) – v RIS chybí zákres, GPS i katastr",
+   "t": "Revíry jen s přibližnou polohou (126) – v RIS chybí zákres, GPS i katastr",
    "x": [
     "411119 Bělušice",
     "413045 BEROUNKA 4 P",
@@ -95,6 +93,7 @@
     "411170 Cidlina 1 A - zemník Podhradí",
     "411009 Cidlina 1 B",
     "411010 Cidlina 2",
+    "451012 CIDLINA 7",
     "451804 Č.Kostelec (malá voda)",
     "411017 Doubrava 1",
     "451756 Dymlov",
@@ -104,6 +103,7 @@
     "451809 Hostinné (malá voda)",
     "4510091 Huryšák 3",
     "4510091 Huryšák I",
+    "451025 JAVORKA 2",
     "453019 JAVORKA 2 P",
     "411022 Javornice 2",
     "413300 JAVORNICE 3",
@@ -134,9 +134,7 @@
     "4510881 Kruh",
     "473501 KRUPÁ 2",
     "411143 Kulatý",
-    "411162 Labe 22 A - jezero Kluk",
-    "411154 Labe 23 B - Doleháj",
-    "411109 Labe 24 B"
+    "411162 Labe 22 A - jezero Kluk"
    ]
   },
   {
@@ -146,7 +144,7 @@
  "pocty": {
   "reviry": 1774,
   "prutoky": 273,
-  "pribl": 121
+  "pribl": 126
  },
  "polohyNesedi": [
   "431145 PARDUS VELKÝ: zákres 13.3 km od GPS v detailu RIS",

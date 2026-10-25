@@ -21,6 +21,24 @@ const API = RIS + "/proxy/api/public";
 const SVAZ = (n = "") => /Jihočesk/i.test(n) ? "JČ" : /Moravskoslez/i.test(n) ? "MS" : /Severočesk/i.test(n) ? "SČ" : /Středočesk/i.test(n) ? "STČ"
   : /Východočesk/i.test(n) ? "VČ" : /Západočesk/i.test(n) ? "ZČ" : /Prahy|Praha/i.test(n) ? "PHA" : "";
 
+// GPS body z popisu revíru („GPS Z: 50°17'30.9"N, 13°0'33.2"E, K: …“ i desetinné „49.39N, 15.87E“), náhradně bod z detailu RIS.
+export function gpsFromText(t = "") {
+  const out = [], s = String(t).replace(/[´‘’′]/g, "'").replace(/[“”″]|''|´´/g, '"');
+  const num = "(\\d{1,3}(?:[.,]\\d+)?)";
+  const dms = new RegExp(`(\\d{2})\\s*°\\s*(\\d{1,2})\\s*'\\s*${num}?\\s*"?\\s*([NS])[\\s,;]*(\\d{1,2})\\s*°\\s*(\\d{1,2})\\s*'\\s*${num}?\\s*"?\\s*([EV])`, "g");
+  const f = (d, m, x) => +d + +m / 60 + (x ? +String(x).replace(",", ".") : 0) / 3600;
+  for (const m of s.matchAll(dms)) out.push([f(m[5], m[6], m[7]), f(m[1], m[2], m[3])]);
+  if (!out.length) for (const m of s.matchAll(/(\d{2}[.,]\d{3,})\s*°?\s*N[\s,;]*(\d{1,2}[.,]\d{3,})\s*°?\s*E/g)) out.push([+m[2].replace(",", "."), +m[1].replace(",", ".")]);
+  return out.filter(([lon, lat]) => lat > 48.5 && lat < 51.1 && lon > 12 && lon < 18.9).slice(0, 4);
+}
+async function knownPoints(cislo) {
+  const p = await readJSON(`podminky/${cislo}.json`, {});
+  const g = gpsFromText(p.popis);
+  if (g.length) return g;
+  if (p.lat && p.lon && p.lat > 48.5 && p.lat < 51.1 && p.lon > 12 && p.lon < 18.9) return [[+p.lon, +p.lat]];
+  return [];
+}
+
 // ---------- 1) Revíry ČRS z RIS (polohy úseků) ----------
 async function reviry() {
   const tiles = [];
@@ -47,21 +65,24 @@ async function reviry() {
     x.friendlyUrl, x.sid, encodeGeom(x.uzemniVymezeni),
   ]);
   // Revíry bez mapy v RIS (bbox je nevrátí): doplníme z úplného seznamu a umístíme přibližně
-  // do středu ostatních revírů téže organizace (9. položka = 1 → poloha přibližná).
+  // do středu ostatních revírů téže organizace (9. položka = 1 → poloha přibližná), pokud neznáme GPS bod.
   try {
     const all = await get(`${API}/reviry?size=5000`, { json: true });
     const have = new Set(list.map((r) => r[6]));
     const center = new Map();
     for (const r of list) { const g = r[7]?.[0]; if (!g) continue; const k = r[4]; const c = center.get(k) || { x: 0, y: 0, n: 0 }; c.x += g[0]; c.y += g[1]; c.n++; center.set(k, c); }
-    let add = 0;
+    let add = 0, gps = 0;
     for (const x of all.items || []) {
       if (!x.typReviru || !x.cislo || have.has(x.sid)) continue;
       const org = x.organizace?.nazev || ""; const c = center.get(org);
+      // Přednost má skutečný bod: GPS z popisu revíru (začátek/konec), jinak GPS z detailu v RIS (9. položka = 2).
+      const pts = await knownPoints(x.cislo);
+      if (pts.length) gps++;
       list.push([x.cislo, x.oficialniNazev, x.typReviru.kod === "PSTRUHOVY" ? "P" : "M", SVAZ(x.uzemniSvaz?.nazev), org, x.friendlyUrl, x.sid,
-        c ? [[Math.round(c.x / c.n), Math.round(c.y / c.n)]] : [], 1]);
+        pts.length ? pts.map(([lon, lat]) => [Math.round(lon * 1000), Math.round(lat * 1000)]) : c ? [[Math.round(c.x / c.n), Math.round(c.y / c.n)]] : [], pts.length ? 2 : 1]);
       add++;
     }
-    log("revíry bez mapy doplněny", add, "z úplného seznamu", (all.items || []).length);
+    log("revíry bez mapy doplněny", add, "z úplného seznamu", (all.items || []).length, "– s GPS bodem", gps);
   } catch (e) { log("úplný seznam revírů chyba", e.message); }
   if (list.length < 500) throw new Error("podezřele málo revírů: " + list.length);
   // Revíry Moravského rybářského svazu (mimo RIS). Když MRS selže, ponecháme včerejší.

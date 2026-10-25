@@ -593,7 +593,7 @@ const persist=()=>store.set("kapr",{typ:S.typ,mode:S.mode,loc:S.loc});
 /* ---------- revíry ---------- */
 const RIS={all:null};
 async function loadRis(){ if(RIS.all) return RIS.all; const d=await getData("reviry.json"); if(!d) return null;
-  RIS.all=d.reviry.map(([c,n,t,s,o,url,sid,parts,approx])=>({c,n,t,s,o,url,sid,approx:!!approx,segs:(parts||[]).map(f=>{const p=[];let x=0,y=0;for(let i=0;i<f.length;i+=2){x+=f[i];y+=(f[i+1]||0);p.push([x/1000,y/1000]);}return p;}).filter(p=>p.length)}));
+  RIS.all=d.reviry.map(([c,n,t,s,o,url,sid,parts,approx])=>({c,n,t,s,o,url,sid,approx:approx===1,bod:approx===2,segs:(parts||[]).map(f=>{const p=[];let x=0,y=0;for(let i=0;i<f.length;i+=2){x+=f[i];y+=(f[i+1]||0);p.push([x/1000,y/1000]);}return p;}).filter(p=>p.length)}));
   RIS.stav=d.aktualizovano; return RIS.all; }
 const risOfTyp=()=>(RIS.all||[]).filter(r=>r.t===S.typ);
 function risDist(r,pt){ const K=Math.cos(pt.lat*Math.PI/180)*111.32, L=110.57; let best={d:1e9,lat:0,lon:0};
@@ -729,7 +729,7 @@ function renderResults(title,extra=""){
     return `<button class="card" data-i="${i}" ${S.sel===i?'aria-current="true"':""}>
       <span class="num">${esc(x._label??i+1)}</span>
       <div><h3>${esc(x.title||r?.n||"")}</h3><div class="meta">${esc(x.sub||(r?fmtNum(r.c)+" · "+orgL(r):""))}</div>
-      ${x.pozn?`<div class="meta">${esc(x.pozn)}</div>`:""}${r?.approx?`<div class="meta">Poloha přibližná – revír nemá zákres v mapě</div>`:""}
+      ${x.pozn?`<div class="meta">${esc(x.pozn)}</div>`:""}${r?.approx?`<div class="meta">Poloha přibližná – revír nemá zákres v mapě</div>`:r?.bod?`<div class="meta">Revír nemá zákres úseku – v mapě je bod podle GPS z popisu revíru</div>`:""}
       ${x.pill?`<div class="meta" style="margin-top:4px"><span class="pill vysoka">${esc(x.pill)}</span></div>`:""}</div>
       <span class="dist">${isFinite(x._d)?fmtKm(x._d)+"<small>KM VZDUŠNĚ</small>":x._date?dShort(x._date)+"<small>NAPOSLEDY</small>":""}</span></button>`;}).join("");
   $("out").innerHTML=`<h2 style="font-size:26px;margin-bottom:10px;text-align:center">${esc(title)}</h2>${extra}<div class="list">${items}</div><p class="hint" style="margin-top:8px">Klepni na revír pro podmínky lovu.</p>`;
@@ -807,7 +807,7 @@ const povPill=p=>{ const i=povInfo(p); return !i||i.ice?"":i.k==="all"?"Jen mís
 function head(r,x,p){ p=p||{};
   return `<div class="sheet-head"><div class="rid">${esc(fmtNum(r.c))} · ${esc(SVN[r.s]||"ČRS")} · ${r.t==="P"?"pstruhový":"mimopstruhový"}</div>
   <h2>${esc(r.n)}</h2>${mistniBox(r,p)}<p>Hospodaří ${esc(orgL(r))}${p.delka?` · délka ${esc(String(p.delka).replace(".",","))} km`:""}${p.rozloha?` · ${esc(String(p.rozloha).replace(".",","))} ha`:""}</p>
-  ${isFinite(x._d)?`<p class="hint" style="margin-top:4px">${r.approx?"asi ":""}${fmtKm(x._d)} km vzdušnou čarou od tvého bodu${r.approx?" (poloha přibližná – revír nemá zákres v mapě, přesný úsek najdeš v popisu)":""}</p>`:""}${(r.segs&&r.segs.length)||isFinite(x.lat)?`<div class="mapbox revmapbox"><div class="revmap" role="img" aria-label="Mapa revíru ${esc(r.n)}"></div><button class="fsbtn" type="button" aria-label="Zvětšit mapu na celou obrazovku">⛶ Zvětšit mapu</button><button class="fsclose" type="button">← Zpět</button></div>`:""}${zapisLine(r)}${isFinite(x.lat)?`<div class="navrow"><a class="btn small" href="${/iPhone|iPad|Macintosh/.test(navigator.userAgent)?`https://maps.apple.com/?daddr=${x.lat},${x.lon}`:`https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lon}`}" target="_blank" rel="noopener">🧭 Navigovat k revíru</a></div>`:""}</div>`; }
+  ${isFinite(x._d)?`<p class="hint" style="margin-top:4px">${r.approx?"asi ":""}${fmtKm(x._d)} km vzdušnou čarou od tvého bodu${r.approx?" (poloha přibližná – revír nemá zákres v mapě, přesný úsek najdeš v popisu)":r.bod?" (revír nemá zákres úseku, bod podle GPS z popisu revíru)":""}</p>`:""}${(r.segs&&r.segs.length)||isFinite(x.lat)?`<div class="mapbox revmapbox"><div class="revmap" role="img" aria-label="Mapa revíru ${esc(r.n)}"></div><button class="fsbtn" type="button" aria-label="Zvětšit mapu na celou obrazovku">⛶ Zvětšit mapu</button><button class="fsclose" type="button">← Zpět</button></div>`:""}${zapisLine(r)}${isFinite(x.lat)?`<div class="navrow"><a class="btn small" href="${/iPhone|iPad|Macintosh/.test(navigator.userAgent)?`https://maps.apple.com/?daddr=${x.lat},${x.lon}`:`https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lon}`}" target="_blank" rel="noopener">🧭 Navigovat k revíru</a></div>`:""}</div>`; }
 function zapisLine(r){ const d=new Date(); const ds=`${d.getDate()}. ${d.getMonth()+1}. ${d.getFullYear()}`;
   return `<div class="zapis"><div><span class="hint">Zápis do povolenky (před začátkem lovu)</span><br><b>${esc(ds)}</b> · <span style="white-space:nowrap">revír <b>${esc(fmtNum(r.c))}</b></span> <span class="hint">(${esc(r.n)})</span></div><button class="btn small" type="button" data-copy="${esc(r.n)}">Kopírovat revír</button></div>`; }
 document.addEventListener("click",async e=>{ const b=e.target.closest("[data-copy]"); if(!b) return;
@@ -1675,7 +1675,7 @@ loadRis().then(()=>drawRevs());
 if(!readHashLoc() && S.mode==="gps" && navigator.permissions?.query){
   navigator.permissions.query({name:"geolocation"}).then(st=>{ if(st.state==="granted") locate(true); }).catch(()=>{}); }
 /* verze aplikace – zvyšuj spolu s CACHE v sw.js */
-const APP_VER="2026-10-20 22:25";
+const APP_VER="2026-10-25 18:20";
 try{ const ft=document.getElementById("foot"); if(ft) ft.insertAdjacentHTML("beforeend",`<br><span style="font-size:11px;opacity:.7">Verze ${APP_VER}</span>`); }catch(e){}
 /* aktualizace: při návratu do aplikace zkontroluj novou verzi a po jejím převzetí stránku jednou obnov */
 if("serviceWorker" in navigator){

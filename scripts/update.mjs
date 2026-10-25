@@ -41,18 +41,21 @@ const decodeParts = (parts = []) => parts.flatMap((f) => { const p = []; let x =
 const polomer = (p, pts) => pts.length === 1 && p.rozloha > 0 ? Math.round(Math.sqrt(p.rozloha / 100 / Math.PI) * 100) / 100 : 0;
 const encodePts = (pts) => pts.map(([lon, lat]) => [Math.round(lon * 1000), Math.round(lat * 1000)]);
 // Katastrální území z popisu („v k. ú. Česká Skalice“) → souřadnice obce přes OpenStreetMap Nominatim (výsledky se pamatují v data/geokod.json).
-const kuFromText = (t = "") => (String(t).match(/k\.\s*ú\.\s*([A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ][^\t\n\r,;():.]{1,40})/) || [])[1]?.replace(/\s+(až|v|a|od|do|nad|pod|ř\.\s*km).*$/i, "").trim() || "";
-async function geokod(cache, q) {
-  if (q in cache) return cache[q];
+const kuFromText = (t = "") => (String(t).match(/k\.\s*ú\.\s*([A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ][^\t\n\r,;():.\d]{1,40})/) || [])[1]?.replace(/\s+(až|v|a|od|do|nad|pod|ř\.\s*km)(\s.*)?$/i, "").trim() || "";
+// Hledá se jen v okolí revírů téže organizace (±0,5°), aby se stejně pojmenované obce jinde v ČR nepletly.
+async function geokod(cache, q, near) {
+  const key = near ? `${q}|${near[0].toFixed(1)},${near[1].toFixed(1)}` : q;
+  if (key in cache) return cache[key];
+  const vb = near ? `&bounded=1&viewbox=${near[0] - 0.5},${near[1] + 0.5},${near[0] + 0.5},${near[1] - 0.5}` : "";
   try {
     await new Promise((r) => setTimeout(r, 1100));
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=cz&limit=1&accept-language=cs&q=${encodeURIComponent(q)}`,
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=cz&limit=1&accept-language=cs${vb}&q=${encodeURIComponent(q)}`,
       { headers: { "User-Agent": "Pstruh-a-Kapr/1.0 (pstruhakapr@gmail.com)" } });
     const j = res.ok ? await res.json() : [];
     const pt = j[0] ? [+(+j[0].lon).toFixed(4), +(+j[0].lat).toFixed(4)] : null;
-    cache[q] = pt && inCZ(pt) ? pt : null;
+    cache[key] = pt && inCZ(pt) ? pt : null;
   } catch { return null; }
-  return cache[q];
+  return cache[key];
 }
 // Projde všechny revíry: 9. položka 1 = přibližně (střed organizace), 2 = GPS bod z popisu/RIS, 3 = obec katastrálního území.
 // Revír se zákresem, který o víc než 3 km nesedí s GPS z popisu i z detailu RIS (a ty dva se shodují), dostane GPS bod.
@@ -69,7 +72,8 @@ async function polohy(list) {
     if (r[8] === 1) {
       if (g.length || b) { const pts = g.length ? g : [b]; r[7] = encodePts(pts); r[8] = 2; const rad = polomer(p, pts); if (rad >= 0.1) r[9] = rad; continue; }
       const ku = kuFromText(p.popis);
-      if (ku && geo < 80) { const pt = await geokod(cache, ku); geo++; if (pt) { r[7] = encodePts([pt]); r[8] = 3; rep.katastr.push(`${tag} – k. ú. ${ku}`); continue; } }
+      const near = decodeParts(r[7])[0];
+      if (ku && near && geo < 80) { const pt = await geokod(cache, ku, near); geo++; if (pt) { r[7] = encodePts([pt]); r[8] = 3; rep.katastr.push(`${tag} – k. ú. ${ku}`); continue; } }
       rep.pribl.push(tag); continue;
     }
     const z = decodeParts(r[7]); if (!z.length) continue;

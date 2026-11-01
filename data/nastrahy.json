@@ -1,31 +1,68 @@
 {
-  "aktualizovano": "2026-10-12",
+  "aktualizovano": "2026-11-01",
   "pozn": "Katalog typů nástrah a návnad pro rady „Nástrahy dnes“ v aplikaci Kapr. Odkazy vedou na kategorie obchodů a zatím se nezobrazují. Kontroluje se jednou měsíčně.",
   "typy": {
     "boilies": {
       "n": "Boilies",
       "vel": "16–24 mm, potápivé nebo pop-up",
-      "odkazy": []
+      "odkazy": [
+        {
+          "o": "Sportcarp",
+          "u": "https://www.sportcarp.cz/krmeni-a-nastrahy/boilies/"
+        }
+      ]
     },
     "pelety": {
       "n": "Pelety",
       "vel": "nástraha 8–20 mm, krmení 2–6 mm",
-      "odkazy": []
+      "odkazy": [
+        {
+          "o": "Chytil",
+          "u": "https://www.chytil.cz/pelety-2/"
+        },
+        {
+          "o": "Chytil",
+          "u": "https://www.chytil.cz/pelety-na-chytani/"
+        }
+      ]
     },
     "kukurice": {
       "n": "Kukuřice",
       "vel": "2–3 zrna nebo umělá na vlasci",
-      "odkazy": []
+      "odkazy": [
+        {
+          "o": "Sportcarp",
+          "u": "https://www.sportcarp.cz/partikly/"
+        },
+        {
+          "o": "Sportcarp",
+          "u": "https://www.sportcarp.cz/nastrahy-na-hacek/"
+        }
+      ]
     },
     "method": {
       "n": "Method feeder",
-      "vel": "krmítko 20–40 g, nástraha 8–10 mm (dumbell, peletka)",
-      "odkazy": []
+      "vel": "krmítko 20–60 g, nástraha 6–10 mm (dumbell, wafter, peletka)",
+      "odkazy": [
+        {
+          "o": "Chytil",
+          "u": "https://www.chytil.cz/krmitka-method-feeder/"
+        }
+      ]
     },
     "feeder": {
       "n": "Klasický feeder",
-      "vel": "krmítko 20–60 g, háček 12–16",
-      "odkazy": []
+      "vel": "krmítko 20–60 g, na silném proudu i 80–120 g, háček 12–16",
+      "odkazy": [
+        {
+          "o": "Sportcarp",
+          "u": "https://www.sportcarp.cz/feederova-krmitka/"
+        },
+        {
+          "o": "Chytil",
+          "u": "https://www.chytil.cz/feeder/"
+        }
+      ]
     },
     "zizala": {
       "n": "Žížala",
@@ -50,7 +87,12 @@
     "pkukurice": {
       "n": "Kukuřice na plavanou",
       "vel": "1 zrno, háček 10–12",
-      "odkazy": []
+      "odkazy": [
+        {
+          "o": "Sportcarp",
+          "u": "https://www.sportcarp.cz/partikly/"
+        }
+      ]
     },
     "pzizala": {
       "n": "Žížala na plavanou",
@@ -74,7 +116,7 @@
     },
     "krot": {
       "n": "Rotačka",
-      "vel": "č. 2–4, 5–12 g",
+      "vel": "č. 2–4, 4–11 g (podle výrobce)",
       "odkazy": [
         {
           "o": "Moje přívlač – Mepps",

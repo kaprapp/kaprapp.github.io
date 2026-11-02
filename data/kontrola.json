@@ -1,6 +1,6 @@
 {
- "datum": "2026-11-01",
- "zjisteno": "2026-11-01T04:32:54.967Z",
+ "datum": "2026-11-02",
+ "zjisteno": "2026-11-02T04:46:36.093Z",
  "ok": true,
  "problemy": [],
  "info": [
@@ -139,7 +139,7 @@
  ],
  "pocty": {
   "reviry": 1774,
-  "prutoky": 273,
+  "prutoky": 319,
   "pribl": 126
  },
  "polohyNesedi": [

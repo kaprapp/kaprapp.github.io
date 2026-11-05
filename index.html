@@ -197,7 +197,8 @@ ul.plain li{margin:3px 0}
 .helpbody code{font-family:var(--f-mono);font-size:12px;word-break:break-all;background:var(--sunk);padding:1px 4px;border-radius:4px}
 .guide{margin:0;padding-left:22px;display:grid;gap:8px;font-size:15px}
 .guide li::marker{font-family:var(--f-display);font-weight:800;color:var(--accent)}
-.foot{margin-top:28px;font-size:13px;color:var(--muted);text-align:center}
+.follow{margin:26px auto 0;max-width:420px;padding:14px 16px;border:1px solid var(--line,#dde3e1);border-radius:16px;text-align:center;display:flex;flex-direction:column;gap:2px}.follow>span{font-size:13px;color:var(--muted)}.followb{display:flex;gap:10px;justify-content:center;margin-top:10px}.followb a{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:999px;font-weight:600;font-size:14px;color:#fff;text-decoration:none}.followb .fb{background:#1877F2}.followb .ig{background:linear-gradient(45deg,#F58529,#DD2A7B 55%,#8134AF)}
+.foot{margin-top:18px;font-size:13px;color:var(--muted);text-align:center}
 
 /* --- web verze --- */
 #map{display:block;width:100%;height:380px;z-index:0}.revmapbox{margin:10px 0 4px}.fsbtn,.fsclose{position:absolute;top:10px;right:10px;z-index:1000;border:1px solid transparent;background:var(--accent);color:var(--accent-ink);font:700 14px var(--f-body);border-radius:10px;padding:8px 12px;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer}.fsclose{display:none;font-size:17px;padding:12px 18px;background:var(--accent);color:var(--accent-ink);border-color:transparent}.mapbox.fs{position:fixed;inset:0;z-index:10000;margin:0;border:0;border-radius:0}.mapbox.fs #map,.mapbox.fs .revmap{height:100%!important}.mapbox.fs .fsbtn{display:none}.mapbox.fs .fsclose{display:block;top:calc(env(safe-area-inset-top,0px) + 12px);right:calc(env(safe-area-inset-right,0px) + 12px)}body.fsopen{overflow:hidden}.revmap{display:block;width:100%;height:240px;z-index:0}
@@ -538,6 +539,7 @@ ul.plain li{margin:3px 0}
     <p><a class="btn primary" id="contactSend" href="#">Odeslat e-mailem</a></p>
     <p>nebo přímo na <a id="contactMail" href="#"></a></p>
   </div>
+  <div class="follow" id="follow"><b>Sledujte nás</b><span>novinky, zarybnění a tipy k vodě</span><div class="followb"><a href="https://www.facebook.com/profile.php?id=61595580659827" target="_blank" rel="noopener" class="fb"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V22h3.4z"/></svg>Facebook</a><a href="https://www.instagram.com/pstruhakapr/" target="_blank" rel="noopener" class="ig"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 7.2A4.8 4.8 0 1 0 12 16.8 4.8 4.8 0 0 0 12 7.2zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2zM17 5.8a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 3.6c2.7 0 3 0 4.1.1 2.7.1 4 1.4 4.1 4.1.1 1.1.1 1.4.1 4.1s0 3-.1 4.1c-.1 2.7-1.4 4-4.1 4.1-1.1.1-1.4.1-4.1.1s-3 0-4.1-.1c-2.7-.1-4-1.4-4.1-4.1C3.7 15 3.6 14.7 3.6 12s0-3 .1-4.1C3.8 5.2 5.1 3.9 7.9 3.8 9 3.6 9.3 3.6 12 3.6zM12 2C9.3 2 8.9 2 7.8 2.1 4.2 2.2 2.2 4.2 2.1 7.8 2 8.9 2 9.3 2 12s0 3.1.1 4.2c.2 3.6 2.1 5.6 5.7 5.7 1.1.1 1.5.1 4.2.1s3.1 0 4.2-.1c3.6-.2 5.6-2.1 5.7-5.7.1-1.1.1-1.5.1-4.2s0-3.1-.1-4.2c-.2-3.6-2.1-5.6-5.7-5.7C15.1 2 14.7 2 12 2z"/></svg>Instagram</a></div></div>
   <p class="foot" id="foot">Data z RIS ČRS, MRS a ČHMÚ, mapa © OpenStreetMap · obnova každé ráno · bez soukromých revírů. Před lovem si vždy ověř podmínky na kartě revíru.<br><a href="https://iryba.cz/#instalace">Jak na plochu</a> · <a href="https://iryba.cz/#zdroje">Podmínky užití</a><br><span style="font-size:12px">© 2026 Tým Pstruh &amp; Kapr · všechna práva vyhrazena · kopírování a komerční využití bez souhlasu není dovoleno</span></p>
   <p class="foot contactline" id="contactLine" hidden>Nesedí údaj nebo chybí revír? Napiš nám, u kterého revíru a jak je to správně: <a id="contactLink" href="#"></a></p>
 </div>
@@ -1688,7 +1690,7 @@ loadRis().then(()=>drawRevs());
 if(!readHashLoc() && S.mode==="gps" && navigator.permissions?.query){
   navigator.permissions.query({name:"geolocation"}).then(st=>{ if(st.state==="granted") locate(true); }).catch(()=>{}); }
 /* verze aplikace – zvyšuj spolu s CACHE v sw.js */
-const APP_VER="2026-11-02 21:10";
+const APP_VER="2026-11-05 17:05";
 try{ const ft=document.getElementById("foot"); if(ft) ft.insertAdjacentHTML("beforeend",`<br><span style="font-size:11px;opacity:.7">Verze ${APP_VER}</span>`); }catch(e){}
 /* aktualizace: při návratu do aplikace zkontroluj novou verzi a po jejím převzetí stránku jednou obnov */
 if("serviceWorker" in navigator){

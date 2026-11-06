@@ -1,6 +1,6 @@
 {
- "datum": "2026-11-05",
- "zjisteno": "2026-11-05T11:33:28.902Z",
+ "datum": "2026-11-06",
+ "zjisteno": "2026-11-06T11:34:05.021Z",
  "ok": true,
  "problemy": [],
  "info": [
@@ -44,8 +44,8 @@
   {
    "t": "Zákres nesedí s GPS (4×, už hlášené) – u řek může GPS v popisu patřit k tůni či přítoku",
    "x": [
-    "431145 PARDUS VELKÝ: zákres 13.3 km od GPS v detailu RIS",
     "401232 V Luhu: zákres 42.8 km od GPS v detailu RIS",
+    "431145 PARDUS VELKÝ: zákres 13.3 km od GPS v detailu RIS",
     "411057 LABE 25: zákres 14.4 km od GPS v detailu RIS",
     "461078 MARKOVKA 1: zákres 3.9 km od GPS v popisu"
    ]
@@ -143,8 +143,8 @@
   "pribl": 126
  },
  "polohyNesedi": [
-  "431145 PARDUS VELKÝ: zákres 13.3 km od GPS v detailu RIS",
   "401232 V Luhu: zákres 42.8 km od GPS v detailu RIS",
+  "431145 PARDUS VELKÝ: zákres 13.3 km od GPS v detailu RIS",
   "411057 LABE 25: zákres 14.4 km od GPS v detailu RIS",
   "461078 MARKOVKA 1: zákres 3.9 km od GPS v popisu"
  ],

@@ -1,8 +1,12 @@
 {
- "datum": "2026-11-06",
- "zjisteno": "2026-11-06T11:34:05.021Z",
- "ok": true,
- "problemy": [],
+ "datum": "2026-11-07",
+ "zjisteno": "2026-11-07T10:44:00.562Z",
+ "ok": false,
+ "problemy": [
+  {
+   "t": "Přibylo revírů jen s přibližnou polohou: 126 → 127"
+  }
+ ],
  "info": [
   {
    "t": "Lov ryb dnes zakázán bez upřesnění (32 revírů) – ověřit, že jde o celý revír",
@@ -44,8 +48,8 @@
   {
    "t": "Zákres nesedí s GPS (4×, už hlášené) – u řek může GPS v popisu patřit k tůni či přítoku",
    "x": [
-    "401232 V Luhu: zákres 42.8 km od GPS v detailu RIS",
     "431145 PARDUS VELKÝ: zákres 13.3 km od GPS v detailu RIS",
+    "401232 V Luhu: zákres 42.8 km od GPS v detailu RIS",
     "411057 LABE 25: zákres 14.4 km od GPS v detailu RIS",
     "461078 MARKOVKA 1: zákres 3.9 km od GPS v popisu"
    ]
@@ -69,7 +73,7 @@
    ]
   },
   {
-   "t": "Revíry jen s přibližnou polohou (126) – v RIS chybí zákres, GPS i katastr",
+   "t": "Revíry jen s přibližnou polohou (127) – v RIS chybí zákres, GPS i katastr",
    "x": [
     "411119 Bělušice",
     "413045 BEROUNKA 4 P",
@@ -90,6 +94,7 @@
     "411009 Cidlina 1 B",
     "411010 Cidlina 2",
     "451012 CIDLINA 7",
+    "8999999 Činnost mimo revíry",
     "451804 Č.Kostelec (malá voda)",
     "411017 Doubrava 1",
     "451756 Dymlov",
@@ -129,8 +134,7 @@
     "451392 Kravín",
     "4510881 Kruh",
     "473501 KRUPÁ 2",
-    "411143 Kulatý",
-    "411162 Labe 22 A - jezero Kluk"
+    "411143 Kulatý"
    ]
   },
   {
@@ -138,13 +142,13 @@
   }
  ],
  "pocty": {
-  "reviry": 1774,
+  "reviry": 1775,
   "prutoky": 319,
-  "pribl": 126
+  "pribl": 127
  },
  "polohyNesedi": [
-  "401232 V Luhu: zákres 42.8 km od GPS v detailu RIS",
   "431145 PARDUS VELKÝ: zákres 13.3 km od GPS v detailu RIS",
+  "401232 V Luhu: zákres 42.8 km od GPS v detailu RIS",
   "411057 LABE 25: zákres 14.4 km od GPS v detailu RIS",
   "461078 MARKOVKA 1: zákres 3.9 km od GPS v popisu"
  ],

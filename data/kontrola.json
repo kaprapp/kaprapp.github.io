@@ -1,48 +1,66 @@
 {
- "datum": "2026-11-07",
- "zjisteno": "2026-11-07T10:44:00.562Z",
- "ok": false,
- "problemy": [
-  {
-   "t": "Přibylo revírů jen s přibližnou polohou: 126 → 127"
-  }
- ],
+ "zarybKroky": {
+  "praha": 470,
+  "jihocesky": 1585,
+  "boskovice": 35,
+  "hodonin": 6,
+  "sumperk": 9,
+  "sus": "ok",
+  "usti": "ok"
+ },
+ "datum": "2026-11-08",
+ "zjisteno": "2026-11-08T08:49:48.358Z",
+ "ok": true,
+ "problemy": [],
  "info": [
   {
-   "t": "Lov ryb dnes zakázán bez upřesnění (32 revírů) – ověřit, že jde o celý revír",
+   "t": "Lov ryb dnes zakázán bez upřesnění, popis potvrzuje celý revír (chovný / CHRO): 22 revírů"
+  },
+  {
+   "t": "Lov ryb dnes zakázán bez upřesnění a popis to výslovně nepotvrzuje (10) – ověřit u svazu, zda jde o celý revír",
    "x": [
-    "BÍLINA 3",
     "BÍLINA 9",
-    "BOBŘÍ POTOK 2",
-    "BULOVSKÝ POTOK 1",
-    "BYLANKA 1 P",
-    "ČERNÝ POTOK 1",
     "DESNÁ 1",
-    "HERLIČKA 1",
-    "HOŘINA 1",
-    "JEŠTĚDKA 1",
-    "JEŠTĚDSKÝ POTOK 1",
-    "JIŘÍKOVSKÝ POTOK 1",
-    "KLENOS 1",
     "KOUŘIMKA 2 A",
     "KRUPÁ 2",
-    "LAZNICKÝ POTOK 1 (Říka)",
-    "LIBOCKÝ POTOK 1",
-    "LOSINKA 1",
     "MALÁ ÚPA 1",
-    "MORÁVKA 2",
-    "OLEŠNICE JESENICKÁ 1",
     "OPAVA 9 P",
-    "PLOUČNICE 8",
-    "POLICKÝ POTOK 1",
     "PORUBKA 1",
-    "PRUNÉŘOVSKÝ POTOK 1",
     "RYBNÍK VÁCLAV",
-    "SKOROŠICKÝ POTOK 1",
-    "STAŘÍČ 1",
-    "VÁCLAVICKÝ POTOK 1",
     "VELKÁ ÚPA 1",
     "VELKÝ RYBNÍK"
+   ]
+  },
+  {
+   "t": "Aplikace bere zákaz lovu jen jako část revíru podle upřesnění (4) – ověřit, že upřesnění opravdu říká jen úsek",
+   "x": [
+    "LABE 18 A - PROBOŠTSKÁ JEZERA: na Proboštském jezeru v době provozu sport. areálu a 50m v prostoru úpravny písku a parkoviště lodí",
+    "OLEŠKA 1 P: V úseku od jezu MVE v Libštátě po soutok s Rokytkou.",
+    "ORLICE DIVOKÁ 7: V pásmech v úseku 20 m nad a 80 m pod limnigrafem v Klášterci nad Orl. je vstup a lov zakázán.",
+    "OTAVA 1: V úseku 25 m pod starým Kamenným mostem v Písku je celoroční zákaz lovu ryb."
+   ]
+  },
+  {
+   "t": "Technika zakázána s upřesněním „jen/pouze na…“ – aplikace ji ukazuje s hvězdičkou (2)",
+   "x": [
+    "DOLANSKÝ POTOK 1 – Přívlač: Přívlač je zakázaná pouze na nádrži.",
+    "Světlá nad Sázavou – Plavaná: Lov na plavanou je možný pouze na 1 udici, a to pouze při zamrznutí hladiny při lovu ryb na dírkách."
+   ]
+  },
+  {
+   "t": "Poznej rybu: povinnost ponechat vyčtená z upřesnění lovné míry (2316 řádků, 5 různých znění)",
+   "x": [
+    "2312× „povinnost ponechat si“",
+    "1× „Po ulovení se nesmí vrátit zpět do rybářského revíru.“",
+    "1× „Úlovek sumečka amerického nesmí být vrácen zpět do revíru.“",
+    "1× „Ulovená štika se nevrací zpět do revíru! Štiku ulovenou v době hájení či podměrečnou přenést do řeky“",
+    "1× „Ulovený sumec se nevrací zpět do revíru! Sumce uloveného v době hájení či podměrečného dát do řeky“"
+   ]
+  },
+  {
+   "t": "Pstruh: revír podle názvu/popisu brán jako nádrž, ale má délku toku (1) – ověřit nabídku nástrah",
+   "x": [
+    "PŘÍTOKY VLTAVY 15 - ÚDOLNÍ NÁDRŽ KAMÝK (délka 23 km, bere se jako nádrž)"
    ]
   },
   {
@@ -135,6 +153,26 @@
     "4510881 Kruh",
     "473501 KRUPÁ 2",
     "411143 Kulatý"
+   ]
+  },
+  {
+   "t": "Zarybnění: zpráva svazu jmenuje vodu, ale aplikace ji nepřiřadila k revíru (1) – je jen dole ve „Zprávách svazů“",
+   "x": [
+    "2026-10-31 Středočeský: Do Světlé vysazeni duháci a siveni | Světlá → možná Světlá nad Sázavou (M)"
+   ]
+  },
+  {
+   "t": "Aktuality: 9 zpráv z RIS se do aplikace nedostalo (žádný štítek) – zkontrolovat, jestli nebylo něco důležitého",
+   "x": [
+    "2026-11-05 Podvodní svět přiblížil školákům ichtyolog ČRS Pavel Vrána",
+    "2026-11-01 Bushman pro ČRS: celý listopad 40 % sleva pro všechny naše rybáře",
+    "2026-10-25 Hodnocení migrační průchodnosti Rolavy a odhad dopadů její obnovy na rybí společenstva",
+    "2026-10-24 Karel Mach zvolen předsedou Českého rybářského svazu",
+    "2026-10-19 Dvojnásobný medailový úspěch na mistrovství světa v přívlači z lodí",
+    "2026-10-16 Ze zasedání Západočeského územního svazu (říjen 2026)",
+    "2026-10-15 Zástupci ČRS jednali s ministrem životního prostředí o malých vodních elektrárnách",
+    "2026-10-09 Říjnové vydání časopisu Rybářství",
+    "2026-09-29 Akce „Poznej svého farmáře“ se uskutečnila ve Vodňanech"
    ]
   },
   {

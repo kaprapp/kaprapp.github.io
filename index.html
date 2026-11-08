@@ -210,7 +210,7 @@ ul.plain li{margin:3px 0}
 .tgrid .tile.wide.alert{background:#B4441F;border-color:#B4441F}.tgrid .tile.wide.alert:active{background:#97381A}
 .report .r150{border:2px solid #B4441F;border-radius:14px;padding:12px 14px;margin:10px 0;text-align:left}.report .r150 h4{margin:0 0 6px;color:#B4441F;font-size:18px}.report .r150 .n150{font-size:30px;font-weight:800;color:#B4441F;letter-spacing:1px}
 .report ul,.report ol{text-align:left;padding-left:20px;margin:6px 0}.report li{margin:4px 0;font-size:14px}.report .rsec{text-align:left;border-top:1px solid var(--line);margin-top:14px;padding-top:12px}.report .rsec h4{margin:0 0 6px}
-.report .rph{display:flex;gap:8px;margin:8px 0}.report .rph label{flex:1;aspect-ratio:1;border:1px dashed var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:26px;cursor:pointer}.report .rph img{width:100%;height:100%;object-fit:cover}
+.report .rph{display:flex;gap:8px;margin:8px 0}.report .rph label{flex:1;aspect-ratio:1;border:1px dashed var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:26px;cursor:pointer}.report .rph img{width:100%;height:100%;object-fit:cover}.report .rpl{display:flex;flex-direction:column;align-items:center;gap:2px}.report .rpl small{font-size:12px;color:var(--muted)}
 .report .rbtns{display:grid;gap:8px;margin-top:10px}.report textarea{width:100%;box-sizing:border-box}
 .tgrid .tile.wide{grid-column:1/-1;flex-direction:row;gap:10px;min-height:58px;background:#2E7D4F;color:#fff;border-color:#2E7D4F;font-weight:700;font-size:17px}.tgrid .tile.wide:active{background:#256A42}
 .uklid .clbags{display:flex;gap:8px;margin:8px 0 12px}.uklid .clbags button{flex:1;min-height:46px;font-size:17px;font-weight:700}.uklid .clbags button[aria-pressed="true"]{background:#2E7D4F;color:#fff;border-color:#2E7D4F}
@@ -583,8 +583,9 @@ ul.plain li{margin:3px 0}
       <div id="rpOrg" class="hint" style="text-align:left"></div>
       <label class="smf">Co se děje<textarea id="rpText" rows="3" placeholder="Např. pod jezem asi 30 uhynulých ryb, voda páchne, zjištěno v 7:30…"></textarea></label>
       <div class="smf">Fotky (až 3)</div>
-      <div class="rph"><label><input type="file" accept="image/*" data-rp="0" hidden><span>📷</span></label><label><input type="file" accept="image/*" data-rp="1" hidden><span>📷</span></label><label><input type="file" accept="image/*" data-rp="2" hidden><span>📷</span></label></div>
-      <div class="rbtns"><button class="btn primary" id="rpMail" type="button">📧 Otevřít e-mail (adresy vyplněné)</button><button class="btn" id="rpShare" type="button">📎 Sdílet s fotkami</button></div>
+      <div class="rph"><label><input type="file" accept="image/*" data-rp="0" hidden><span class="rpl">📷<small>Vyfotit</small></span></label><label><input type="file" accept="image/*" data-rp="1" hidden><span class="rpl">📷<small>Vyfotit</small></span></label><label><input type="file" accept="image/*" data-rp="2" hidden><span class="rpl">📷<small>Vyfotit</small></span></label></div>
+      <div class="rbtns"><button class="btn primary" id="rpShare" type="button">📧 Poslat e-mail s fotkami</button><button class="btn" id="rpMail" type="button">✉️ Poslat e-mail bez fotek</button><a class="btn" id="rpCall" href="#" hidden>☎ Zavolat organizaci</a></div>
+      <p class="hint" style="text-align:left">E-mail půjde organizaci revíru a v kopii i nám na pstruhakapr@gmail.com.</p>
       <div id="rpOut"></div>
     </div>
   </div>
@@ -1258,9 +1259,10 @@ async function rpOpen(){ await loadRis(); const rs=$("rpRev"), cur=rs.value, opt
   if(pt&&RIS.all){ RIS.all.filter(x=>x.segs.length).map(x=>({r:x,d:risDist(x,pt).d})).sort((a,b)=>a.d-b.d).slice(0,8).forEach(o=>add(o.r,`${o.r.n} · ${fmtKm(o.d)} km`)); }
   rs.innerHTML=opts.length?opts.map(o=>`<option value="${esc(o.v)}">${esc(o.l)}</option>`).join(""):`<option value="">Nejdřív zvol polohu (krok 2)</option>`;
   if(cur&&opts.some(o=>o.v===cur)) rs.value=cur; await rpOrg(); }
-async function rpOrg(){ const r=(RIS.all||[]).find(x=>x.c===$("rpRev").value); RP.r=r||null; RP.p=r?await getData(`podminky/${r.c}.json`):null; const p=RP.p||{};
-  $("rpOrg").innerHTML=r?`Revír <b>${esc(r.n)}</b> (${esc(fmtNum(r.c))}) · ${esc(p.o||orgL(r))}<br>${p.mo_mail?`📧 ${esc(p.mo_mail)}`:"E-mail organizace v RIS chybí"}${p.mo_tel?` · ☎ <a href="tel:${esc(String(p.mo_tel).replace(/\s/g,""))}">${esc(p.mo_tel)}</a>`:""}${p.mo_web?` · <a href="${esc(p.mo_web)}" target="_blank" rel="noopener">web</a>`:""}${RP.pos?`<br>📍 tvoje poloha se přidá do zprávy`:""}`:""; }
+async function rpOrg(){ const r=(RIS.all||[]).find(x=>x.c===$("rpRev").value); RP.r=r||null; RP.p=r?await getData(`podminky/${r.c}.json`):null; const p=RP.p||{}; rpCallUpd();
+  $("rpOrg").innerHTML=r?`Revír <b>${esc(r.n)}</b> (${esc(fmtNum(r.c))}) · ${esc(p.o||orgL(r))}<br>${p.mo_mail?`📧 ${esc(p.mo_mail)}`:"E-mail organizace v RIS chybí"}${p.mo_tel?` · ☎ ${esc(p.mo_tel)}`:" · telefon v RIS chybí"}${p.mo_web?` · <a href="${esc(p.mo_web)}" target="_blank" rel="noopener">web</a>`:""}${RP.pos?`<br>📍 tvoje poloha se přidá do zprávy`:""}`:""; }
 $("rpRev").onchange=rpOrg;
+const rpCallUpd=()=>{ const t=String((RP.p||{}).mo_tel||"").split(/[,;]/)[0].replace(/[^\d+]/g,""), a=$("rpCall"); if(t.length>=9){ a.href="tel:"+t; a.textContent=`☎ Zavolat organizaci (${(RP.p||{}).mo_tel.split(/[,;]/)[0].trim()})`; a.hidden=false; } else a.hidden=true; };
 document.querySelectorAll('#reportPanel input[data-rp]').forEach(inp=>inp.onchange=async()=>{ const i=+inp.dataset.rp, f=inp.files[0]; if(!f) return; try{ const b=await shrinkImg(f,1200*1024,1800); RP.ph[i]=new File([b],`problem-u-vody-${i+1}.jpg`,{type:"image/jpeg"}); inp.nextElementSibling.outerHTML=`<img src="${URL.createObjectURL(b)}" alt="">`; }catch(e){} });
 function rpMsg(){ const r=RP.r, p=RP.p||{}, now=new Date(), pos=RP.pos;
   const subj=`Problém u vody – ${r?r.n+" ("+r.c+")":"revír"}`;
@@ -1271,8 +1273,10 @@ $("rpMail").onclick=()=>{ const m=rpMsg(); if(!RP.r){ $("rpOut").innerHTML=`<p c
   $("rpOut").innerHTML=`<p class="hint">${m.to?"":"<b>E-mail organizace v RIS chybí</b> – doplň ho podle webu organizace, nebo zavolej. "}Fotky přilož v e-mailu z galerie (sponka / „Vložit fotku“).</p>`; location.href=href; };
 $("rpShare").onclick=async()=>{ const m=rpMsg(), files=RP.ph.filter(Boolean); if(!RP.r){ $("rpOut").innerHTML=`<p class="hint">Vyber revír.</p>`; return; }
   const addr=[m.to,RP_US].filter(Boolean).join(", "); try{ await navigator.clipboard.writeText(addr); }catch(e){}
-  try{ if(files.length&&navigator.canShare&&navigator.canShare({files})){ await navigator.share({files,title:m.subj,text:m.body}); $("rpOut").innerHTML=`<p class="hint">Adresy jsou zkopírované (${esc(addr)}) – v e-mailu je vlož do příjemců.</p>`; return; } }catch(e){ if(e.name==="AbortError") return; }
-  $("rpOut").innerHTML=`<p class="hint">Sdílení fotek tady nejde – použij „Otevřít e-mail“ a fotky přilož z galerie. Adresy: ${esc(addr)}</p>`; };
+  if(!files.length){ $("rpOut").innerHTML=`<p class="hint">Nejdřív vyfoť nebo vyber aspoň jednu fotku – nebo pošli e-mail bez fotek.</p>`; return; }
+  $("rpOut").innerHTML=`<p class="hint"><b>V nabídce vyber Mail / Gmail.</b> Adresy příjemců jsou zkopírované – v e-mailu klepni do pole Komu a vlož je: <b>${esc(addr)}</b></p>`;
+  try{ if(navigator.canShare&&navigator.canShare({files})){ await navigator.share({files,title:m.subj,text:m.subj+"\n\n"+m.body}); return; } }catch(e){ if(e.name==="AbortError") return; }
+  $("rpOut").innerHTML=`<p class="hint">Tenhle prohlížeč neumí poslat fotky přímo – použij „Poslat e-mail bez fotek“ a fotky přilož v e-mailu z galerie. Adresy: ${esc(addr)}</p>`; };
 $("reportBtn").onclick=()=>{ const el=$("reportPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel","cleanPanel","reportPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(open){ rpOpen(); el.scrollIntoView({behavior:"smooth",block:"nearest"}); } };
 }catch(e){ console.warn("Nahlásit problém – vypnuto kvůli chybě:",e); try{ document.getElementById("reportBtn").hidden=true; }catch(_){} }
 /* pojistka: chyba v této nové části nesmí zastavit zbytek aplikace */

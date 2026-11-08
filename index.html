@@ -584,8 +584,8 @@ ul.plain li{margin:3px 0}
       <label class="smf">Co se děje<textarea id="rpText" rows="3" placeholder="Např. pod jezem asi 30 uhynulých ryb, voda páchne, zjištěno v 7:30…"></textarea></label>
       <div class="smf">Fotky (až 3)</div>
       <div class="rph"><label><input type="file" accept="image/*" data-rp="0" hidden><span class="rpl">📷<small>Vyfotit</small></span></label><label><input type="file" accept="image/*" data-rp="1" hidden><span class="rpl">📷<small>Vyfotit</small></span></label><label><input type="file" accept="image/*" data-rp="2" hidden><span class="rpl">📷<small>Vyfotit</small></span></label></div>
-      <div class="rbtns"><button class="btn primary" id="rpShare" type="button">📧 Poslat e-mail s fotkami</button><button class="btn" id="rpMail" type="button">✉️ Poslat e-mail bez fotek</button><a class="btn" id="rpCall" href="#" hidden>☎ Zavolat organizaci</a></div>
-      <p class="hint" style="text-align:left">E-mail půjde organizaci revíru a v kopii i nám na pstruhakapr@gmail.com.</p>
+      <div class="rbtns"><button class="btn primary" id="rpSend" type="button">📧 Poslat e-mail organizaci</button><a class="btn" id="rpCall" href="#" hidden>☎ Zavolat organizaci</a></div>
+      <p class="hint" style="text-align:left">E-mail půjde organizaci revíru a v kopii i nám na pstruhakapr@gmail.com. Když přidáš fotky, přiloží se samy.</p>
       <div id="rpOut"></div>
     </div>
   </div>
@@ -1266,17 +1266,16 @@ const rpCallUpd=()=>{ const t=String((RP.p||{}).mo_tel||"").split(/[,;]/)[0].rep
 document.querySelectorAll('#reportPanel input[data-rp]').forEach(inp=>inp.onchange=async()=>{ const i=+inp.dataset.rp, f=inp.files[0]; if(!f) return; try{ const b=await shrinkImg(f,1200*1024,1800); RP.ph[i]=new File([b],`problem-u-vody-${i+1}.jpg`,{type:"image/jpeg"}); inp.nextElementSibling.outerHTML=`<img src="${URL.createObjectURL(b)}" alt="">`; }catch(e){} });
 function rpMsg(){ const r=RP.r, p=RP.p||{}, now=new Date(), pos=RP.pos;
   const subj=`Problém u vody – ${r?r.n+" ("+r.c+")":"revír"}`;
-  const body=[`Dobrý den,`,``,`u revíru ${r?r.n+" ("+r.c+")":""} jsem zjistil problém:`,``,($("rpText").value||"").trim()||"(popis doplním)",``,`Kdy: ${now.toLocaleString("cs-CZ")}`, pos?`Kde: ${pos.lat.toFixed(5)}, ${pos.lon.toFixed(5)} – https://mapy.cz/zakladni?q=${pos.lat.toFixed(5)},${pos.lon.toFixed(5)}`:"", RP.ph.some(Boolean)?`Fotky přikládám.`:"",``,`Pokud jde o úhyn ryb nebo znečištění, volal(a) jsem / zavolám i hasiče 150.`,``,`Odesláno z aplikace ${document.title||"iRyba"} (iryba.cz)`].filter((x,i,a)=>x!==""||a[i-1]!=="").join("\n");
+  const body=[`Dobrý den,`,``,`u revíru ${r?r.n+" ("+r.c+")":""} jsem zjistil problém:`,``,($("rpText").value||"").trim()||"(popis doplním)",``,`Kdy: ${now.toLocaleString("cs-CZ")}`, pos?`Kde: ${pos.lat.toFixed(5)}, ${pos.lon.toFixed(5)} – https://mapy.cz/zakladni?q=${pos.lat.toFixed(5)},${pos.lon.toFixed(5)}`:"", RP.ph.some(Boolean)?`Fotky přikládám.`:"",``,`Pokud jde o úhyn ryb nebo znečištění, volal(a) jsem / zavolám i hasiče 150.`,``,`—`,`Podnět byl podán pomocí bezplatné rybářské aplikace iRyba (${document.title||"Pstruh a Kapr"}): https://iryba.cz`].filter((x,i,a)=>x!==""||a[i-1]!=="").join("\n");
   return {to:p.mo_mail||"", subj, body}; }
-$("rpMail").onclick=()=>{ const m=rpMsg(); if(!RP.r){ $("rpOut").innerHTML=`<p class="hint">Vyber revír.</p>`; return; }
-  const href=`mailto:${encodeURIComponent(m.to)}?cc=${encodeURIComponent(RP_US)}&subject=${encodeURIComponent(m.subj)}&body=${encodeURIComponent(m.body)}`;
-  $("rpOut").innerHTML=`<p class="hint">${m.to?"":"<b>E-mail organizace v RIS chybí</b> – doplň ho podle webu organizace, nebo zavolej. "}Fotky přilož v e-mailu z galerie (sponka / „Vložit fotku“).</p>`; location.href=href; };
-$("rpShare").onclick=async()=>{ const m=rpMsg(), files=RP.ph.filter(Boolean); if(!RP.r){ $("rpOut").innerHTML=`<p class="hint">Vyber revír.</p>`; return; }
+const rpMailto=(m,note)=>{ const href=`mailto:${encodeURIComponent(m.to)}?cc=${encodeURIComponent(RP_US)}&subject=${encodeURIComponent(m.subj)}&body=${encodeURIComponent(m.body)}`;
+  $("rpOut").innerHTML=`<p class="hint">${m.to?"":"<b>E-mail organizace v RIS chybí</b> – doplň ho podle webu organizace, nebo zavolej. "}${note||""}</p>`; location.href=href; };
+$("rpSend").onclick=async()=>{ if(!RP.r){ $("rpOut").innerHTML=`<p class="hint">Vyber revír.</p>`; return; }
+  const m=rpMsg(), files=RP.ph.filter(Boolean);
+  if(!files.length) return rpMailto(m,"");
   const addr=[m.to,RP_US].filter(Boolean).join(", "); try{ await navigator.clipboard.writeText(addr); }catch(e){}
-  if(!files.length){ $("rpOut").innerHTML=`<p class="hint">Nejdřív vyfoť nebo vyber aspoň jednu fotku – nebo pošli e-mail bez fotek.</p>`; return; }
-  $("rpOut").innerHTML=`<p class="hint"><b>V nabídce vyber Mail / Gmail.</b> Adresy příjemců jsou zkopírované – v e-mailu klepni do pole Komu a vlož je: <b>${esc(addr)}</b></p>`;
-  try{ if(navigator.canShare&&navigator.canShare({files})){ await navigator.share({files,title:m.subj,text:m.subj+"\n\n"+m.body}); return; } }catch(e){ if(e.name==="AbortError") return; }
-  $("rpOut").innerHTML=`<p class="hint">Tenhle prohlížeč neumí poslat fotky přímo – použij „Poslat e-mail bez fotek“ a fotky přilož v e-mailu z galerie. Adresy: ${esc(addr)}</p>`; };
+  try{ if(navigator.canShare&&navigator.canShare({files})){ $("rpOut").innerHTML=`<p class="hint"><b>V nabídce vyber Mail / Gmail.</b> Adresy příjemců jsou zkopírované – v e-mailu klepni do pole Komu a vlož je: <b>${esc(addr)}</b></p>`; await navigator.share({files,title:m.subj,text:m.subj+"\n\n"+m.body}); return; } }catch(e){ if(e.name==="AbortError") return; }
+  rpMailto(m,"Tenhle prohlížeč neumí fotky přiložit sám – v e-mailu je přidej z galerie (sponka / „Vložit fotku“)."); };
 $("reportBtn").onclick=()=>{ const el=$("reportPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel","cleanPanel","reportPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(open){ rpOpen(); el.scrollIntoView({behavior:"smooth",block:"nearest"}); } };
 }catch(e){ console.warn("Nahlásit problém – vypnuto kvůli chybě:",e); try{ document.getElementById("reportBtn").hidden=true; }catch(_){} }
 /* pojistka: chyba v této nové části nesmí zastavit zbytek aplikace */

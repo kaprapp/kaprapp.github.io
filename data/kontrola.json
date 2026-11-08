@@ -5,13 +5,18 @@
   "boskovice": 35,
   "hodonin": 6,
   "sumperk": 9,
-  "sus": "ok",
+  "sus": "chyba: TypeError: fetch failed",
   "usti": "ok"
  },
  "datum": "2026-11-08",
- "zjisteno": "2026-11-08T10:49:03.295Z",
- "ok": true,
- "problemy": [],
+ "zjisteno": "2026-11-08T17:52:20.203Z",
+ "ok": false,
+ "problemy": [
+  {
+   "t": "Zarybnění – zdroj „sus“ selhal",
+   "x": "chyba: TypeError: fetch failed"
+  }
+ ],
  "info": [
   {
    "t": "Lov ryb dnes zakázán bez upřesnění, popis potvrzuje celý revír (chovný / CHRO): 22 revírů"

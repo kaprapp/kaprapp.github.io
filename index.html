@@ -943,6 +943,16 @@ async function renderZar(){
   /* zprávy svazů bez určení revíru */
   const trout=/pstruh|siven|lipan|hlavat/i;
   const news=(Z2?.zpravy||[]).filter(z=>z.datum>=from&&((S.typ==="P")===trout.test(z.titul+" "+z.text)));
+  /* zprávy, které jmenují revír z RIS → navíc karta revíru (zpráva zůstává i v seznamu níž) */
+  try{ const SVK={"Středočeský":"STČ","Severočeský":"SČ"}, nrm=t=>String(t||"").toLowerCase().replace(/[–—]/g,"-").replace(/\s+/g," "), isL=ch=>!!ch&&/[\p{L}\d]/u.test(ch);
+    for(const z of news){ const sk=SVK[z.svaz]; if(!sk) continue; const tx=nrm(z.titul+". "+z.text), hit=new Map();
+      for(const r of (RIS.all||[])){ if(r.s!==sk||r.t!==S.typ||!r.n||r.n.length<4) continue; const n=nrm(r.n), i=tx.indexOf(n);
+        if(i<0||isL(tx[i-1])||isL(tx[i+n.length])) continue; if(!hit.has(n)) hit.set(n,r); }
+      const names=[...hit.keys()]; for(const n of names) if(names.some(m=>m!==n&&m.includes(n))) hit.delete(n);
+      for(const [n,r] of hit){ if(res.some(x=>x.r&&x.r.c===r.c&&x._date===z.datum)) continue;
+        const parts=String(z.text||"").split(/(?<=\.)\s+|\s+a do\s+/).filter(p=>nrm(p).includes(n)).map(p=>/^[a-zá-ž]/.test(p)?"Do "+p:p), txt=(parts.length?parts.join(" … "):String(z.text||z.titul)).trim().slice(0,220);
+        let lat=NaN,lon=NaN,d=Infinity; if(here){const x=risDist(r,here); d=x.d; lat=x.lat; lon=x.lon;} else { const q=r.segs[0]&&r.segs[0][Math.floor(r.segs[0].length/2)]; if(q){lon=q[0];lat=q[1];} }
+        res.push({r,lat,lon,_d:d,_date:z.datum,title:r.n,sub:`${fmtNum(r.c)} · ${orgL(r)}`,pozn:`${txt} · ${dShort(z.datum)}`,pill:`zpráva · ${z.svaz==="Středočeský"?"SÚS":"SčÚS"}`,zpravaRevir:1}); } } }catch(e){ console.warn("zprávy→revíry",e); }
   const newsHtml=news.length?`<section class="sec" style="margin-top:12px"><h3>Zprávy svazů o vysazení</h3><p class="hint">Bez určení konkrétních revírů.</p><div class="news">${news.map(z=>`<a class="newsitem" href="${esc(z.url)}" target="_blank" rel="noopener"><span class="nm">${esc(dCZ(z.datum))} · ${esc(z.svaz)} územní svaz</span><span class="nt">${esc(z.titul)}</span>${z.text?`<span class="nx">${esc(z.text)}</span>`:""}</a>`).join("")}</div></section>`:"";
   if(!res.length){ $("out").innerHTML=`<div class="status">Za posledních 6 týdnů nejsou žádná zveřejněná vysazení ryb do ${S.typ==="P"?"pstruhových":"mimopstruhových"} revírů.</div>${newsHtml}`; return; }
   const sortD=ZSORT==="dist"&&here;
@@ -1690,7 +1700,7 @@ loadRis().then(()=>drawRevs());
 if(!readHashLoc() && S.mode==="gps" && navigator.permissions?.query){
   navigator.permissions.query({name:"geolocation"}).then(st=>{ if(st.state==="granted") locate(true); }).catch(()=>{}); }
 /* verze aplikace – zvyšuj spolu s CACHE v sw.js */
-const APP_VER="2026-11-05 17:05";
+const APP_VER="2026-11-08 10:00";
 try{ const ft=document.getElementById("foot"); if(ft) ft.insertAdjacentHTML("beforeend",`<br><span style="font-size:11px;opacity:.7">Verze ${APP_VER}</span>`); }catch(e){}
 /* aktualizace: při návratu do aplikace zkontroluj novou verzi a po jejím převzetí stránku jednou obnov */
 if("serviceWorker" in navigator){

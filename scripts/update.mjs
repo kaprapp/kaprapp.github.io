@@ -259,10 +259,12 @@ async function aktuality() {
   const prev = await readJSON("aktuality.json", { polozky: [] });
   // štítky starších zpráv přepočítat (oprava třídění), bez štítku vypadnou
   const items = new Map(prev.polozky.map((x) => [x.url, { ...x, stitek: tag(x.titul + " " + (x.text || "")) }]).filter(([, x]) => x.stitek));
+  const vyrazeno = []; // zprávy bez štítku – do aplikace nejdou, jen pro sebekontrolu
   for (let p = 1; p <= 5; p++) {
     const html = await get(`${RIS}/aktuality?category=&page=${p}&pageSize=9`);
     for (const c of parseCards(html, RIS)) {
       const st = tag(c.titul + " " + c.text);
+      if (!st && c.datum && !items.has(c.url)) vyrazeno.push({ datum: c.datum, titul: c.titul, url: c.url });
       if (!st || !c.datum || items.has(c.url)) continue;
       let text = c.text.replace(/\s*\.\.\.$/, "…");
       if (text.length > 180) text = text.slice(0, 177).replace(/\s\S*$/, "") + "…";
@@ -271,7 +273,7 @@ async function aktuality() {
   }
   const limit = new Date(Date.now() - 120 * 864e5).toISOString().slice(0, 10);
   const polozky = [...items.values()].filter((x) => x.datum >= limit).sort((a, b) => b.datum.localeCompare(a.datum)).slice(0, 40);
-  await writeJSON("aktuality.json", { aktualizovano: now.iso, zdroje: "RIS Portál ČRS (celostátní aktuality a zprávy územních svazů)", polozky });
+  await writeJSON("aktuality.json", { aktualizovano: now.iso, zdroje: "RIS Portál ČRS (celostátní aktuality a zprávy územních svazů)", polozky, vyrazeno: vyrazeno.slice(0, 45) });
   log("aktuality", polozky.length, "(nových", polozky.length - prev.polozky.filter((x) => x.datum >= limit).length, ")");
   return { polozek: polozky.length };
 }

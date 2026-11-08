@@ -850,7 +850,8 @@ function rezimMimo(r,p){
   return {kratce:`${nm[0].toUpperCase()+nm.slice(1)} režim platí jen od ${+m[1]}. ${+m[2]}. do ${+m[3]}. ${+m[4]}.`,
     txt:`Tato voda má kombinovaný režim. ${nm[0].toUpperCase()+nm.slice(1)} režim tu platí jen od ${+m[1]}. ${+m[2]}. do ${+m[3]}. ${+m[4]}., dnes podle tohoto revíru lovit nelze. Mimo toto období se řiď podmínkami ${r.t==="P"?"mimopstruhového":"pstruhového"} revíru stejného jména (v aplikaci Pstruh), pokud v tu dobu platí.`};
 }
-const jenCast=l=>!!(l&&l.zakaz&&l.pozn&&!/celý\s+revír|celého\s+revíru|hlavní\s+tok|mimo\s+provoz/i.test(l.pozn)), techCast=t=>!!(t&&t.zakaz&&/(?:pouze|jen)\s+(?:na|v)\s/i.test(t.pozn||""));
+/* zákaz jen v části revíru: jen když upřesnění výslovně jmenuje úsek či místo; v pochybnostech platí zákaz (přísnější výklad) */
+const jenCast=l=>!!(l&&l.zakaz&&l.pozn&&!/celý\s+revír|celého\s+revíru|hlavní\s+tok|mimo\s+provoz|závod|místenk|neplatí\s+pro|kromě|vyjma|mimo\s+(rybník|nádrž|vodní)|povolen\w*\s+pouze|pouze\s+(pro|s|se|členům|držitel)/i.test(l.pozn)&&/úsek|úseku|v\s+části|část\w*\s+revíru|pásm|v\s+prostoru|\d+\s*m\s+(nad|pod|od|kolem|okolo)|od\s+\S.*\s+(po|až\s+(k|po|na))\s|na\s+\S+\s+(jezeru|rybníku|nádrži|ploše)/i.test(l.pozn)), techCast=t=>!!(t&&t.zakaz&&/(?:pouze|jen)\s+(?:na|v)\s/i.test(t.pozn||""));
 const upr=t=>t?` <span class="hint upr">Upřesnění: ${esc(t)}</span>`:"";
 async function body(r,x,p){
   const sec=(t,h)=>h?`<section class="sec"><h3>${t}</h3>${h}</section>`:"";
@@ -897,9 +898,31 @@ function links(r,x){ const ll=isFinite(x.lat)?`${x.lat},${x.lon}`:"";
 const moKey=t=>norm(t).replace(/^mo\s+/,"").replace(/\s+ii\.?$/," 2").replace(/\s+i\.?$/," 1").replace(/\s+/g," ").trim();
 const moMatch=(a,b)=>a===b||a.startsWith(b+" ")||b.startsWith(a+" ")||a.startsWith(b);
 const isTroutSp=d=>/pstruh|siven|lipan|hlavat/i.test(d);
+/* zprávy svazů (SÚS, SčÚS), které jmenují revír z RIS → zarybnění pro detail revíru a šanci na záběr */
+let ZPR_MAP=null;
+const ZPR_DRUH=[[/pstruh\w*\s+duhov/i,"Pstruh duhový"],[/pstruh\w*\s+(obecn|potočn)/i,"Pstruh obecný"],[/siven/i,"Siven americký"],[/lipan/i,"Lipan"],[/hlavat/i,"Hlavatka"],[/kapr/i,"Kapr"],[/lín/i,"Lín"],[/štik/i,"Štika"],[/candát/i,"Candát"],[/amur/i,"Amur"],[/sumc|sumec/i,"Sumec"],[/okoun/i,"Okoun"],[/pstruh/i,"Pstruh"]];
+async function zprRevir(r){
+  if(!ZPR_MAP){ const m=new Map();
+    try{ const Z2=await getData("zarybneni-svazy.json"), SVK={"Středočeský":"STČ","Severočeský":"SČ"}, trout=/pstruh|siven|lipan|hlavat/i,
+        nrm=t=>String(t||"").toLowerCase().replace(/[–—]/g,"-").replace(/\s+/g," "), isL=ch=>!!ch&&/[\p{L}\d]/u.test(ch);
+      if(!(RIS.all||[]).length) return [];
+      for(const z of (Z2?.zpravy||[])){ const sk=SVK[z.svaz]; if(!sk) continue; const tr=trout.test(z.titul+" "+z.text), tx=nrm(z.titul+". "+z.text), hit=new Map();
+        for(const q of RIS.all){ if(q.s!==sk||(q.t==="P")!==tr||!q.n||q.n.length<4) continue; const n=nrm(q.n), i=tx.indexOf(n);
+          if(i<0||isL(tx[i-1])||isL(tx[i+n.length])) continue; if(!hit.has(n+"|"+q.t)) hit.set(n+"|"+q.t,q); }
+        const keys=[...hit.keys()]; for(const k of keys){ const n=k.split("|")[0]; if(keys.some(o=>o!==k&&o.split("|")[0]!==n&&o.split("|")[0].includes(n))) hit.delete(k); }
+        for(const [k,q] of hit){ const n=k.split("|")[0];
+          const parts=String(z.text||"").split(/(?<=\.)\s+|\s+a do\s+/).filter(p=>nrm(p).includes(n)).map(p=>/^[a-zá-ž]/.test(p)?"Do "+p:p), txt=(parts.length?parts.join(" … "):String(z.text||z.titul)).trim();
+          const druh=(ZPR_DRUH.find(([re])=>re.test(txt))||[0,"Ryby"])[1];
+          if(!m.has(q.c)) m.set(q.c,[]); m.get(q.c).push({datum:z.datum,druh,txt:txt.slice(0,220),svaz:z.svaz,url:z.url}); } }
+    }catch(e){ console.warn("zprRevir",e); }
+    ZPR_MAP=m; }
+  return (ZPR_MAP.get(r.c)||[]).slice().sort((a,b)=>b.datum.localeCompare(a.datum)); }
+const zprSvaz=z=>z.svaz==="Středočeský"?"Středočeského ÚS":"Severočeského ÚS";
 /* poslední známé zarybnění organizace (pro horní část detailu) */
 async function lastStock(r){ const Z2=await getData("zarybneni-svazy.json");
   const own=(Z2?.zaznamy||[]).filter(z=>z.revir===r.c&&(r.t==="P")===isTroutSp(z.druh)).sort((a,b)=>b.datum.localeCompare(a.datum));
+  const zp=await zprRevir(r);
+  if(zp.length&&(!own.length||zp[0].datum>=own[0].datum)) return `<div class="flownow"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true" style="width:34px;flex:none"><use href="#fish-sm"/></svg><div><span class="lvltxt">Poslední známé zarybnění ${esc(dCZ(zp[0].datum))}</span><br>${esc(zp[0].txt)}<br><span class="hint">přímo do tohoto revíru · podle <a href="${esc(zp[0].url)}" target="_blank" rel="noopener">zprávy ${esc(zprSvaz(zp[0]))}</a></span></div></div>`;
   if(own.length){ const d=own[0].datum, same=own.filter(z=>z.datum===d);
     return `<div class="flownow"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true" style="width:34px;flex:none"><use href="#fish-sm"/></svg><div><span class="lvltxt">Poslední známé zarybnění ${esc(dCZ(d))}</span><br>${same.slice(0,4).map(z=>`${esc(z.druh)}${z.mn!=null?` ${esc(z.mn.toLocaleString("cs-CZ"))} ${esc(z.j)}`:""}${z.kat?` (${esc(z.kat)})`:""}`).join(", ")}<br><span class="hint">přímo do tohoto revíru · ${esc(own[0].svaz==="Praha"?"ÚS města Prahy":"Jihočeský ÚS")}</span></div></div>`; }
   if(isMRS(r)) return ""; const Z=await getData("zarybneni.json"); if(!Z) return "";
@@ -910,6 +933,8 @@ async function lastStock(r){ const Z2=await getData("zarybneni-svazy.json");
   return `<div class="flownow"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true" style="width:34px;flex:none"><use href="#fish-sm"/></svg><div><span class="lvltxt">Poslední známé zarybnění ${esc(dCZ(d))}</span><br>${same.slice(0,3).map(z=>`${esc(z.druh)} ${esc(z.mn.toLocaleString("cs-CZ"))} ${esc(z.j)}`).join(", ")}<br><span class="hint">MO ${esc(pick[0].mo)} · podle zpráv Východočeského ÚS</span></div></div>`; }
 async function stockFor(r){ const Z2=await getData("zarybneni-svazy.json");
   const own=(Z2?.zaznamy||[]).filter(z=>z.revir===r.c).sort((a,b)=>b.datum.localeCompare(a.datum));
+  const zp=await zprRevir(r);
+  if(zp.length&&!own.length) return `<div class="stock">${zp.slice(0,10).map(z=>`<div class="stock-item"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true"><use href="#fish-sm"/></svg><div><strong>${esc(z.druh)}</strong><div class="hint">${esc(dCZ(z.datum))} · ${esc(z.txt)}</div></div></div>`).join("")}</div><p class="hint" style="margin-top:6px">Podle zpráv ${esc(zprSvaz(zp[0]))} o vysazení (<a href="${esc(zp[0].url)}" target="_blank" rel="noopener">zdroj</a>).</p>`;
   if(own.length) return `<div class="stock">${own.slice(0,10).map(z=>`<div class="stock-item"><svg class="fishico" viewBox="0 0 84 52" aria-hidden="true"><use href="#fish-sm"/></svg><div><strong>${esc(z.druh)}${z.mn!=null?` ${esc(z.mn.toLocaleString("cs-CZ"))} ${esc(z.j)}`:""}</strong><div class="hint">${esc(dCZ(z.datum))}${z.kat?` · ${esc(z.kat)}`:""}</div></div></div>`).join("")}</div><p class="hint" style="margin-top:6px">Vysazení přímo do tohoto revíru za poslední rok (${esc(own[0].svaz==="Praha"?"ÚS města Prahy":"Jihočeský ÚS")}).</p>`;
   if(isMRS(r)) return ""; const Z=await getData("zarybneni.json"); if(!Z) return "";
   const k=moKey(r.o), od60=new Date(today.getTime()-60*864e5).toISOString().slice(0,10); const recs=(Z.zaznamy||[]).filter(z=>z.datum>=od60&&moMatch(k,moKey(z.mo))).sort((a,b)=>b.datum.localeCompare(a.datum));
@@ -1232,6 +1257,8 @@ async function revFlow(r){ const d=await getData("prutoky.json"); if(!d) return 
   for(const s of d.stanice){ if(riverKey(s.tok)!==k||s.lat==null||s.q==null) continue; const dd=risDist(r,s).d; if(dd<=15&&(!best||dd<best.dd)) best={...s,dd}; } return best; }
 async function revStock(r){ const Z2=await getData("zarybneni-svazy.json");
   const own=(Z2?.zaznamy||[]).filter(z=>z.revir===r.c&&(r.t==="P")===isTroutSp(z.druh)).sort((a,b)=>b.datum.localeCompare(a.datum));
+  const zp=await zprRevir(r);
+  if(zp.length&&(!own.length||zp[0].datum>own[0].datum)) return {datum:zp[0].datum,druh:zp[0].druh,own:true};
   if(own.length) return {datum:own[0].datum,druh:own[0].druh,own:true};
   if(isMRS(r)) return null; const Z=await getData("zarybneni.json"); if(!Z) return null; const k=moKey(r.o);
   const pick=(Z.zaznamy||[]).filter(z=>moMatch(k,moKey(z.mo))&&(r.t==="P")===isTroutSp(z.druh)).sort((a,b)=>b.datum.localeCompare(a.datum));
@@ -1700,7 +1727,7 @@ loadRis().then(()=>drawRevs());
 if(!readHashLoc() && S.mode==="gps" && navigator.permissions?.query){
   navigator.permissions.query({name:"geolocation"}).then(st=>{ if(st.state==="granted") locate(true); }).catch(()=>{}); }
 /* verze aplikace – zvyšuj spolu s CACHE v sw.js */
-const APP_VER="2026-11-08 10:00";
+const APP_VER="2026-11-08 11:10";
 try{ const ft=document.getElementById("foot"); if(ft) ft.insertAdjacentHTML("beforeend",`<br><span style="font-size:11px;opacity:.7">Verze ${APP_VER}</span>`); }catch(e){}
 /* aktualizace: při návratu do aplikace zkontroluj novou verzi a po jejím převzetí stránku jednou obnov */
 if("serviceWorker" in navigator){

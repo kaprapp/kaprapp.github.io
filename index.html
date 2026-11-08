@@ -402,7 +402,7 @@ ul.plain li{margin:3px 0}
       <button class="btn tile" id="catchBtn"><span class="ti">✍️</span>Zapsat úlovek</button>
       <button class="btn tile" id="guardBtn"><span class="ti">🛡️</span>Kontrola rybářské stráže</button>
       <button class="btn tile" id="shareBtn"><span class="ti">📤</span>Poslat kamarádovi</button>
-      <button class="btn tile wide" id="cleanBtn"><span class="ti">♻️</span>Uklidil jsem kolem vody</button>
+      <button class="btn tile wide" id="cleanBtn"><svg class="ti" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M5 6l1 14h12l1-14"/><path d="M10 10v7M14 10v7"/></svg>Uklízím kolem vody</button>
     </div>
   </section>
   <div class="sharebar">
@@ -535,7 +535,7 @@ ul.plain li{margin:3px 0}
     </div>
   </div>
   <div class="panel ulovek uklid" id="cleanPanel" hidden>
-    <h3>♻️ Uklidil jsem kolem vody</h3>
+    <h3>Uklízím kolem vody</h3>
     <p class="hint">Sebral jsi u vody odpadky? Zapiš si to – sbíráš odznaky a na konci roku je uvidíš ve svém rybářském roce. Na čestné slovo, ukládá se jen v tomhle telefonu.</p>
     <label class="smf">Revír<select id="clRev"></select></label>
     <div class="smf">Kolik odpadků jsi sebral? (stačí odhad)</div>
@@ -1856,7 +1856,7 @@ loadRis().then(()=>drawRevs());
 if(!readHashLoc() && S.mode==="gps" && navigator.permissions?.query){
   navigator.permissions.query({name:"geolocation"}).then(st=>{ if(st.state==="granted") locate(true); }).catch(()=>{}); }
 /* verze aplikace – zvyšuj spolu s CACHE v sw.js */
-const APP_VER="2026-11-08 19:15";
+const APP_VER="2026-11-08 23:15";
 try{ const ft=document.getElementById("foot"); if(ft) ft.insertAdjacentHTML("beforeend",`<br><span style="font-size:11px;opacity:.7">Verze ${APP_VER}</span>`); }catch(e){}
 /* aktualizace: při návratu do aplikace zkontroluj novou verzi a po jejím převzetí stránku jednou obnov */
 if("serviceWorker" in navigator){

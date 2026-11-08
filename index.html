@@ -1210,6 +1210,8 @@ function radRender(q){ if(!RAD) return; q=(q||"").trim(); const nq=norm(q);
   $("radBody").innerHTML=html||`<p class="hint">Nic nenalezeno.</p>`; }
 $("guardBtn").onclick=()=>{ const el=$("guardPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel","cleanPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(open) el.scrollIntoView({behavior:"smooth",block:"nearest"}); };
 $("catchBtn").onclick=()=>{ const el=$("catchPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel","cleanPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(open) el.scrollIntoView({behavior:"smooth",block:"nearest"}); };
+/* pojistka: chyba v této nové části nesmí zastavit zbytek aplikace */
+try{
 /* ---------- Uklidil jsem kolem vody: zápis úklidu, odznaky, sdílení (jen v tomto telefonu, na čestné slovo) ---------- */
 const CL_KEY="uklid", CL_MAX_DEN=50;
 const clW=n=>n===1?"odpadek":n>=2&&n<=4?"odpadky":"odpadků";
@@ -1301,6 +1303,7 @@ async function clShare(){ const y=clYear(), n=clSum(y), b=clBadge(n)||CL_BADGES[
   const txt=`Uklízím kolem vody 🌊 ${CL_PHOTO&&last?`Dnes ${last.p} ${clW(last.p)}, `:""}letos už ${n} ${clW(n)} – odznak ${b[2]}. #UklízímKolemVody @pstruhakapr iryba.cz`;
   await brShare(blob,"uklizim-kolem-vody.jpg",txt,$("clOut")); }
 $("cleanBtn").onclick=()=>{ const el=$("cleanPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel","cleanPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(open){ clOpen(); el.scrollIntoView({behavior:"smooth",block:"nearest"}); } };
+}catch(e){ console.warn("Uklidil jsem / Pochlub se – vypnuto kvůli chybě:",e); try{ document.getElementById("cleanBtn").hidden=true; document.getElementById("cBragBtn").hidden=true; }catch(_){} }
 const cSub=(show)=>{ [["cRisBtn","cRis"],["cMeBtn","sendMe"]].forEach(([b,p])=>{ const on=p===show&&$(p).hidden; $(p).hidden=!on; $(b).setAttribute("aria-expanded",on); if(on){ if(p==="sendMe") smOpen(); $(p).scrollIntoView({behavior:"smooth",block:"nearest"}); } }); };
 $("cRisBtn").onclick=()=>cSub("cRis"); $("cMeBtn").onclick=()=>cSub("sendMe");
 $("radBtn").onclick=async()=>{ const el=$("radPanel"); const open=el.hidden; ["donatePanel","contactPanel","radPanel","catchPanel","guardPanel","cleanPanel"].forEach(x=>$(x)&&($(x).hidden=true)); el.hidden=!open; if(!open) return;

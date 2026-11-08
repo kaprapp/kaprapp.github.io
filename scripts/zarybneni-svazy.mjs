@@ -201,6 +201,8 @@ export async function zarybneniSvazy({ reviry, prev, today, log = console.log })
   const prevZ = prev?.zpravy || [];
   try { res.zpravy.push(...await zpravySus(prevZ.filter((z) => z.svaz === "Středočeský"), today, log)); res.kroky.sus = "ok"; } catch (e) { res.kroky.sus = "chyba: " + String(e).slice(0, 120); res.zpravy.push(...prevZ.filter((z) => z.svaz === "Středočeský")); }
   try { res.zpravy.push(...await zpravyUsti(log)); res.kroky.usti = "ok"; } catch (e) { res.kroky.usti = "chyba: " + String(e).slice(0, 120); res.zpravy.push(...prevZ.filter((z) => z.svaz === "Severočeský")); }
+  // starší zprávy, které už web svazu nemá na úvodní stránce (čte se jen 12 nejnovějších odkazů), si necháme – ořízne je až limit 90 dní
+  for (const z of prevZ) if (!res.zpravy.some((x) => x.url === z.url)) res.zpravy.push(z);
   // bez duplicit, jen poslední rok / 90 dní
   const seen = new Set(); res.zaznamy = keep(res.zaznamy, 400).filter((z) => { const k = [z.svaz, z.datum, z.rn, z.druh, z.kat, z.mn].join("|"); if (seen.has(k)) return false; seen.add(k); return true; });
   const seenU = new Set(); res.zpravy = keep(res.zpravy, 90).filter((z) => !seenU.has(z.url) && seenU.add(z.url)).sort((a, b) => b.datum.localeCompare(a.datum));

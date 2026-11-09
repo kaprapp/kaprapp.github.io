@@ -5,18 +5,13 @@
   "boskovice": 35,
   "hodonin": 6,
   "sumperk": 9,
-  "sus": "chyba: TypeError: fetch failed",
+  "sus": "ok",
   "usti": "ok"
  },
- "datum": "2026-11-08",
- "zjisteno": "2026-11-08T17:52:20.203Z",
- "ok": false,
- "problemy": [
-  {
-   "t": "Zarybnění – zdroj „sus“ selhal",
-   "x": "chyba: TypeError: fetch failed"
-  }
- ],
+ "datum": "2026-11-09",
+ "zjisteno": "2026-11-09T12:13:01.860Z",
+ "ok": true,
+ "problemy": [],
  "info": [
   {
    "t": "Lov ryb dnes zakázán bez upřesnění, popis potvrzuje celý revír (chovný / CHRO): 22 revírů"
@@ -96,7 +91,7 @@
    ]
   },
   {
-   "t": "Revíry jen s přibližnou polohou (127) – v RIS chybí zákres, GPS i katastr",
+   "t": "Revíry jen s přibližnou polohou (126) – v RIS chybí zákres, GPS i katastr",
    "x": [
     "411119 Bělušice",
     "413045 BEROUNKA 4 P",
@@ -185,9 +180,9 @@
   }
  ],
  "pocty": {
-  "reviry": 1775,
+  "reviry": 1774,
   "prutoky": 319,
-  "pribl": 127
+  "pribl": 126
  },
  "polohyNesedi": [
   "431145 PARDUS VELKÝ: zákres 13.3 km od GPS v detailu RIS",

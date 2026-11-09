@@ -215,7 +215,7 @@ ul.plain li{margin:3px 0}
 .report ul,.report ol{text-align:left;padding-left:20px;margin:6px 0}.report li{margin:4px 0;font-size:14px}.report .rsec{text-align:left;border-top:1px solid var(--line);margin-top:14px;padding-top:12px}.report .rsec h4{margin:0 0 6px}
 .report .rph{display:flex;gap:8px;margin:8px 0}.report .rph label{flex:1;aspect-ratio:1;border:1px dashed var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:26px;cursor:pointer}.report .rph img{width:100%;height:100%;object-fit:cover}.report .rpl{display:flex;flex-direction:column;align-items:center;gap:2px}.report .rpl small{font-size:12px;color:var(--muted)}
 .report .rbtns{display:grid;gap:8px;margin-top:10px}.report textarea{width:100%;box-sizing:border-box}
-.tgrid .tile.wide{grid-column:1/-1;flex-direction:row;gap:10px;min-height:58px;background:#2E7D4F;color:#fff;border-color:#2E7D4F;font-weight:700;font-size:17px}.tgrid .tile.wide:active{background:#256A42}
+.tgrid .tile.wide{background:#2E7D4F;color:#fff;border-color:#2E7D4F;font-weight:700}.tgrid .tile.wide:active{background:#256A42}
 .uklid .clbags{display:flex;gap:8px;margin:8px 0 12px}.uklid .clbags button{flex:1;min-height:46px;font-size:17px;font-weight:700}.uklid .clbags button[aria-pressed="true"]{background:#2E7D4F;color:#fff;border-color:#2E7D4F}
 .uklid .clthx{margin:12px 0;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--ok,#2E7D4F) 12%,transparent);text-align:left}.uklid .clthx b{display:block;font-size:17px;margin-bottom:2px}
 .uklid .clsum{display:flex;justify-content:space-around;margin:14px 0 6px;text-align:center}.uklid .clsum b{display:block;font-size:26px;line-height:1.1}.uklid .clsum span{font-size:12px;color:var(--muted)}
@@ -1929,7 +1929,7 @@ loadRis().then(()=>drawRevs());
 if(!readHashLoc() && S.mode==="gps" && navigator.permissions?.query){
   navigator.permissions.query({name:"geolocation"}).then(st=>{ if(st.state==="granted") locate(true); }).catch(()=>{}); }
 /* verze aplikace – zvyšuj spolu s CACHE v sw.js */
-const APP_VER="2026-11-08 23:43";
+const APP_VER="2026-11-09 17:41";
 try{ const ft=document.getElementById("foot"); if(ft) ft.insertAdjacentHTML("beforeend",`<br><span style="font-size:11px;opacity:.7">Verze ${APP_VER}</span>`); }catch(e){}
 /* aktualizace: při návratu do aplikace zkontroluj novou verzi a po jejím převzetí stránku jednou obnov */
 if("serviceWorker" in navigator){

@@ -9,7 +9,7 @@
   "usti": "ok"
  },
  "datum": "2026-11-11",
- "zjisteno": "2026-11-11T11:30:37.797Z",
+ "zjisteno": "2026-11-11T17:41:44.896Z",
  "ok": true,
  "problemy": [],
  "info": [
@@ -159,6 +159,17 @@
    "t": "Zarybnění: zpráva svazu jmenuje vodu, ale aplikace ji nepřiřadila k revíru (1) – je jen dole ve „Zprávách svazů“",
    "x": [
     "2026-10-31 Středočeský: Do Světlé vysazeni duháci a siveni | Světlá → možná Světlá nad Sázavou (M)"
+   ]
+  },
+  {
+   "t": "Doba lovu podle popisu revíru – aplikace podle ní hlásí, kdy se na celém revíru nesmí lovit (6) – občas ověřit",
+   "x": [
+    "BARTOŠOVICKÝ POTOK 1 A: Zákaz rybolovu v období od 14.10.2026 do 27.10.2026 (včetně) z důvodu zarybňování revíru.",
+    "BĚLÁ 1: Zákaz lovu všech druhů ryb platí od 16. 3. do 30. 4. včetně.",
+    "OPAVICE 1 A (DNES zavřeno): Zákaz rybolovu v období od 31.10.2026 do 13.11.2026 z důvodu zarybňování revíru.",
+    "OSLAVA ŠTERNBERSKÁ 1 A (DNES zavřeno): Zákaz rybolovu v období od 2.11.2026 do 14.11.2026 z důvodu zarybňování revíru.",
+    "OSOBLAHA 2 A (DNES zavřeno): Zákaz rybolovu v období od 31.10.2026 do 13.11.2026 z důvodu zarybňování revíru.",
+    "VLTAVA 29 P (DNES zavřeno): Lov ryb povolen jen v období od zahájení pstruhové sezony do 31. 8."
    ]
   },
   {

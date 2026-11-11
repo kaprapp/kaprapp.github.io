@@ -89,6 +89,53 @@ try {
   for (const [k, v] of Object.entries(zs.kroky || {})) { if (typeof v === "string" && v.startsWith("chyba")) prob(`Zarybnění – zdroj „${k}“ selhal`, v); else if (v === 0 && prev.zarybKroky?.[k] > 0) prob(`Zarybnění – zdroj „${k}“ vrátil 0 záznamů (minule ${prev.zarybKroky[k]})`); }
   globalThis.__zarybKroky = zs.kroky || {};
 } catch (e) { info("Kontrola zarybnění se nepovedla", String(e).slice(0, 120)); }
+// 3b) doba lovu vyčtená z popisu revíru (stejná funkce jako index.html: sezPopis) – aplikace podle ní hlásí „Dnes mimo dobu lovu revíru“
+/* Doba lovu z popisu revíru: celorevírní „Lov ryb povolen jen od … do …“ / „Zákaz lovu ryb od … do …“. Věty o úseku, části, nádrži apod. se nepoužijí. */
+function sezPopis(r,p,today){
+  if(!r||!p||!p.popis) return null;
+  const t0=today;
+  const txt=String(p.popis).replace(/<[^>]+>/g," ").replace(/\*+/g," ").replace(/&nbsp;/g," ");
+  const vety=txt.split(/\r?\n|(?<=\.)\s+(?=[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ])/).map(s=>s.replace(/\s+/g," ").trim()).filter(Boolean);
+  const D="(\\d{1,2})\\.\\s*(\\d{1,2})\\.\\s*(20\\d\\d)?";
+  const NE=/úsek|úseku|část|břeh|pláž|podrevír|nádrž|rybník|tabul|ostrov|zátok|zátoc|lokalit|jezer|štěrkovišt|poldr|hráz|přítok|potok|kanál|GPS|pozemk|plavid|přívlač|muškař|plavan|položen|brod|zaváž|vstup|nonstop|výjimk|denní\s+dob|pod\s+ledem|druh|lososovit|lipan|pstruh\s+obecn|sumc|kapr|štik|candát|úhoř|amur|mník|hod\.|\d+[.:]\d\d\s*hod|místenk|závod|soutěž|pouze\s+pro|jen\s+pro|člen|mládež|dět/i;
+  const pad=x=>String(+x).padStart(2,"0");
+  const iso=(d,m,y)=>(y?y:t0.slice(0,4))+"-"+pad(m)+"-"+pad(d);
+  const dm=(d,m)=>`${+d}. ${+m}.`;
+  for(const v of vety){
+    if(v.length>220) continue;
+    let m=v.match(new RegExp("^(?:na\\s+(?:celém\\s+)?revíru\\s+(?:je\\s+)?)?lov\\s+(?:ryb\\s+)?(?:je\\s+)?povolen\\s+(?:jen|pouze)\\s+(?:v\\s+(?:období|době)\\s+)?od\\s+(?:(zahájení\\s+pstruhové\\s+sez[oó]ny)|"+D+")\\s*(?:do|–|-)\\s*"+D+"\\s*(?:včetně)?\\s*\\.?$","i"));
+    if(m&&!NE.test(v.replace(/pstruhové\s+sez[oó]ny/i,""))){
+      const od=m[1]?"04-16":pad(m[3])+"-"+pad(m[2]), doo=pad(m[6])+"-"+pad(m[5]);
+      const yOd=m[4], yDo=m[7];
+      let uvnitr;
+      if(yOd||yDo){ const a=yOd?iso(m[2],m[3],yOd):t0.slice(0,4)+"-"+od, b=iso(m[5],m[6],yDo); uvnitr=t0>=a&&t0<=b; }
+      else { const md=t0.slice(5); uvnitr=od<=doo?(md>=od&&md<=doo):(md>=od||md<=doo); }
+      if(uvnitr) return null;
+      const per=(m[1]?"od zahájení pstruhové sezóny":"od "+dm(m[2],m[3]))+" do "+dm(m[5],m[6]);
+      return {nadpis:"Dnes mimo dobu lovu revíru:",kratce:`Podle popisu revíru se tu loví jen ${per}`,txt:`Podle popisu revíru je lov ryb povolen jen ${per} Dnes tu lovit nelze. Případné výjimky pro jednotlivé úseky najdeš v popisu revíru.`,veta:v};
+    }
+    m=v.match(new RegExp("^(?:na\\s+(?:celém\\s+)?revíru\\s+)?(?:platí\\s+)?zákaz\\s+(?:lovu\\s+(?:všech\\s+druhů\\s+)?(?:ryb\\s+)?|rybolovu\\s+)(?:platí\\s+)?(?:v\\s+(?:období|době|dnech)\\s+)?od\\s+"+D+"\\s*(?:do|–|-)\\s*"+D+"(?:\\s*\\(?včetně\\)?)?(?:\\s+z\\s+důvodu\\s+(?:zarybňování|zarybnění|výlovu|opravy|údržby|odbahnění|rekonstrukce|vypouštění|snížení\\s+hladiny)[^.]{0,40})?\\s*\\.?$","i"));
+    if(m&&!NE.test(v.replace(/zákaz\s+lovu\s+všech\s+druhů\s+ryb/i,""))){
+      const a=m[3]?iso(m[1],m[2],m[3]):null, b=m[6]?iso(m[4],m[5],m[6]):null;
+      let uvnitr;
+      if(a||b){ const A=a||iso(m[1],m[2],(b||t0).slice(0,4)), B=b||iso(m[4],m[5],(a||t0).slice(0,4)); uvnitr=t0>=A&&t0<=B; }
+      else { const od=pad(m[2])+"-"+pad(m[1]), doo=pad(m[5])+"-"+pad(m[4]), md=t0.slice(5); uvnitr=od<=doo?(md>=od&&md<=doo):(md>=od||md<=doo); }
+      if(!uvnitr) continue;
+      const per="od "+dm(m[1],m[2])+(m[3]?" "+m[3]:"")+" do "+dm(m[4],m[5])+(m[6]?" "+m[6]:"");
+      return {nadpis:"Dnes platí zákaz lovu podle popisu revíru:",kratce:`Podle popisu revíru platí zákaz lovu ${per}`,txt:`${v}`,veta:v};
+    }
+  }
+  return null;
+}
+try {
+  const sezL = []; const dny = []; for (let mo = 1; mo <= 12; mo++) for (const d of ["01", "15"]) dny.push(`${today.slice(0, 4)}-${String(mo).padStart(2, "0")}-${d}`);
+  const seen2 = new Set();
+  for (const r of rv) { const [c, n, t] = r; if (seen2.has(c)) continue; seen2.add(c);
+    const p = await rd(`podminky/${c}.json`); if (!p) continue;
+    const v = new Set(); for (const d of [today, ...dny]) { const s = sezPopis({ c, n, t }, p, d); if (s) v.add(s.veta); }
+    if (v.size) { const dnes = sezPopis({ c, n, t }, p, today); sezL.push(`${n}${dnes ? " (DNES zavřeno)" : ""}: ${[...v].join(" | ").slice(0, 160)}`); } }
+  if (sezL.length) info(`Doba lovu podle popisu revíru – aplikace podle ní hlásí, kdy se na celém revíru nesmí lovit (${sezL.length}) – občas ověřit`, sezL.slice(0, 40));
+} catch (e) { info("Doba lovu z popisu: kontrola selhala – " + e.message); }
 // 8) aktuality – zprávy, které robot nepustil do aplikace (nemají štítek)
 try {
   const ak = await rd("aktuality.json", {}); const vyr = ak.vyrazeno || [];

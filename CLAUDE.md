@@ -41,7 +41,7 @@ Tento soubor čte Claude (AI asistent), když v tomto repozitáři dělá úprav
 - `head()`, `body()` – detail revíru (hlavička, Dnes na revíru, Lovné míry a hájení, popis).
 - `povInfo()`, `mistniBox()` – upozornění na místní a zvláštní povolenky.
 - `jenCast()`, `techCast()` – práce s upřesněním svazu (zákaz jen v úseku apod.).
-- `rezimMimo()` – kombinovaný režim revíru.
+- `rezimMimo()` – revír dnes neplatí: kombinovaný režim (`rezimKomb()`) nebo celorevírní doba lovu / zákaz od–do vyčtený z popisu (`sezPopis()`, věty o úseku, nádrži, technice apod. ignoruje). Seznam v `kontrola.json` (bod 3b).
 - `chanceScore()` – Šance na záběr. `naCtx` / `naCtxK`, `NA_L`, `naCard()`, `naRender()` – Jakou nástrahu?
 - Pravidla v kódu: přívlač v mimopstruhovém revíru jen 16. 6.–31. 12.; v pstruhovém revíru 1. 9.–30. 11. jen jeden jednoháček.
 

@@ -916,7 +916,7 @@ async function flowNow(r){ const d=await getData("prutoky.json"); if(!d) return 
   return `<div class="flownow"><div class="big">${fq(best.q)} <small>m³/s</small></div><div><span class="lvltxt" style="color:${l?l.c:"var(--ink)"}">${l?esc(l.t):"Aktuální průtok"}</span> · ${tr[0]} ${esc(tr[1])}<br><span class="hint">${esc(best.tok)} · ${esc(best.stanice)}${best.qa?`, běžně ${fq(best.qa)} m³/s`:""}${best.cas?` · ${esc(best.cas)}`:""}</span></div></div>`; }
 const covers=it=>(!it.od||it.od<=todayISO)&&(!it.do||it.do>=todayISO);
 /* Kombinovaný režim: popis „Pstruhový režim od 1. 11. do 31. 3.“ – mimo období revír dnes neplatí */
-function rezimMimo(r,p){
+function rezimKomb(r,p){
   if(!r||!p) return null;
   const re=r.t==="P"?/(?:^|[\s(.,;:])pstruhov\S*\s+režim\S*\s+od\s+(\d{1,2})\.\s*(\d{1,2})\.\s*do\s+(\d{1,2})\.\s*(\d{1,2})\./i
                     :/mimopstruhov\S*\s+režim\S*\s+od\s+(\d{1,2})\.\s*(\d{1,2})\.\s*do\s+(\d{1,2})\.\s*(\d{1,2})\./i;
@@ -927,6 +927,45 @@ function rezimMimo(r,p){
   return {kratce:`${nm[0].toUpperCase()+nm.slice(1)} režim platí jen od ${+m[1]}. ${+m[2]}. do ${+m[3]}. ${+m[4]}.`,
     txt:`Tato voda má kombinovaný režim. ${nm[0].toUpperCase()+nm.slice(1)} režim tu platí jen od ${+m[1]}. ${+m[2]}. do ${+m[3]}. ${+m[4]}., dnes podle tohoto revíru lovit nelze. Mimo toto období se řiď podmínkami ${r.t==="P"?"mimopstruhového":"pstruhového"} revíru stejného jména (v aplikaci Pstruh), pokud v tu dobu platí.`};
 }
+/* Doba lovu z popisu revíru: celorevírní „Lov ryb povolen jen od … do …“ / „Zákaz lovu ryb od … do …“. Věty o úseku, části, nádrži apod. se nepoužijí. */
+function sezPopis(r,p,today=todayISO){
+  if(!r||!p||!p.popis) return null;
+  const t0=today;
+  const txt=String(p.popis).replace(/<[^>]+>/g," ").replace(/\*+/g," ").replace(/&nbsp;/g," ");
+  const vety=txt.split(/\r?\n|(?<=\.)\s+(?=[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ])/).map(s=>s.replace(/\s+/g," ").trim()).filter(Boolean);
+  const D="(\\d{1,2})\\.\\s*(\\d{1,2})\\.\\s*(20\\d\\d)?";
+  const NE=/úsek|úseku|část|břeh|pláž|podrevír|nádrž|rybník|tabul|ostrov|zátok|zátoc|lokalit|jezer|štěrkovišt|poldr|hráz|přítok|potok|kanál|GPS|pozemk|plavid|přívlač|muškař|plavan|položen|brod|zaváž|vstup|nonstop|výjimk|denní\s+dob|pod\s+ledem|druh|lososovit|lipan|pstruh\s+obecn|sumc|kapr|štik|candát|úhoř|amur|mník|hod\.|\d+[.:]\d\d\s*hod|místenk|závod|soutěž|pouze\s+pro|jen\s+pro|člen|mládež|dět/i;
+  const pad=x=>String(+x).padStart(2,"0");
+  const iso=(d,m,y)=>(y?y:t0.slice(0,4))+"-"+pad(m)+"-"+pad(d);
+  const dm=(d,m)=>`${+d}. ${+m}.`;
+  for(const v of vety){
+    if(v.length>220) continue;
+    let m=v.match(new RegExp("^(?:na\\s+(?:celém\\s+)?revíru\\s+(?:je\\s+)?)?lov\\s+(?:ryb\\s+)?(?:je\\s+)?povolen\\s+(?:jen|pouze)\\s+(?:v\\s+(?:období|době)\\s+)?od\\s+(?:(zahájení\\s+pstruhové\\s+sez[oó]ny)|"+D+")\\s*(?:do|–|-)\\s*"+D+"\\s*(?:včetně)?\\s*\\.?$","i"));
+    if(m&&!NE.test(v.replace(/pstruhové\s+sez[oó]ny/i,""))){
+      const od=m[1]?"04-16":pad(m[3])+"-"+pad(m[2]), doo=pad(m[6])+"-"+pad(m[5]);
+      const yOd=m[4], yDo=m[7];
+      let uvnitr;
+      if(yOd||yDo){ const a=yOd?iso(m[2],m[3],yOd):t0.slice(0,4)+"-"+od, b=iso(m[5],m[6],yDo); uvnitr=t0>=a&&t0<=b; }
+      else { const md=t0.slice(5); uvnitr=od<=doo?(md>=od&&md<=doo):(md>=od||md<=doo); }
+      if(uvnitr) return null;
+      const per=(m[1]?"od zahájení pstruhové sezóny":"od "+dm(m[2],m[3]))+" do "+dm(m[5],m[6]);
+      return {nadpis:"Dnes mimo dobu lovu revíru:",kratce:`Podle popisu revíru se tu loví jen ${per}`,txt:`Podle popisu revíru je lov ryb povolen jen ${per} Dnes tu lovit nelze. Případné výjimky pro jednotlivé úseky najdeš v popisu revíru.`,veta:v};
+    }
+    m=v.match(new RegExp("^(?:na\\s+(?:celém\\s+)?revíru\\s+)?(?:platí\\s+)?zákaz\\s+(?:lovu\\s+(?:všech\\s+druhů\\s+)?(?:ryb\\s+)?|rybolovu\\s+)(?:platí\\s+)?(?:v\\s+(?:období|době|dnech)\\s+)?od\\s+"+D+"\\s*(?:do|–|-)\\s*"+D+"(?:\\s*\\(?včetně\\)?)?(?:\\s+z\\s+důvodu\\s+(?:zarybňování|zarybnění|výlovu|opravy|údržby|odbahnění|rekonstrukce|vypouštění|snížení\\s+hladiny)[^.]{0,40})?\\s*\\.?$","i"));
+    if(m&&!NE.test(v.replace(/zákaz\s+lovu\s+všech\s+druhů\s+ryb/i,""))){
+      const a=m[3]?iso(m[1],m[2],m[3]):null, b=m[6]?iso(m[4],m[5],m[6]):null;
+      let uvnitr;
+      if(a||b){ const A=a||iso(m[1],m[2],(b||t0).slice(0,4)), B=b||iso(m[4],m[5],(a||t0).slice(0,4)); uvnitr=t0>=A&&t0<=B; }
+      else { const od=pad(m[2])+"-"+pad(m[1]), doo=pad(m[5])+"-"+pad(m[4]), md=t0.slice(5); uvnitr=od<=doo?(md>=od&&md<=doo):(md>=od||md<=doo); }
+      if(!uvnitr) continue;
+      const per="od "+dm(m[1],m[2])+(m[3]?" "+m[3]:"")+" do "+dm(m[4],m[5])+(m[6]?" "+m[6]:"");
+      return {nadpis:"Dnes platí zákaz lovu podle popisu revíru:",kratce:`Podle popisu revíru platí zákaz lovu ${per}`,txt:`${v}`,veta:v};
+    }
+  }
+  return null;
+}
+/* revír dnes neplatí: kombinovaný režim nebo doba lovu z popisu (když ji už nehlásí krátkodobé omezení z RIS) */
+function rezimMimo(r,p){ const k=rezimKomb(r,p); if(k) return k; try{ if((p?.kratkodobe||[]).some(covers)) return null; return sezPopis(r,p); }catch(e){ return null; } }
 /* zákaz jen v části revíru: jen když upřesnění výslovně jmenuje úsek či místo; v pochybnostech platí zákaz (přísnější výklad) */
 const jenCast=l=>!!(l&&l.zakaz&&l.pozn&&!/celý\s+revír|celého\s+revíru|hlavní\s+tok|mimo\s+provoz|závod|místenk|neplatí\s+pro|kromě|vyjma|mimo\s+(rybník|nádrž|vodní)|povolen\w*\s+pouze|pouze\s+(pro|s|se|členům|držitel)/i.test(l.pozn)&&/úsek|úseku|v\s+části|část\w*\s+revíru|pásm|v\s+prostoru|\d+\s*m\s+(nad|pod|od|kolem|okolo)|od\s+\S.*\s+(po|až\s+(k|po|na))\s|na\s+\S+\s+(jezeru|rybníku|nádrži|ploše)/i.test(l.pozn)), techCast=t=>!!(t&&t.zakaz&&/(?:pouze|jen)\s+(?:na|v)\s/i.test(t.pozn||""));
 const upr=t=>t?` <span class="hint upr">Upřesnění: ${esc(t)}</span>`:"";
@@ -934,7 +973,7 @@ async function body(r,x,p){
   const sec=(t,h)=>h?`<section class="sec"><h3>${t}</h3>${h}</section>`:"";
   const kr=(p.kratkodobe||[]).filter(covers);
   const rz=rezimMimo(r,p);
-  const alert=(rz?`<div class="alert"><b>Dnes mimo režim revíru:</b> ${esc(rz.txt)}</div>`:"")+(kr.length?`<div class="alert"><b>Platí omezení:</b> ${kr.map(k=>esc(k.duvod)+(k.pozn?" – "+esc(k.pozn):"")+(k.do?` <span class="hint">(do ${esc(dCZ(k.do))})</span>`:"")).join("<br>")}</div>`:"");
+  const alert=(rz?`<div class="alert"><b>${esc(rz.nadpis||"Dnes mimo režim revíru:")}</b> ${esc(rz.txt)}</div>`:"")+(kr.length?`<div class="alert"><b>Platí omezení:</b> ${kr.map(k=>esc(k.duvod)+(k.pozn?" – "+esc(k.pozn):"")+(k.do?` <span class="hint">(do ${esc(dCZ(k.do))})</span>`:"")).join("<br>")}</div>`:"");
   const lov=(p.lov||[]).filter(covers);
   const lovRyb=lov.find(l=>/^lov ryb/i.test(l.co));
   const doba=(p.doba||[]).filter(covers);
@@ -1929,7 +1968,7 @@ loadRis().then(()=>drawRevs());
 if(!readHashLoc() && S.mode==="gps" && navigator.permissions?.query){
   navigator.permissions.query({name:"geolocation"}).then(st=>{ if(st.state==="granted") locate(true); }).catch(()=>{}); }
 /* verze aplikace – zvyšuj spolu s CACHE v sw.js */
-const APP_VER="2026-11-09 17:41";
+const APP_VER="2026-11-11 18:37";
 try{ const ft=document.getElementById("foot"); if(ft) ft.insertAdjacentHTML("beforeend",`<br><span style="font-size:11px;opacity:.7">Verze ${APP_VER}</span>`); }catch(e){}
 /* aktualizace: při návratu do aplikace zkontroluj novou verzi a po jejím převzetí stránku jednou obnov */
 if("serviceWorker" in navigator){

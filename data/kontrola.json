@@ -8,8 +8,8 @@
   "sus": "ok",
   "usti": "ok"
  },
- "datum": "2026-11-12",
- "zjisteno": "2026-11-12T11:54:49.351Z",
+ "datum": "2026-11-13",
+ "zjisteno": "2026-11-13T11:37:27.964Z",
  "ok": true,
  "problemy": [],
  "info": [
@@ -173,7 +173,7 @@
    ]
   },
   {
-   "t": "Aktuality: 9 zpráv z RIS se do aplikace nedostalo (žádný štítek) – zkontrolovat, jestli nebylo něco důležitého",
+   "t": "Aktuality: 8 zpráv z RIS se do aplikace nedostalo (žádný štítek) – zkontrolovat, jestli nebylo něco důležitého",
    "x": [
     "2026-11-05 Podvodní svět přiblížil školákům ichtyolog ČRS Pavel Vrána",
     "2026-11-01 Bushman pro ČRS: celý listopad 40 % sleva pro všechny naše rybáře",
@@ -182,8 +182,7 @@
     "2026-10-19 Dvojnásobný medailový úspěch na mistrovství světa v přívlači z lodí",
     "2026-10-16 Ze zasedání Západočeského územního svazu (říjen 2026)",
     "2026-10-15 Zástupci ČRS jednali s ministrem životního prostředí o malých vodních elektrárnách",
-    "2026-10-09 Říjnové vydání časopisu Rybářství",
-    "2026-09-29 Akce „Poznej svého farmáře“ se uskutečnila ve Vodňanech"
+    "2026-10-09 Říjnové vydání časopisu Rybářství"
    ]
   },
   {

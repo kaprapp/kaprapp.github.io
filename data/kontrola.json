@@ -8,8 +8,8 @@
   "sus": "ok",
   "usti": "ok"
  },
- "datum": "2026-11-13",
- "zjisteno": "2026-11-13T11:37:27.964Z",
+ "datum": "2026-11-14",
+ "zjisteno": "2026-11-14T10:59:42.577Z",
  "ok": true,
  "problemy": [],
  "info": [
@@ -166,15 +166,16 @@
    "x": [
     "BARTOŠOVICKÝ POTOK 1 A: Zákaz rybolovu v období od 14.10.2026 do 27.10.2026 (včetně) z důvodu zarybňování revíru.",
     "BĚLÁ 1: Zákaz lovu všech druhů ryb platí od 16. 3. do 30. 4. včetně.",
-    "OPAVICE 1 A (DNES zavřeno): Zákaz rybolovu v období od 31.10.2026 do 13.11.2026 z důvodu zarybňování revíru.",
+    "OPAVICE 1 A: Zákaz rybolovu v období od 31.10.2026 do 13.11.2026 z důvodu zarybňování revíru.",
     "OSLAVA ŠTERNBERSKÁ 1 A (DNES zavřeno): Zákaz rybolovu v období od 2.11.2026 do 14.11.2026 z důvodu zarybňování revíru.",
-    "OSOBLAHA 2 A (DNES zavřeno): Zákaz rybolovu v období od 31.10.2026 do 13.11.2026 z důvodu zarybňování revíru.",
+    "OSOBLAHA 2 A: Zákaz rybolovu v období od 31.10.2026 do 13.11.2026 z důvodu zarybňování revíru.",
     "VLTAVA 29 P (DNES zavřeno): Lov ryb povolen jen v období od zahájení pstruhové sezony do 31. 8."
    ]
   },
   {
-   "t": "Aktuality: 8 zpráv z RIS se do aplikace nedostalo (žádný štítek) – zkontrolovat, jestli nebylo něco důležitého",
+   "t": "Aktuality: 9 zpráv z RIS se do aplikace nedostalo (žádný štítek) – zkontrolovat, jestli nebylo něco důležitého",
    "x": [
+    "2026-11-13 Český rybářský svaz se zúčastní rybářského festivalu v polských Kielcích",
     "2026-11-05 Podvodní svět přiblížil školákům ichtyolog ČRS Pavel Vrána",
     "2026-11-01 Bushman pro ČRS: celý listopad 40 % sleva pro všechny naše rybáře",
     "2026-10-25 Hodnocení migrační průchodnosti Rolavy a odhad dopadů její obnovy na rybí společenstva",

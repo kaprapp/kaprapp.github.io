@@ -8,21 +8,23 @@
   "sus": "ok",
   "usti": "ok"
  },
- "datum": "2026-11-15",
- "zjisteno": "2026-11-15T11:33:40.664Z",
- "ok": true,
- "problemy": [],
+ "datum": "2026-11-16",
+ "zjisteno": "2026-11-16T12:07:49.316Z",
+ "ok": false,
+ "problemy": [
+  {
+   "t": "Ubylo revírů: 1774 → 1615"
+  }
+ ],
  "info": [
   {
-   "t": "Lov ryb dnes zakázán bez upřesnění, popis potvrzuje celý revír (chovný / CHRO): 22 revírů"
+   "t": "Lov ryb dnes zakázán bez upřesnění, popis potvrzuje celý revír (chovný / CHRO): 18 revírů"
   },
   {
-   "t": "Lov ryb dnes zakázán bez upřesnění a popis to výslovně nepotvrzuje (10) – ověřit u svazu, zda jde o celý revír",
+   "t": "Lov ryb dnes zakázán bez upřesnění a popis to výslovně nepotvrzuje (8) – ověřit u svazu, zda jde o celý revír",
    "x": [
-    "BÍLINA 9",
     "DESNÁ 1",
     "KOUŘIMKA 2 A",
-    "KRUPÁ 2",
     "MALÁ ÚPA 1",
     "OPAVA 9 P",
     "PORUBKA 1",
@@ -41,16 +43,15 @@
    ]
   },
   {
-   "t": "Technika zakázána s upřesněním „jen/pouze na…“ – aplikace ji ukazuje s hvězdičkou (2)",
+   "t": "Technika zakázána s upřesněním „jen/pouze na…“ – aplikace ji ukazuje s hvězdičkou (1)",
    "x": [
-    "DOLANSKÝ POTOK 1 – Přívlač: Přívlač je zakázaná pouze na nádrži.",
-    "Světlá nad Sázavou – Plavaná: Lov na plavanou je možný pouze na 1 udici, a to pouze při zamrznutí hladiny při lovu ryb na dírkách."
+    "DOLANSKÝ POTOK 1 – Přívlač: Přívlač je zakázaná pouze na nádrži."
    ]
   },
   {
-   "t": "Poznej rybu: povinnost ponechat vyčtená z upřesnění lovné míry (2316 řádků, 5 různých znění)",
+   "t": "Poznej rybu: povinnost ponechat vyčtená z upřesnění lovné míry (2076 řádků, 5 různých znění)",
    "x": [
-    "2312× „povinnost ponechat si“",
+    "2072× „povinnost ponechat si“",
     "1× „Po ulovení se nesmí vrátit zpět do rybářského revíru.“",
     "1× „Úlovek sumečka amerického nesmí být vrácen zpět do revíru.“",
     "1× „Ulovená štika se nevrací zpět do revíru! Štiku ulovenou v době hájení či podměrečnou přenést do řeky“",
@@ -81,84 +82,16 @@
    ]
   },
   {
-   "t": "Poloha odhadnuta podle obce/katastru (5×)",
+   "t": "Revíry jen s přibližnou polohou (2) – v RIS chybí zákres, GPS i katastr",
    "x": [
-    "451011 CIDLINA 6 – k. ú. Radim",
-    "451043 LIBUŇKA 2 – k. ú. Jinolice",
-    "431107 RADBUZA 5/R – k. ú. Čermná",
-    "413044 SKALICE 5 P – k. ú. Rožmitál",
-    "04431123 U MLATU – k. ú. Vejvanov"
-   ]
-  },
-  {
-   "t": "Revíry jen s přibližnou polohou (126) – v RIS chybí zákres, GPS i katastr",
-   "x": [
-    "411119 Bělušice",
-    "413045 BEROUNKA 4 P",
-    "413010 BEROUNKA 6 P",
-    "4513951 Bezejmenný rybník",
-    "443003 BÍLINA 9",
-    "4210051 Blanice Vlašimská 3 - Staré koupaliště",
-    "413028 BLAŽEJOVICKÝ POTOK 1",
-    "4510921 Blažkovec (MO Holice)",
-    "451104 Buchťák (RMV MO Stárkov)",
-    "451002 Bylanka 1",
-    "453005 Bysterský potok 1 (SAM)",
-    "451551 Bystříček - RMV MO Jablonné nad Orlicí",
-    "443008 ČERNÝ POTOK 1",
-    "453114 CHRUDIMKA 5 B",
-    "411008 Cidlina 1",
-    "411170 Cidlina 1 A - zemník Podhradí",
-    "411009 Cidlina 1 B",
-    "411010 Cidlina 2",
-    "451012 CIDLINA 7",
-    "8999999 Činnost mimo revíry",
-    "451804 Č.Kostelec (malá voda)",
-    "411017 Doubrava 1",
-    "451756 Dymlov",
-    "413005 HODKOVSKÝ POTOK 1",
-    "411021 Hodkovský potok 3",
-    "443012 HORSKÁ KAMENICE 1",
-    "451809 Hostinné (malá voda)",
-    "4510091 Huryšák 3",
-    "4510091 Huryšák I",
-    "451025 JAVORKA 2",
-    "453019 JAVORKA 2 P",
-    "411022 Javornice 2",
-    "413300 JAVORNICE 3",
-    "4510021 Jerkův rybník",
-    "443502 JEŠTĚDKA 1",
-    "443501 JEŠTĚDSKÝ POTOK 1",
-    "451201 Jevíčka 1 A",
-    "411149 Jez",
-    "411151 Jezero pode Dvorem",
-    "443018 JIŘÍKOVSKÝ POTOK 1",
-    "441016 JIZERA 10 A (SAM)",
-    "451027 JIZERA 8",
-    "453022 JIZERA 8 P",
-    "4510071 Jordánek",
-    "4510731 Kamenná žabka",
-    "433072 KATEŘINSKÝ POTOK 1",
-    "411135 Kaufmaňák",
-    "411034 Klejnarka 1",
-    "411036 Klejnarka 3",
-    "411038 Klenice 2",
-    "411172 Knovízský potok",
-    "411107 Konopišťský potok 3",
-    "411137 Košátecký potok 1 M",
-    "451785 Košťálov (malá voda) ( podrevír neuveden )",
-    "411159 Koupaliště Tři Dvory",
-    "433019 KRALOVICKÝ POTOK 1",
-    "451392 Kravín",
-    "4510881 Kruh",
-    "473501 KRUPÁ 2",
-    "411143 Kulatý"
+    "300002 KOPANKA",
+    "300003 VELKÝ RYBNÍK"
    ]
   },
   {
    "t": "Zarybnění: zpráva svazu jmenuje vodu, ale aplikace ji nepřiřadila k revíru (1) – je jen dole ve „Zprávách svazů“",
    "x": [
-    "2026-10-31 Středočeský: Do Světlé vysazeni duháci a siveni | Světlá → možná Světlá nad Sázavou (M)"
+    "2026-10-31 Středočeský: Do Světlé vysazeni duháci a siveni | Světlá → v RIS nenalezeno"
    ]
   },
   {
@@ -190,9 +123,9 @@
   }
  ],
  "pocty": {
-  "reviry": 1774,
+  "reviry": 1615,
   "prutoky": 319,
-  "pribl": 126
+  "pribl": 2
  },
  "polohyNesedi": [
   "431145 PARDUS VELKÝ: zákres 13.3 km od GPS v detailu RIS",

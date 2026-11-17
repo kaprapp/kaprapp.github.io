@@ -211,6 +211,9 @@ ul.plain li{margin:3px 0}
 .rpwarn{background:#FFF4E5;border:1px solid #F0B36A;color:#6B3A00;border-radius:12px;padding:10px 12px;margin:8px 0 10px;font-size:.92em;line-height:1.4;text-align:left}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .rpwarn{background:#3A2A14;border-color:#8A5A20;color:#FFE2B8} }
 :root[data-theme="dark"] .rpwarn{background:#3A2A14;border-color:#8A5A20;color:#FFE2B8}
+.sezban{margin:12px 16px 0;padding:10px 14px;border-radius:12px;background:#FFF4E5;border:1px solid #F0B36A;color:#6B3A00;font-size:.93em;line-height:1.4}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .sezban{background:#3A2A14;border-color:#8A5A20;color:#FFE2B8} }
+:root[data-theme="dark"] .sezban{background:#3A2A14;border-color:#8A5A20;color:#FFE2B8}
 .report .r150{border:2px solid #B4441F;border-radius:14px;padding:12px 14px;margin:10px 0;text-align:left}.report .r150 h4{margin:0 0 6px;color:#B4441F;font-size:18px}.report .r150 .n150{font-size:30px;font-weight:800;color:#B4441F;letter-spacing:1px}
 .report ul,.report ol{text-align:left;padding-left:20px;margin:6px 0}.report li{margin:4px 0;font-size:14px}.report .rsec{text-align:left;border-top:1px solid var(--line);margin-top:14px;padding-top:12px}.report .rsec h4{margin:0 0 6px}
 .report .rph{display:flex;gap:8px;margin:8px 0}.report .rph label{flex:1;aspect-ratio:1;border:1px dashed var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:26px;cursor:pointer}.report .rph img{width:100%;height:100%;object-fit:cover}.report .rpl{display:flex;flex-direction:column;align-items:center;gap:2px}.report .rpl small{font-size:12px;color:var(--muted)}
@@ -964,8 +967,25 @@ function sezPopis(r,p,today=todayISO){
   }
   return null;
 }
-/* revír dnes neplatí: kombinovaný režim nebo doba lovu z popisu (když ji už nehlásí krátkodobé omezení z RIS) */
-function rezimMimo(r,p){ const k=rezimKomb(r,p); if(k) return k; try{ if((p?.kratkodobe||[]).some(covers)) return null; return sezPopis(r,p); }catch(e){ return null; } }
+/* Pstruhová sezóna (Rybářský řád ČRS): v pstruhovém revíru se loví 16. 4.–30. 11. Výjimka = kombinovaný režim, kde popis uvádí „Pstruhový režim od … do …“ i v zimě (např. Mlynařice 3 – Dvorce, Božkov). */
+const PS_OD="04-16", PS_DO="11-30";
+function pstruhKomb(r,p){
+  if(!r||r.t!=="P"||!p) return null;
+  const m=String(p.popis||"").match(/(?:^|[\s(.,;:])pstruhov\S*\s+režim\S*\s+od\s+(\d{1,2})\.\s*(\d{1,2})\.\s*do\s+(\d{1,2})\.\s*(\d{1,2})\./i); if(!m) return null;
+  const pad=x=>String(+x).padStart(2,"0");
+  return {od:pad(m[2])+"-"+pad(m[1]), do:pad(m[4])+"-"+pad(m[3]), per:`od ${+m[1]}. ${+m[2]}. do ${+m[3]}. ${+m[4]}.`};
+}
+function psDalsi(today=todayISO){ const md=today.slice(5); return +today.slice(0,4)+(md>PS_DO?1:0); }
+function sezPstruh(r,p,today=todayISO){
+  if(!r||r.t!=="P") return null;
+  const md=today.slice(5); if(md>=PS_OD&&md<=PS_DO) return null;
+  const k=pstruhKomb(r,p); if(k&&inPer(k.od,k.do,today)) return null;
+  const y=psDalsi(today);
+  return {nadpis:"Mimo pstruhovou sezónu:", kratce:`V pstruhových revírech se loví od 16. 4. do 30. 11. Další sezóna začíná 16. 4. ${y}.`,
+    txt:`Podle Rybářského řádu se v pstruhových revírech loví jen od 16. dubna do 30. listopadu. Další sezóna začíná 16. 4. ${y}. Výjimkou jsou vody s kombinovaným režimem, kde svaz povoluje pstruhový režim i v zimě (např. Mlynařice 3 – Dvorce nebo Božkov).`};
+}
+/* revír dnes neplatí: mimo pstruhovou sezónu, kombinovaný režim nebo doba lovu z popisu (když ji už nehlásí krátkodobé omezení z RIS) */
+function rezimMimo(r,p){ try{ const sp=sezPstruh(r,p); if(sp) return sp; }catch(e){} const k=rezimKomb(r,p); if(k) return k; try{ if((p?.kratkodobe||[]).some(covers)) return null; return sezPopis(r,p); }catch(e){ return null; } }
 /* zákaz jen v části revíru: jen když upřesnění výslovně jmenuje úsek či místo; v pochybnostech platí zákaz (přísnější výklad) */
 const jenCast=l=>!!(l&&l.zakaz&&l.pozn&&!/celý\s+revír|celého\s+revíru|hlavní\s+tok|mimo\s+provoz|závod|místenk|neplatí\s+pro|kromě|vyjma|mimo\s+(rybník|nádrž|vodní)|povolen\w*\s+pouze|pouze\s+(pro|s|se|členům|držitel)/i.test(l.pozn)&&/úsek|úseku|v\s+části|část\w*\s+revíru|pásm|v\s+prostoru|\d+\s*m\s+(nad|pod|od|kolem|okolo)|od\s+\S.*\s+(po|až\s+(k|po|na))\s|na\s+\S+\s+(jezeru|rybníku|nádrži|ploše)/i.test(l.pozn)), techCast=t=>!!(t&&t.zakaz&&/(?:pouze|jen)\s+(?:na|v)\s/i.test(t.pozn||""));
 const upr=t=>t?` <span class="hint upr">Upřesnění: ${esc(t)}</span>`:"";
@@ -980,6 +1000,8 @@ async function body(r,x,p){
   let dnes="";
   const lovCast=jenCast(lovRyb);
   if(lovRyb) dnes+=`<p style="margin:0 0 8px">${(lovRyb.zakaz&&!lovCast)||kr.length||rz?`<span class="st-h">Lov ryb dnes není povolen.</span>${rz?` <span class="hint">${esc(rz.kratce)}</span>`:""}${lovRyb.zakaz?upr(lovRyb.pozn):""}`:`<span class="st-l">Lov ryb je povolen</span>${doba[0]?.h?` · denní doba lovu <b>${esc(doba[0].h)}</b>`:""}.${doba[0]?.pozn?upr(doba[0].pozn):""}`}</p>${lovCast&&!kr.length&&!rz?`<div class="alert" style="margin:0 0 8px"><b>Zákaz lovu ryb${lovRyb.od&&lovRyb.do?` (${esc(dCZ(lovRyb.od))} – ${esc(dCZ(lovRyb.do))})`:""} s upřesněním svazu:</b> ${esc(lovRyb.pozn)}</div>`:""}`;
+  else if(rz) dnes+=`<p style="margin:0 0 8px"><span class="st-h">Lov ryb dnes není povolen.</span> <span class="hint">${esc(rz.kratce)}</span></p>`;
+  else if(!kr.length&&pstruhKomb(r,p)) dnes+=`<p style="margin:0 0 8px"><span class="st-l">Lov ryb je povolen</span> – pstruhový režim tu platí ${esc(pstruhKomb(r,p).per)}${doba[0]?.h?` · denní doba lovu <b>${esc(doba[0].h)}</b>.`:""}</p>`;
   else if(doba[0]?.h) dnes+=`<p style="margin:0 0 8px">Denní doba lovu: <b>${esc(doba[0].h)}</b></p>`;
   const tech=(p.technika||[]);
   if(tech.length) dnes+=`<div class="chiprow">${tech.map(t=>`<span class="${t.zakaz?"c-no":"c-ok"}">${esc(t.co)}${t.pozn?" *":""}</span>`).join("")}</div>${tech.filter(t=>t.pozn).map(t=>`<p class="hint" style="margin:6px 0 0">* <b>${esc(t.co)}</b>${t.zakaz?" – zakázáno":" – povoleno"}: ${esc(t.pozn)}</p>`).join("")}`;
@@ -1150,6 +1172,13 @@ function renderNews(d){ const out=$("out");
   out.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{NEWSF=b.dataset.f;renderNews(d);}); }
 
 /* ---------- nastavení provozovatele ---------- */
+/* Pruh o pstruhové sezóně na úvodní stránce (jen kde je #sezBanner) */
+try{ const sb=document.getElementById("sezBanner"); if(sb){ const md=todayISO.slice(5), y=psDalsi(todayISO);
+  const dny=d=>Math.round((new Date(d+"T12:00:00")-new Date(todayISO+"T12:00:00"))/864e5);
+  let h="";
+  if(md>=PS_OD&&md<=PS_DO){ const n=dny(todayISO.slice(0,4)+"-11-30"); if(n<=21) h=`<b>Pstruhová sezóna končí ${n===0?"dnes":n===1?"zítra":"za "+n+" "+(n<5?"dny":"dní")} (30.&nbsp;11.).</b> Pak se v pstruhových revírech nesmí lovit až do 16.&nbsp;4.&nbsp;${y+1}.`; }
+  else { const n=dny(y+"-04-16"); h=`<b>Pstruhová sezóna je ukončená.</b> V pstruhových revírech se znovu loví od <b>16.&nbsp;4.&nbsp;${y}</b>${n<=30?` (za ${n} ${n===1?"den":n<5?"dny":"dní"})`:""}. Výjimkou jsou vody s kombinovaným režimem, kde se loví i v zimě (např. Mlynařice 3 – Dvorce, Božkov) – aplikace u nich ukáže, že je lov povolen.`; }
+  if(h){ sb.innerHTML=h; sb.hidden=false; } } }catch(e){}
 const CFG={
   kontakt:false,     // true = zobrazit tlačítko „Napište nám“
   email:"pstruhakapr@gmail.com",       // kontaktní e-mail pro „Napište nám“
@@ -1968,7 +1997,7 @@ loadRis().then(()=>drawRevs());
 if(!readHashLoc() && S.mode==="gps" && navigator.permissions?.query){
   navigator.permissions.query({name:"geolocation"}).then(st=>{ if(st.state==="granted") locate(true); }).catch(()=>{}); }
 /* verze aplikace – zvyšuj spolu s CACHE v sw.js */
-const APP_VER="2026-11-11 18:37";
+const APP_VER="2026-11-17 13:44";
 try{ const ft=document.getElementById("foot"); if(ft) ft.insertAdjacentHTML("beforeend",`<br><span style="font-size:11px;opacity:.7">Verze ${APP_VER}</span>`); }catch(e){}
 /* aktualizace: při návratu do aplikace zkontroluj novou verzi a po jejím převzetí stránku jednou obnov */
 if("serviceWorker" in navigator){

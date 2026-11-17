@@ -41,6 +41,7 @@ Tento soubor čte Claude (AI asistent), když v tomto repozitáři dělá úprav
 - `head()`, `body()` – detail revíru (hlavička, Dnes na revíru, Lovné míry a hájení, popis).
 - `povInfo()`, `mistniBox()` – upozornění na místní a zvláštní povolenky.
 - `jenCast()`, `techCast()` – práce s upřesněním svazu (zákaz jen v úseku apod.).
+- Pstruhová sezóna: `sezPstruh()` – v pstruhovém revíru (`t:"P"`) se podle Rybářského řádu loví jen 16. 4.–30. 11. (konstanty `PS_OD`, `PS_DO`); mimo ni hlásí „Mimo pstruhovou sezónu“. Výjimka jen pro kombinovaný režim s pstruhovým obdobím v zimě (`pstruhKomb()`, popis „Pstruhový režim od 1. 11. do 31. 3.“ – Mlynařice 3 – Dvorce, Božkov). Pruh `#sezBanner` na úvodu (jen Pstruh) ukazuje 3 týdny před koncem odpočet a po skončení datum další sezóny.
 - `rezimMimo()` – revír dnes neplatí: kombinovaný režim (`rezimKomb()`) nebo celorevírní doba lovu / zákaz od–do vyčtený z popisu (`sezPopis()`, věty o úseku, nádrži, technice apod. ignoruje). Seznam v `kontrola.json` (bod 3b).
 - `chanceScore()` – Šance na záběr. `naCtx` / `naCtxK`, `NA_L`, `naCard()`, `naRender()` – Jakou nástrahu?
 - Pravidla v kódu: přívlač v mimopstruhovém revíru jen 16. 6.–31. 12.; v pstruhovém revíru 1. 9.–30. 11. jen jeden jednoháček.

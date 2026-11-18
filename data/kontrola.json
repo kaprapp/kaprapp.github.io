@@ -1,6 +1,6 @@
 {
  "zarybKroky": {
-  "praha": 470,
+  "praha": 480,
   "jihocesky": 1585,
   "boskovice": 35,
   "hodonin": 6,
@@ -8,14 +8,10 @@
   "sus": "ok",
   "usti": "ok"
  },
- "datum": "2026-11-17",
- "zjisteno": "2026-11-17T12:30:57.745Z",
- "ok": false,
- "problemy": [
-  {
-   "t": "Přibylo revírů jen s přibližnou polohou: 2 → 126"
-  }
- ],
+ "datum": "2026-11-18",
+ "zjisteno": "2026-11-18T12:17:25.365Z",
+ "ok": true,
+ "problemy": [],
  "info": [
   {
    "t": "Lov ryb dnes zakázán bez upřesnění, popis potvrzuje celý revír (chovný / CHRO): 22 revírů"

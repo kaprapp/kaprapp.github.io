@@ -34,6 +34,7 @@ Tento soubor čte Claude (AI asistent), když v tomto repozitáři dělá úprav
 - `scripts/update.mjs` – ranní stahování (RIS, MRS, ČHMÚ, aktuality, zarybnění), `scripts/kontrola.mjs` – sebekontrola dat → `data/kontrola.json`.
 - Polohy revírů: `polohy()` v `update.mjs` zpřesní revíry bez zákresu v RIS (GPS z popisu → bod z detailu RIS → obec z „k. ú.“ přes Nominatim, cache `data/geokod.json`) a hlídá zákresy, které nesedí s GPS. Výsledek `data/polohy.json`, hlášení v `kontrola.json`. V `reviry.json` 9. položka: 1 = přibližně, 2 = GPS bod, 3 = podle obce; 10. položka = poloměr nádrže v km.
 - `.github/workflows/update.yml` – spouští obojí každé ráno (~5:40) a po změně ve `scripts/`.
+- **Odložená větev `muj-rybarsky-rok`** (v obou aplikacích): hotový návrh „Můj rybářský rok“ – deník výprav a úlovků jen v telefonu (`mujRok` v localStorage, náhledy fotek v IndexedDB), každý zápis pošle e-mail s celou historií a odkazem `#rok=…` pro obnovu (`rokHash()`, `rokNabidni()`). Zveřejnit až na pokyn majitele (merge do `main`, zvýšit CACHE a APP_VER).
 - `src/index.template.html` – stará nepoužívaná verze, **neupravuj ji**.
 
 ## Důležitá místa v index.html

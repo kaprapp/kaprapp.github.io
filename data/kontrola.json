@@ -5,18 +5,13 @@
   "boskovice": 35,
   "hodonin": 6,
   "sumperk": 9,
-  "sus": "chyba: TypeError: fetch failed",
+  "sus": "ok",
   "usti": "ok"
  },
- "datum": "2026-11-25",
- "zjisteno": "2026-11-25T13:33:28.988Z",
- "ok": false,
- "problemy": [
-  {
-   "t": "Zarybnění – zdroj „sus“ selhal",
-   "x": "chyba: TypeError: fetch failed"
-  }
- ],
+ "datum": "2026-11-26",
+ "zjisteno": "2026-11-26T13:13:31.618Z",
+ "ok": true,
+ "problemy": [],
  "info": [
   {
    "t": "Lov ryb dnes zakázán bez upřesnění, popis potvrzuje celý revír (chovný / CHRO): 22 revírů"
@@ -179,6 +174,7 @@
   {
    "t": "Aktuality: 10 zpráv z RIS se do aplikace nedostalo (žádný štítek) – zkontrolovat, jestli nebylo něco důležitého",
    "x": [
+    "2026-11-26 Olovo v rybářském náčiní: EU zavádí postupná omezení. Co to znamená pro rybáře?",
     "2026-11-16 Zástupci ČRS se zúčastnili XV. sněmu Slovenského rybárskeho zväzu",
     "2026-11-13 Český rybářský svaz se zúčastní rybářského festivalu v polských Kielcích",
     "2026-11-05 Podvodní svět přiblížil školákům ichtyolog ČRS Pavel Vrána",
@@ -187,8 +183,7 @@
     "2026-10-24 Karel Mach zvolen předsedou Českého rybářského svazu",
     "2026-10-19 Dvojnásobný medailový úspěch na mistrovství světa v přívlači z lodí",
     "2026-10-16 Ze zasedání Západočeského územního svazu (říjen 2026)",
-    "2026-10-15 Zástupci ČRS jednali s ministrem životního prostředí o malých vodních elektrárnách",
-    "2026-10-09 Říjnové vydání časopisu Rybářství"
+    "2026-10-15 Zástupci ČRS jednali s ministrem životního prostředí o malých vodních elektrárnách"
    ]
   },
   {
